@@ -1,17 +1,42 @@
 ---
+import { getCollection } from 'astro:content';
 
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>東京タクシードライバー転職ガイド | Tenstrage</title>
+    <meta name="description" content="東京のタクシードライバーへの転職情報を徹底解説。年収・歩合・入社祝い金・大手グループの違いまで現場情報をお届け。" />
+  </head>
+  <body>
+    <header>
+      <h1>東京タクシードライバー転職ガイド</h1>
+      <p>現場情報に基づく転職・収入・待遇の最新情報</p>
+    </header>
+    <main>
+      {articles.length === 0 ? (
+        <p>記事準備中...</p>
+      ) : (
+        <ul>
+          {articles.map((article) => (
+            <li>
+              <a href={`/articles/${article.slug}/`}>
+                <h2>{article.data.title}</h2>
+                <p>{article.data.description}</p>
+                <time datetime={article.data.pubDate.toISOString()}>
+                  {article.data.pubDate.toLocaleDateString('ja-JP')}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  </body>
 </html>
