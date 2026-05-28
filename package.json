@@ -12,6 +12,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.3.7"
+    "@remotion/bundler": "^4.0.466",
+    "@remotion/renderer": "^4.0.466",
+    "astro": "^6.3.7",
+    "remotion": "^4.0.466"
   }
 }
