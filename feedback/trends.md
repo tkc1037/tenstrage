@@ -1,6 +1,6 @@
 # 東京タクシー運転手 最新トレンド分析
 
-更新日: 2026年5月27日
+更新日: 2026年5月28日
 
 ## 今週のXトレンド
 
@@ -64,11 +64,22 @@ Uberなどが自動運転タクシー（ロボタクシー）分野で提携先�
 
 ## データソース
 
+### 2026年5月28日 最新調査ソース
 - [P-CHAN TAXI：2026年5月最新タクシー運転手年収データ](https://p-chan.jp/taxi/column/salary)
+- [P-CHAN TAXI：2026年4月最新転職時期ガイド](https://p-chan.jp/taxi/column/timing)
 - [GOジョブ：タクシー運転手転職情報](https://gojob.go.goinc.jp/useful/taxi-tensyoku/)
-- [タクシー求人比較：東京入社祝い金ランキング](https://taxi-tenshoku.net/tokyo-taxi-company-signing-bonus-ranking/)
+- [GOジョブ：タクシー求人サービス](https://gojob.go.goinc.jp/)
+- [タクシー求人比較：2026年4月版東京入社祝い金ランキング](https://taxi-tenshoku.net/tokyo-taxi-company-signing-bonus-ranking/)
 - [ドライバーズワーク：タクシー求人情報](https://www.drivers-work.com/)
-- [タクシージョブ：年収シミュレーション](https://taxi-job.net/advanced-income-simulator/)
-- [日本経済新聞：Uberロボタクシー提携拡大](https://www.nikkei.com/article/DGXZQOCD159PU0V10C26A4000000/)
-- [Yahoo!ニュース：東京タクシー値上げニュース（TBS NEWS DIG）](https://news.yahoo.co.jp/articles/7c28d3271c12303621343b9c5ab00be62e5c58cc)
-- [タクシーメディア：業界ニュース](https://www.tenshokudou.com/media/?cat=41)
+- [タクシー転職道：タクシー求人情報サイト](https://www.tenshokudou.com/)
+- [すべらない転職：タクシー入社祝い金のからくり解説](https://axxix.co.jp/magazine/58752)
+- [マネーフォワード：タクシー運転手の年収・稼ぎ方解説](https://biz.moneyforward.com/establish/basic/86374/)
+- [GO Inc.採用情報](https://hrmos.co/pages/goinc/jobs)
+
+### 2026年データサマリー
+- **全国平均年収**: 414.8万円（2026年最新）
+- **東京都平均年収**: 502万円（全国最高）
+- **4年成長率**: 2020年299.6万円 → 2024年414.8万円（38%増）
+- **入社祝い金相場**: 10万〜30万円（実質50万〜80万円規模のケースあり）
+- **運賃改定**: 2026年4月20日、東京都内23区で初乗り1km500円へ改定
+- **GOネットワーク**: 全国1,100社以上、3,500万ダウンロード
