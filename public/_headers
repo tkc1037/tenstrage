@@ -1,0 +1,5 @@
+/video/*.mp4
+  Content-Type: video/mp4
+
+/audio/*.wav
+  Content-Type: audio/wav
