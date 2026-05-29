@@ -1,15 +1,15 @@
-import { Composition } from 'remotion';
+import { Composition, registerRoot } from 'remotion';
 import { TaxiVideo } from './TaxiVideo';
 
-export const RemotionRoot: React.FC = () => {
+const RemotionRoot: React.FC = () => {
   return (
     <Composition
       id="TaxiVideo"
       component={TaxiVideo}
-      durationInFrames={450}
+      durationInFrames={900}
       fps={30}
       width={1080}
-      height={1080}
+      height={1920}
       defaultProps={{
         title: '東京タクシードライバーの年収は？',
         lines: [
@@ -21,3 +21,5 @@ export const RemotionRoot: React.FC = () => {
     />
   );
 };
+
+registerRoot(RemotionRoot);
