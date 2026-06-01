@@ -12,9 +12,14 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
     "@remotion/bundler": "^4.0.466",
+    "@remotion/google-fonts": "^4.0.469",
     "@remotion/renderer": "^4.0.466",
+    "@remotion/transitions": "^4.0.469",
     "astro": "^6.3.7",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "remotion": "^4.0.466"
   }
 }
