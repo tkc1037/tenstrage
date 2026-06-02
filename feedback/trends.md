@@ -1,6 +1,6 @@
 # 東京タクシー運転手 最新トレンド分析
 
-更新日: 2026年6月1日
+更新日: 2026年6月2日（最新調査反映）
 
 ## 今週のXトレンド
 
@@ -89,20 +89,48 @@
 ---
 
 ## 調査日時
-- 調査実施日：2026年6月1日
-- 調査対象：東京都タクシー業界の最新求人情報・年収データ・業界統計
+- 調査実施日：2026年6月2日（最新調査）
+- 前回調査日：2026年6月1日
+- 調査対象：東京都タクシー業界の最新求人情報・年収データ・業界統計・求人トレンド
 - データソース：転職道.com、GOジョブ、doda、マイナビ転職、Indeed、ドライバーズワーク、国土交通省統計など複数の求人サイト・公開統計
-- 検索クエリ：「タクシードライバー 転職 2026」「タクシー 年収 2026」「タクシー 入社祝い金」「GO タクシー 求人 東京」「東京 タクシー運転手 募集 2026」
+- 検索クエリ（2026年6月2日更新）：
+  - 「タクシードライバー 転職 2026」
+  - 「タクシー 年収 2026」
+  - 「タクシー 入社祝い金」
+  - 「GO タクシー 求人」
+  - 「東京 タクシー ドライバー 募集」
 
-## 主な参考情報源
+## 主な参考情報源（2026年6月2日更新）
+
+### 転職・求人サイト
 - [タクシードライバーの転職道](https://www.tenshokudou.com/)
-- [ドライバーズワーク](https://www.drivers-work.com/)
-- [GOジョブ](https://gojob.go.goinc.jp/)
-- [ピーチャンタクシー（給与・入社祝い金関連）](https://p-chan.jp/taxi/column/)
+- [ドライバーズワーク](https://www.drivers-work.com/) - 1,117件の求人掲載（2026年5月28日時点）
+- [GOジョブ](https://gojob.go.goinc.jp/) - ドライバー専門の仕事探しサイト
+- [GOアプリ導入企業の求人情報](https://www.tenshokudou.com/tokyo/search?sc%5B42%5D=GO%E3%82%A2%E3%83%97%E3%83%AA%E5%B0%8E%E5%85%A5)
+- [東京タクシー求人](https://www.tr16.jp/tokyo/) - タクルート
 - [タクシー年収シミュレーション 2026版](https://taxi-job.net/advanced-income-simulator/)
-- [P-CHAN TAXI：2026年5月最新タクシー運転手年収データ](https://p-chan.jp/taxi/column/salary)
-- [GO Inc. キャリア情報](https://hrmos.co/pages/goinc/jobs)
+
+### 給与・年収関連
+- [P-CHAN TAXI：2026年5月最新タクシー運転手年収データ](https://p-chan.jp/taxi/column/salary) - 平均年収460万円、東京502万円
+- [タクシー運転手の年収比較レポート](https://taxi-tenshoku.net/taxi-income-region-ranking-2026/) - 地域別年収ランキング
 - [マネーフォワード：タクシー運転手の年収・稼ぎ方解説](https://biz.moneyforward.com/establish/basic/86374/)
+- [求人ボックス：タクシー運転手の平均年収460万円](https://xn--pckua2a7gp15o89zb.com/%E3%82%BF%E3%82%AF%E3%82%B7%E3%83%BC%E9%81%8B%E8%BB%A2%E6%89%8B%E3%81%AE%E5%B9%B4%E5%8F%8E%E3%83%BB%E6%99%82%E7%B5%A6)
+
+### 入社祝い金・待遇関連
+- [ピーチャンタクシー（給与・入社祝い金関連）](https://p-chan.jp/taxi/column/)
+- [タクシー入社祝い金解説](https://gojob.go.goinc.jp/useful/taxi-tensyoku/25zZSbzPOUvs0YbsBmDnhN) - GOジョブ
+- [東京タクシー入社祝い金比較](https://taxi-tenshoku.net/tokyo-taxi-company-signing-bonus-ranking-2026/) - 相場10万～50万円
+- [入社祝い金からくり解説](https://www.taxi-qjin.com/contents/detail/52) - タクQ
+
+### 採用企業情報
+- [日本交通タクシー採用](http://www.nihon-kotsu-recruit.jp/taxi/)
+- [日の丸交通](https://hinomaru.tokyo/recruit/) - 「心で運転」採用ページ
+- [GO Inc. 企業情報](https://hrmos.co/pages/goinc/jobs)
+
+### 業界統計・分析
+- [タクシー運転手転職完全ガイド](https://note.com/writer_sales/n/n92997df8f9d3) - すい先生の4社転職実績
+- [タクシー運転手が辞めたい人向けガイド](https://gojob.go.goinc.jp/useful/taxi-tensyoku/121Vtn1cwsww3pg9iLPtxA) - GOジョブ
+- [2026年4月最新：タクシー転職エージェント10選](https://p-chan.jp/taxi/column/career-change-agent) - P-CHAN TAXI
 
 ## 次のアクション
 1. 高優先度（高）の5つのテーマについて詳細な記事制作を開始
