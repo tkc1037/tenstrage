@@ -1,6 +1,6 @@
 # 東京タクシー運転手 最新トレンド分析
 
-更新日: 2026年6月4日（最新調査反映）
+更新日: 2026年6月5日（最新調査反映）
 
 ## 今週のXトレンド
 
@@ -92,18 +92,18 @@
 ---
 
 ## 調査日時
-- 調査実施日：2026年6月4日（最新調査）
-- 前回調査日：2026年6月3日
+- 調査実施日：2026年6月5日（最新調査）
+- 前回調査日：2026年6月4日
 - 調査対象：東京都タクシー業界の最新求人情報・年収データ・業界統計・求人トレンド・業界課題
 - データソース：転職道.com、GOジョブ、doda、マイナビ転職、Indeed、ドライバーズワーク、国土交通省統計など複数の求人サイト・公開統計
-- 検索クエリ（2026年6月4日更新）：
+- 検索クエリ（2026年6月5日更新）：
   - 「タクシードライバー 転職 2026」
   - 「タクシー 年収 2026」
-  - 「タクシー 入社祝い金」
-  - 「GO タクシー 求人 2026」
-  - 「東京 タクシー ドライバー ニュース」
+  - 「タクシー 入社祝い金 求人」
+  - 「GO タクシー 求人 東京」
+  - 「東京タクシー業界 トレンド 2026」
 
-## 主な参考情報源（2026年6月3日更新）
+## 主な参考情報源（2026年6月5日更新）
 
 ### 転職・求人サイト
 - [タクシードライバーの転職道](https://www.tenshokudou.com/)
@@ -118,6 +118,7 @@
 
 ### 給与・年収関連
 - [P-CHAN TAXI：2026年6月最新タクシー運転手年収データ](https://p-chan.jp/taxi/column/salary) - 平均年収460万円、東京502万円、2026年4月運賃改定で年収60万円増加見込み
+- [ピーチャンタクシー：2026年6月最新版給与・年収情報](https://p-chan.jp/taxi/column/salary) - 運賃改定後の実績データ、初乗り500円への改定詳細
 - [タクシー運転手の年収比較レポート](https://taxi-tenshoku.net/taxi-income-region-ranking-2026/) - 地域別年収ランキング、全国26都道府県39地域の運賃改定状況
 - [マネーフォワード：タクシー運転手の年収・稼ぎ方解説](https://biz.moneyforward.com/establish/basic/86374/)
 - [求人ボックス：タクシー運転手の平均年収460万円](https://xn--pckua2a7gp15o89zb.com/%E3%82%BF%E3%82%AF%E3%82%B7%E3%83%BC%E9%81%8B%E8%BB%A2%E6%89%8B%E3%81%AE%E5%B9%B4%E5%8F%8E%E3%83%BB%E6%99%82%E7%B5%A6)
@@ -154,12 +155,13 @@
 - [2026年4月最新：タクシードライバーへの転職タイミング](https://p-chan.jp/taxi/column/timing) - ピーチャンタクシー
 
 ### GO Taxi関連
-- [GO Crew（GOクルー）アルバイト・パート募集](https://gojob.go.goinc.jp/lp/gocrew) - GOジョブ
+- [GO Crew（GOクルー）アルバイト・パート募集](https://gojob.go.goinc.jp/lp/gocrew) - GOジョブ - 時給1,500円、週3日から可能
 - [アプリドライバーとは](https://gojob.go.goinc.jp/contents/category_taxi/01) - GOジョブ
 - [GO Inc. 採用情報](https://hrmos.co/pages/goinc/jobs)
 - [GO Inc. Wantedly採用ページ](https://sg.wantedly.com/companies/GOinc/projects)
 - [Indeed：東京都GO専用ドライバー求人](https://jp.indeed.com/q-%E3%82%BF%E3%82%AF%E3%82%B7%E3%83%BC%E3%82%A2%E3%83%97%E3%83%AAgo%E5%B0%82%E7%94%A8%E3%83%89%E3%83%A9%E3%82%A4%E3%83%90%E3%83%BC-l-%E6%9D%B1%E4%BA%AC%E9%83%BD-%E6%B1%82%E4%BA%BA.html)
 - [アオイグループ：GO対応タクシードライバー正社員](https://recruit-aoi-group.com/recruits/13440049)
+- [タクシー業界に新旋風！GO Crew登場](https://www.tenshokudou.com/media/?p=10118) - タクシーメディア by転職道.com
 
 ## 次のアクション
 1. 高優先度（高）の5つのテーマについて詳細な記事制作を開始
