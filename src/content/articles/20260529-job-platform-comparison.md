@@ -511,7 +511,7 @@ P-CHAN TAXI     ★☆☆☆☆ (なし)
 
 より詳しい最新の求人情報と企業別の給与データは、以下のサイトで確認できます：
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 ## 結論：複数サイト活用で年収502万円から600万円への転職を実現
 
