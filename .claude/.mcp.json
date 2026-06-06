@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "buffer": {
+      "command": "node",
+      "args": [
+        "C:/Users/wtknt/Documents/tenstrage/buffer-mcp/dist/index.js"
+      ],
+      "env": {
+        "BUFFER_ACCESS_TOKEN": "${BUFFER_API_KEY}"
+      }
+    }
+  }
+}

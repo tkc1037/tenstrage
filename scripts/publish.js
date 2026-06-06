@@ -7,27 +7,8 @@
 
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
-const OBSIDIAN = 'C:/Users/wtknt/Documents/iCloudDrive/iCloud~md~obsidian/Tenstrage';
-const ENV_PATH = `${OBSIDIAN}/.env`;
-
-// ─── .env 読み込み ───────────────────────────────────────
-function loadEnv() {
-  const env = {};
-  if (!existsSync(ENV_PATH)) {
-    console.error('❌ .env が見つかりません:', ENV_PATH);
-    process.exit(1);
-  }
-  for (const line of readFileSync(ENV_PATH, 'utf8').split('\n')) {
-    const match = line.match(/^([^#=]+)=(.*)$/);
-    if (match) env[match[1].trim()] = match[2].trim();
-  }
-  return env;
-}
+import { join } from 'path';
+import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
 // ─── Buffer GraphQL 呼び出し ─────────────────────────────
 async function bufferPost({ apiKey, channelId, text, dueAt, videoUrl = null, assetOverride = null, postMetadata = null }) {
@@ -111,7 +92,10 @@ function logDiary(entry) {
 function gitPush(dateStr) {
   console.log('\n📦 GitHubにプッシュ中...');
   try {
-    execSync('git add src/content/articles/ public/video/ public/audio/ public/images/', { cwd: ROOT, stdio: 'inherit' });
+    execSync('git add src/content/articles/ public/video/ public/audio/', { cwd: ROOT, stdio: 'inherit' });
+    if (existsSync(join(ROOT, 'public', 'images'))) {
+      execSync('git add public/images/', { cwd: ROOT, stdio: 'inherit' });
+    }
     const status = execSync('git status --short', { cwd: ROOT }).toString().trim();
     if (!status) {
       console.log('⚠️  変更なし。スキップ。');
@@ -165,12 +149,29 @@ async function main() {
     : posts.slice(0, 3);
 
   for (const post of targetPosts) { // X投稿（デフォルト3本）
+    // X は280文字制限（日本語は1文字=2カウント）— 超過時は自動切り詰め
+    let text = post.text;
+    const twitterLen = [...text].reduce((n, c) => n + (c.charCodeAt(0) > 0x7F ? 2 : 1), 0);
+    if (twitterLen > 280) {
+      const lastHash = text.lastIndexOf('#');
+      const tags = lastHash > 0 ? '\n' + text.slice(lastHash).trim() : '';
+      let trimmed = '';
+      let count = 0;
+      const maxLen = 274 - [...tags].reduce((n, c) => n + (c.charCodeAt(0) > 0x7F ? 2 : 1), 0);
+      for (const c of text.slice(0, lastHash > 0 ? lastHash : text.length)) {
+        count += c.charCodeAt(0) > 0x7F ? 2 : 1;
+        if (count > maxLen) break;
+        trimmed += c;
+      }
+      text = trimmed.replace(/\s+$/, '') + '…' + tags;
+      console.log(`  ⚠️  Twitter ${twitterLen}文字 → 切り詰め`);
+    }
     console.log(`\n📤 投稿中: ${post.type}`);
     try {
       const result = await bufferPost({
         apiKey,
         channelId: channels.X.id,
-        text: post.text,
+        text,
         dueAt,
       });
       console.log(`✅ 投稿成功: ID=${result.id}, 予定時刻=${result.dueAt}`);
@@ -220,6 +221,8 @@ async function main() {
             console.log(`✅ ${platform}「${label}」: ID=${result.id}`);
             logs.push(`- ${platform}「${label}」: ID=${result.id}`);
             if (!postedLog.includes(videoFile)) postedLog.push(videoFile);
+            // レートリミット対策
+            await new Promise(r => setTimeout(r, 2000));
           } catch (e) {
             console.error(`❌ ${platform}「${label}」失敗: ${e.message}`);
             logs.push(`- ${platform}「${label}」: ❌ ${e.message}`);

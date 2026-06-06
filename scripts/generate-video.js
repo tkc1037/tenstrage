@@ -9,29 +9,14 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
+import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
-const OBSIDIAN = 'C:/Users/wtknt/Documents/iCloudDrive/iCloud~md~obsidian/Tenstrage';
-const ENV_PATH = `${OBSIDIAN}/.env`;
 const SCRIPTS_DIR = join(ROOT, 'video-scripts');
 const OUTPUT_DIR = join(ROOT, 'public', 'video');
 const AUDIO_DIR = join(ROOT, 'public', 'audio');
-
-// ─── .env 読み込み ───────────────────────────────────────
-function loadEnv() {
-  const env = {};
-  if (!existsSync(ENV_PATH)) { console.error('❌ .env なし'); process.exit(1); }
-  for (const line of readFileSync(ENV_PATH, 'utf8').split('\n')) {
-    const m = line.match(/^([^#=]+)=(.*)$/);
-    if (m) env[m[1].trim()] = m[2].trim();
-  }
-  return env;
-}
 
 // ─── 台本パース ──────────────────────────────────────────
 function parseScript(filePath) {
@@ -88,7 +73,21 @@ function parseScript(filePath) {
     .slice(0, 4);
   const lines = emphasisLines.length >= 2 ? emphasisLines : fallbackLines;
 
-  return { title, hook, cta, plain, lines };
+  // frontmatter拡張フィールド
+  const bgStyleFm = raw.match(/^bgStyle:\s*["']?(\w+)["']?\s*$/m);
+  const bgStyle = bgStyleFm?.[1] ?? 'bokeh';
+
+  const accentColorFm = raw.match(/^accentColor:\s*["']?([^"'\n]+?)["']?\s*$/m);
+  const accentColor = accentColorFm?.[1] ?? undefined;
+
+  const hookLabelFm = raw.match(/^hookLabel:\s*["']?(.+?)["']?\s*$/m);
+  const hookLabel = hookLabelFm?.[1] ?? undefined;
+
+  // titleはfrontmatterを優先
+  const titleFm = raw.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+  const resolvedTitle = titleFm?.[1] ?? title;
+
+  return { title: resolvedTitle, hook, cta, plain, lines, bgStyle, accentColor, hookLabel };
 }
 
 // ─── Gemini Imagen 背景画像生成 ──────────────────────────
@@ -191,6 +190,48 @@ async function generateAudio(text, apiKey, outputPath) {
   console.log(`✅ 音声保存: ${outputPath}`);
 }
 
+// ─── WAV duration 取得（ヘッダーから計算） ──────────────
+function getWavDuration(filePath) {
+  const buf = readFileSync(filePath);
+  const sampleRate = buf.readUInt32LE(24);
+  const channels   = buf.readUInt16LE(22);
+  const bitDepth   = buf.readUInt16LE(34);
+  const dataSize   = buf.readUInt32LE(40);
+  return dataSize / (sampleRate * channels * (bitDepth / 8)); // 秒
+}
+
+// ─── 音声長 → テロップ同期タイミング計算 ───────────────
+function calcTiming(audioDurationSec, hook, lines, cta) {
+  const FPS = 30;
+  const T   = 15; // transition frames
+  const totalFrames = Math.ceil(audioDurationSec * FPS);
+
+  // 各セクションの文字数（空白除く）
+  const hookChars = hook.replace(/\s/g, '').length;
+  const infoChars = lines.join('').replace(/\s/g, '').length || 1;
+  const ctaChars  = cta.replace(/\s/g, '').length;
+  const totalChars = hookChars + infoChars + ctaChars;
+
+  // トランジション分を除いた利用可能フレームを文字数比率で配分
+  const avail = totalFrames - T * 2;
+  const hookFrames = Math.max(60, Math.round((hookChars / totalChars) * avail));
+  const ctaFrames  = Math.max(60, Math.round((ctaChars  / totalChars) * avail));
+  const infoFrames = Math.max(90, avail - hookFrames - ctaFrames);
+
+  // InfoScene内：各行の表示タイミング（文字数比率 × infoFrames）
+  // テロップは音声より少し早め(-8f)に出して視認性を確保
+  const LEAD = 8;
+  let cumChars = 0;
+  const lineDelays = lines.map(line => {
+    const delay = Math.max(0, Math.round((cumChars / infoChars) * (infoFrames - 30)) - LEAD);
+    cumChars += line.replace(/\s/g, '').length;
+    return delay;
+  });
+
+  console.log(`⏱  音声: ${audioDurationSec.toFixed(1)}s → Hook:${hookFrames}f Info:${infoFrames}f CTA:${ctaFrames}f`);
+  return { hookFrames, infoFrames, ctaFrames, lineDelays, totalFrames };
+}
+
 // ─── Remotion レンダリング ───────────────────────────────
 async function renderVideo(props, outputPath) {
   console.log('🎬 Remotion 動画レンダリング中...');
@@ -200,14 +241,30 @@ async function renderVideo(props, outputPath) {
     webpackOverride: (config) => config,
   });
 
+  // bgStyleに対応したcomposition IDを選択
+  const bgStyleToId = {
+    bokeh: 'TaxiVideo',
+    aurora: 'TaxiVideo-Aurora',
+    waves: 'TaxiVideo-Waves',
+    grid: 'TaxiVideo-Grid',
+    geometric: 'TaxiVideo-Geometric',
+    gradient: 'TaxiVideo-Gradient',
+  };
+  const compositionId = bgStyleToId[props.bgStyle] ?? 'TaxiVideo';
+
   const composition = await selectComposition({
     serveUrl: bundled,
-    id: 'TaxiVideo',
+    id: compositionId,
     inputProps: props,
   });
 
+  // 音声長に合わせてcompositionのdurationを上書き
+  const finalComposition = props.timing
+    ? { ...composition, durationInFrames: props.timing.totalFrames }
+    : composition;
+
   await renderMedia({
-    composition,
+    composition: finalComposition,
     serveUrl: bundled,
     codec: 'h264',
     outputLocation: outputPath,
@@ -226,7 +283,7 @@ async function processScript(scriptFile, env) {
 
   console.log(`\n📄 処理: ${scriptFile}`);
 
-  const { title, hook, cta, plain, lines } = parseScript(join(SCRIPTS_DIR, scriptFile));
+  const { title, hook, cta, plain, lines, bgStyle, accentColor, hookLabel } = parseScript(join(SCRIPTS_DIR, scriptFile));
 
   // 背景画像生成（Gemini Imagen）
   const hasBg = await generateBackground(title, env.GEMINI_API_KEY, bgPath);
@@ -238,6 +295,10 @@ async function processScript(scriptFile, env) {
     console.log(`⚡ 音声キャッシュ利用: ${audioPath}`);
   }
 
+  // 音声長からタイミング計算
+  const audioDuration = getWavDuration(audioPath);
+  const timing = calcTiming(audioDuration, hook, lines, cta);
+
   // Remotionレンダリング
   const inputProps = {
     title,
@@ -246,6 +307,10 @@ async function processScript(scriptFile, env) {
     cta,
     audioSrc: `audio/${basename(audioPath)}`,
     bgImageSrc: hasBg ? `images/${basename(bgPath)}` : undefined,
+    bgStyle,
+    ...(accentColor ? { accentColor } : {}),
+    ...(hookLabel ? { hookLabel } : {}),
+    timing,
   };
   await renderVideo(inputProps, videoPath);
 

@@ -12,30 +12,17 @@ import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { OBSIDIAN, loadEnv } from './paths.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
-const OBSIDIAN = 'C:/Users/wtknt/Documents/iCloudDrive/iCloud~md~obsidian/Tenstrage';
 const BATCH_LOG = join(__dirname, 'batch-log.json');
-
-// ─── .env 読み込み ───────────────────────────────────────
-function loadEnv() {
-  const ENV_PATH = `${OBSIDIAN}/.env`;
-  const env = {};
-  if (!existsSync(ENV_PATH)) { console.error('❌ .env なし'); process.exit(1); }
-  for (const line of readFileSync(ENV_PATH, 'utf8').split('\n')) {
-    const m = line.match(/^([^#=]+)=(.*)\r?$/);
-    if (m) env[m[1].trim()] = m[2].trim();
-  }
-  return env;
-}
 
 // ─── コンテキスト読み込み ────────────────────────────────
 function loadContext() {
-  const knowledge  = readFileSync(`${OBSIDIAN}/knowledge.md`, 'utf8');
+  const knowledge  = readFileSync(`${OBSIDIAN}/knowledge/industry.md`, 'utf8');
   const seoRules   = readFileSync(`${OBSIDIAN}/quality/seo-rules.md`, 'utf8');
   const writingRules = readFileSync(`${OBSIDIAN}/quality/writing-rules.md`, 'utf8');
-  const snsRules   = readFileSync(`${OBSIDIAN}/quality/sns-copywriting-rules.md`, 'utf8');
+  const snsRules   = readFileSync(`${OBSIDIAN}/quality/sns-rules.md`, 'utf8');
   const trends     = readFileSync(`${OBSIDIAN}/feedback/trends.md`, 'utf8');
   const today      = new Date().toISOString().slice(0, 10);
   return { knowledge, seoRules, writingRules, snsRules, trends, today };

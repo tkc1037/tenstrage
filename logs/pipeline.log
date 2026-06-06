@@ -1,0 +1,73 @@
+🚀 pipeline.js 開始
+📚 NotebookLM からコンテキスト取得中...
+(node:16844) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✅ NotebookLM クエリ完了
+
+📝 記事生成中（Gemini）...
+  ✅ 20260604-600.md
+  ✅ 20260604-goup.md
+
+📱 SNSドラフト生成中（Gemini）...
+  ✅ sns-drafts/20260604.md
+
+📤 publish.js 実行中...
+
+📖 ドラフト読み込み: sns-drafts/20260604.md
+   5件の投稿を検出
+
+📤 投稿中: 記事紹介（URLあり）
+❌ 投稿失敗: Invalid post: Twitter / X posts cannot exceed 280 characters.
+
+📤 投稿中: 役立ちTips（URLなし）
+❌ 投稿失敗: Invalid post: Twitter / X posts cannot exceed 280 characters.
+
+📤 投稿中: 質問投稿（エンゲージメント狙い）
+❌ 投稿失敗: Invalid post: Twitter / X posts cannot exceed 280 characters.
+
+📦 GitHubにプッシュ中...
+warning: in the working copy of 'public/video/.posted.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/content/articles/20260604-600.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/content/articles/20260604-goup.md', LF will be replaced by CRLF the next time Git touches it
+[main 2d969fe] [20260604] 記事・動画追加
+ 3 files changed, 153 insertions(+), 1 deletion(-)
+ create mode 100644 src/content/articles/20260604-600.md
+ create mode 100644 src/content/articles/20260604-goup.md
+To https://github.com/tkc1037/tenstrage.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/tkc1037/tenstrage.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+❌ Gitエラー: Command failed: git push origin main
+'ls' �́A�����R�}���h�܂��͊O���R�}���h�A
+����\�ȃv���O�����܂��̓o�b�` �t�@�C���Ƃ��ĔF������Ă��܂���B
+❌ 予期しないエラー: Error: Command failed: ls "C:\Users\wtknt\Documents\tenstrage\public\video"
+'ls' �́A�����R�}���h�܂��͊O���R�}���h�A
+����\�ȃv���O�����܂��̓o�b�` �t�@�C���Ƃ��ĔF������Ă��܂���B
+
+    at genericNodeError (node:internal/errors:998:15)
+    at wrappedFn (node:internal/errors:543:14)
+    at checkExecSyncError (node:child_process:926:11)
+    at execSync (node:child_process:998:15)
+    at main (file:///C:/Users/wtknt/Documents/tenstrage/scripts/publish.js:205:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '',
+    "'ls' �́A�����R�}���h�܂��͊O���R�}���h�A\r\n" +
+      '����\x94\\�ȃv���O�����܂��̓o�b�` �t�@�C���Ƃ��ĔF������Ă��܂���B\r\n'
+  ],
+  pid: 16324,
+  stdout: '',
+  stderr: "'ls' �́A�����R�}���h�܂��͊O���R�}���h�A\r\n" +
+    '����\x94\\�ȃv���O�����܂��̓o�b�` �t�@�C���Ƃ��ĔF������Ă��܂���B\r\n'
+}
+❌ publish.js: Command failed: node scripts/publish.js
+
+✅ pipeline.js 完了（170.5秒）
+^C

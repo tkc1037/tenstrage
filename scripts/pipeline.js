@@ -15,32 +15,67 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 import { execSync } from 'child_process';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
-const OBSIDIAN = 'C:/Users/wtknt/Documents/iCloudDrive/iCloud~md~obsidian/Tenstrage';
-
-// ─── .env 読み込み ────────────────────────────────────────
-function loadEnv() {
-  const env = {};
-  for (const line of readFileSync(`${OBSIDIAN}/.env`, 'utf8').split('\n')) {
-    const m = line.match(/^([^#=]+)=(.*)\r?$/);
-    if (m) env[m[1].trim()] = m[2].trim();
-  }
-  return env;
-}
+import { NlmSession } from './notebooklm-client.js';
+import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
 // ─── コンテキスト読み込み ─────────────────────────────────
-function loadContext() {
+// NLM_KNOWLEDGE_ID が設定済みなら NotebookLM クエリ（~1,500 tokens）
+// 未設定ならファイル直読み（フォールバック）
+async function loadContext(env) {
+  const knowledgeId = env.NLM_KNOWLEDGE_ID;
+  const researchId  = env.NLM_RESEARCH_ID;
+
+  if (knowledgeId && researchId) {
+    console.log('📚 NotebookLM からコンテキスト取得中...');
+    const nlm = new NlmSession();
+    try {
+      await nlm.connect();
+
+      // Knowledge ノートブックからルールを取得
+      await nlm.openNotebook(knowledgeId);
+      const rules = await nlm.chat(
+        '記事生成に必要な情報を簡潔にまとめてください：' +
+        '①SEOルール（キーワード・タイトル形式）' +
+        '②品質基準（文字数・構成・アフィリエイトルール）' +
+        '③SNSルール（X/TikTok/YouTube各投稿の要件）' +
+        '④knowledge.mdの現場情報から特に引用すべき具体的データ。' +
+        '合計500字以内で箇条書き。'
+      );
+
+      // Research ノートブックからトレンドを取得
+      await nlm.openNotebook(researchId);
+      const trends = await nlm.chat(
+        '今日の記事テーマとして優先度の高いトレンド・ネタを3つ挙げてください。' +
+        '各テーマに「理由（検索需要・競合状況）」と「推奨キーワード」を含めて。' +
+        '箇条書き300字以内。'
+      );
+
+      console.log('  ✅ NotebookLM クエリ完了');
+      return { fromNotebookLM: true, rules, trends };
+    } catch (e) {
+      console.warn(`  ⚠️  NotebookLM 失敗、ファイル読み込みにフォールバック: ${e.message}`);
+    } finally {
+      nlm.close();
+    }
+  }
+
+  // フォールバック: knowledge/ フォルダから直読み
+  const knowledgeDir = `${OBSIDIAN}/knowledge`;
+  const readIfExists = (p) => existsSync(p) ? readFileSync(p, 'utf8') : '';
+  // iCloud が "file 2.md" にリネームする問題のフォールバック
+  const readWithFallback = (base) => readIfExists(base) || readIfExists(base.replace('.md', ' 2.md'));
   return {
-    knowledge:    readFileSync(`${OBSIDIAN}/knowledge.md`, 'utf8'),
-    writingRules: readFileSync(`${OBSIDIAN}/quality/writing-rules.md`, 'utf8'),
-    seoRules:     readFileSync(`${OBSIDIAN}/quality/seo-rules.md`, 'utf8'),
-    snsRules:     readFileSync(`${OBSIDIAN}/quality/sns-copywriting-rules.md`, 'utf8'),
-    trends:       readFileSync(`${OBSIDIAN}/feedback/trends.md`, 'utf8'),
+    fromNotebookLM: false,
+    knowledge:    [
+      readIfExists(`${knowledgeDir}/industry.md`),
+      readIfExists(`${knowledgeDir}/income-records.md`),
+    ].filter(Boolean).join('\n\n---\n\n'),
+    writingRules: readWithFallback(`${OBSIDIAN}/quality/writing-rules.md`),
+    seoRules:     readWithFallback(`${OBSIDIAN}/quality/seo-rules.md`),
+    snsRules:     readWithFallback(`${OBSIDIAN}/quality/sns-rules.md`),
+    trends:       readIfExists(`${knowledgeDir}/trends.md`) || readIfExists(`${OBSIDIAN}/feedback/trends.md`),
   };
 }
 
@@ -77,7 +112,17 @@ function toSlug(title) {
 async function generateArticles(apiKey, ctx, today) {
   console.log('\n📝 記事生成中（Gemini）...');
 
-  const system = `あなたはタクシードライバー転職情報の専門ライターです。
+  // NotebookLM コンテキスト or ファイル直読み
+  const system = ctx.fromNotebookLM
+    ? `あなたはタクシードライバー転職情報の専門ライターです。
+以下はNotebookLMが要約したプロジェクトルールと現場情報です。必ず従ってください。
+
+## ルール・品質基準（SEO・品質・SNS・現場情報）
+${ctx.rules}
+
+## 今日の推奨テーマ
+${ctx.trends}`
+    : `あなたはタクシードライバー転職情報の専門ライターです。
 以下の情報を必ず参照して記事を生成してください。
 
 ## knowledge.md（現場情報・必ず1箇所以上引用）
@@ -149,7 +194,16 @@ tags: ["タクシー転職", "東京"]
 async function generateSnsDraft(apiKey, ctx, today, articleTitles) {
   console.log('\n📱 SNSドラフト生成中（Gemini）...');
 
-  const system = `あなたはSNSコピーライターです。
+  const system = ctx.fromNotebookLM
+    ? `あなたはSNSコピーライターです。
+以下はNotebookLMが要約したルールと現場情報です。必ず従ってください。
+
+## SNS・現場情報・ルール（NotebookLM要約）
+${ctx.rules}
+
+## 今日のトレンド
+${ctx.trends}`
+    : `あなたはSNSコピーライターです。
 以下の情報を参照して投稿文を生成してください。
 
 ## knowledge.md
@@ -166,10 +220,11 @@ ${articleTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 
 上記をもとにSNS投稿ドラフトを生成してください。
 
-【X投稿3本】
-- 投稿1：記事紹介（URLあり・280文字以内・ハッシュタグ3個以内）
-- 投稿2：役立ちTips（URLなし・280文字以内・ハッシュタグ3個以内）
-- 投稿3：質問投稿（エンゲージメント狙い・280文字以内）
+【X投稿3本 ※最重要：各投稿は絶対に140文字以内（日本語は1文字=2文字換算なので実質140文字）。超過はAPIエラーになる】
+- 投稿1：記事紹介（URLあり・140文字以内・ハッシュタグ2個以内）
+- 投稿2：役立ちTips（URLなし・140文字以内・ハッシュタグ2個以内）
+- 投稿3：質問投稿（エンゲージメント狙い・140文字以内）
+※絵文字は最小限（1-2個）。冗長な説明は省き、インパクト重視で短く。
 
 【TikTok投稿1本】テロップ構成（45〜180秒）
 【YouTube Shorts投稿1本】冒頭15秒キャッチ型（15〜60秒）
@@ -268,7 +323,7 @@ async function main() {
   const env = loadEnv();
   if (!env.GEMINI_TEXT_API_KEY) { console.error('❌ GEMINI_TEXT_API_KEY が未設定'); process.exit(1); }
 
-  const ctx = loadContext();
+  const ctx = await loadContext(env);
   const today = new Date().toISOString().slice(0, 10);
   const logs = [];
 

@@ -1,8 +1,13 @@
 /**
- * TaxiVideo — remotion-scenes スタイルで構築したタクシー転職Shorts動画
- * 背景: BackgroundBokeh（ボケ光源）
- * テキスト: TextKineticパターン（spring bounce per-char）
- * カラー: remotion-scenes C パレット（gold/warning）
+ * TaxiVideo — remotion-scenes ライブラリ統合版
+ *
+ * bgStyle で背景を動的切り替え:
+ *   'bokeh'     (default) BackgroundBokeh  — ボケ光源
+ *   'aurora'              BackgroundAurora — オーロラ
+ *   'waves'               BackgroundWaves  — 波
+ *   'grid'                BackgroundGrid   — グリッド
+ *   'geometric'           BackgroundGeometric — 幾何学
+ *   'gradient'            BackgroundFlowingGradient — グラデーション
  */
 
 import React from 'react';
@@ -16,74 +21,58 @@ import {
   useVideoConfig,
   interpolate,
   spring,
-  random,
 } from 'remotion';
 import { TransitionSeries, linearTiming, springTiming } from '@remotion/transitions';
 import { slide } from '@remotion/transitions/slide';
 import { fade } from '@remotion/transitions/fade';
 import { C, lerp, EASE, font } from './common';
 
-// ── Bokeh背景（remotion-scenes BackgroundBokeh ベース、ゴールド配色） ──
-const TaxiBokehBg: React.FC<{ bgImageSrc?: string }> = ({ bgImageSrc }) => {
-  const frame = useCurrentFrame();
-  const bokehCount = 18;
+// ── remotion-scenes ライブラリから背景コンポーネントをインポート ──
+import { BackgroundBokeh }           from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundBokeh';
+import { BackgroundAurora }          from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundAurora';
+import { BackgroundWaves }           from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundWaves';
+import { BackgroundGrid }            from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundGrid';
+import { BackgroundGeometric }       from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundGeometric';
+import { BackgroundFlowingGradient } from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundFlowingGradient';
 
-  const bokehs = React.useMemo(() => {
-    return Array.from({ length: bokehCount }).map((_, i) => ({
-      id: `bokeh-${i}`,
-      x: random(`bokeh-x-${i}`) * 100,
-      y: random(`bokeh-y-${i}`) * 100,
-      size: random(`bokeh-s-${i}`) * 180 + 60,
-      color: [C.gold, C.warning, C.orange, C.yellow][i % 4],
-      speedX: (random(`bokeh-sx-${i}`) - 0.5) * 0.2,
-      speedY: (random(`bokeh-sy-${i}`) - 0.5) * 0.2,
-    }));
-  }, []);
+export type BgStyle = 'bokeh' | 'aurora' | 'waves' | 'grid' | 'geometric' | 'gradient';
+
+// ── 背景セレクタ ─────────────────────────────────────────────────
+const BgLayer: React.FC<{ bgStyle: BgStyle; bgImageSrc?: string }> = ({ bgStyle, bgImageSrc }) => {
+  const BgMap: Record<BgStyle, React.FC<{ startDelay?: number }>> = {
+    bokeh:     BackgroundBokeh,
+    aurora:    BackgroundAurora,
+    waves:     BackgroundWaves,
+    grid:      BackgroundGrid,
+    geometric: BackgroundGeometric,
+    gradient:  BackgroundFlowingGradient,
+  };
+  const BgComponent = BgMap[bgStyle] ?? BackgroundBokeh;
 
   return (
-    <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景画像（Gemini Imagen）*/}
+    <AbsoluteFill>
+      {/* ライブラリ背景 */}
+      <BgComponent startDelay={0} />
+
+      {/* Gemini Imagen 生成背景画像（オーバーレイ） */}
       {bgImageSrc && (
         <AbsoluteFill>
           <Img
             src={staticFile(bgImageSrc)}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.25 }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.2 }}
           />
         </AbsoluteFill>
       )}
 
-      {/* Bokehライト */}
-      {bokehs.map((b) => {
-        const x = (b.x + frame * b.speedX) % 120 - 10;
-        const y = (b.y + frame * b.speedY) % 120 - 10;
-        const pulse = 0.8 + Math.sin(frame * 0.04 + b.x) * 0.2;
-        return (
-          <div
-            key={b.id}
-            style={{
-              position: 'absolute',
-              left: `${x}%`,
-              top: `${y}%`,
-              width: b.size * pulse,
-              height: b.size * pulse,
-              background: `radial-gradient(circle, ${b.color}50 0%, transparent 70%)`,
-              borderRadius: '50%',
-              filter: 'blur(40px)',
-              opacity: lerp(frame, [0, 30], [0, 0.55]),
-            }}
-          />
-        );
-      })}
-
-      {/* 下からの暗いグラデ（テキスト可読性） */}
+      {/* 下部グラデ（テキスト可読性確保） */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%)',
+        background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)',
       }} />
     </AbsoluteFill>
   );
 };
 
-// ── キネティックテキスト（remotion-scenes TextKinetic ベース） ──────
+// ── キネティックテキスト ─────────────────────────────────────────
 const KineticText: React.FC<{
   text: string;
   startFrame: number;
@@ -142,8 +131,10 @@ const KineticText: React.FC<{
   );
 };
 
-// ── シーン1: フック ─────────────────────────────────────────────────
-const HookScene: React.FC<{ hook: string; accentColor: string }> = ({ hook, accentColor }) => {
+// ── シーン1: フック ──────────────────────────────────────────────
+const HookScene: React.FC<{ hook: string; accentColor: string; label?: string }> = ({
+  hook, accentColor, label = '知ってた？',
+}) => {
   const frame = useCurrentFrame();
 
   return (
@@ -154,7 +145,6 @@ const HookScene: React.FC<{ hook: string; accentColor: string }> = ({ hook, acce
       padding: '100px 64px',
       gap: 28,
     }}>
-      {/* ラベルバッジ */}
       <div style={{
         opacity: lerp(frame, [0, 18], [0, 1]),
         transform: `scale(${lerp(frame, [0, 18], [0.7, 1], EASE.out)})`,
@@ -164,23 +154,16 @@ const HookScene: React.FC<{ hook: string; accentColor: string }> = ({ hook, acce
         borderRadius: 6,
         boxShadow: `0 0 20px ${accentColor}80`,
       }}>
-        <span style={{
-          fontFamily: font,
-          color: C.black,
-          fontSize: 20,
-          fontWeight: 800,
-          letterSpacing: 3,
-        }}>
-          知ってた？
+        <span style={{ fontFamily: font, color: C.black, fontSize: 20, fontWeight: 800, letterSpacing: 3 }}>
+          {label}
         </span>
       </div>
 
-      {/* メインフック — キネティックタイポ */}
       <div style={{ textAlign: 'center', maxWidth: 900 }}>
         <KineticText
           text={hook}
           startFrame={12}
-          fontSize={58}
+          fontSize={56}
           color={C.white}
           accentColor={accentColor}
           showUnderline
@@ -190,8 +173,12 @@ const HookScene: React.FC<{ hook: string; accentColor: string }> = ({ hook, acce
   );
 };
 
-// ── シーン2: 本編ポイント ─────────────────────────────────────────
-const InfoScene: React.FC<{ lines: string[]; accentColor: string }> = ({ lines, accentColor }) => {
+// ── シーン2: 本編ポイント ──────────────────────────────────────
+const InfoScene: React.FC<{
+  lines: string[];
+  accentColor: string;
+  lineDelays?: number[];
+}> = ({ lines, accentColor, lineDelays }) => {
   const frame = useCurrentFrame();
 
   return (
@@ -202,21 +189,18 @@ const InfoScene: React.FC<{ lines: string[]; accentColor: string }> = ({ lines, 
       padding: '80px 64px',
       gap: 36,
     }}>
-      {/* セクションラベル */}
       <div style={{
         opacity: lerp(frame, [0, 15], [0, 1]),
         borderLeft: `6px solid ${accentColor}`,
         paddingLeft: 18,
-        boxShadow: `inset 4px 0 0 ${accentColor}`,
       }}>
         <span style={{ fontFamily: font, color: C.gray[400], fontSize: 18, fontWeight: 700, letterSpacing: 3 }}>
           POINT
         </span>
       </div>
 
-      {/* ポイント一覧 */}
       {lines.map((line, i) => {
-        const start = 18 + i * 30;
+        const start = lineDelays ? (lineDelays[i] ?? (18 + i * 30)) : 18 + i * 30;
         const progress = lerp(frame, [start, start + 20], [0, 1], EASE.out);
         return (
           <div
@@ -229,7 +213,6 @@ const InfoScene: React.FC<{ lines: string[]; accentColor: string }> = ({ lines, 
               transform: `translateX(${lerp(frame, [start, start + 20], [-50, 0], EASE.out)}px)`,
             }}
           >
-            {/* 番号 */}
             <span style={{
               fontFamily: font,
               fontSize: 22,
@@ -241,7 +224,6 @@ const InfoScene: React.FC<{ lines: string[]; accentColor: string }> = ({ lines, 
             }}>
               {String(i + 1).padStart(2, '0')}
             </span>
-            {/* テキスト */}
             <span style={{
               fontFamily: '"Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif',
               fontSize: 32,
@@ -258,7 +240,7 @@ const InfoScene: React.FC<{ lines: string[]; accentColor: string }> = ({ lines, 
   );
 };
 
-// ── シーン3: CTA ────────────────────────────────────────────────
+// ── シーン3: CTA ─────────────────────────────────────────────
 const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = ({ cta, title, accentColor }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -274,11 +256,7 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
       padding: '80px 64px',
       gap: 32,
     }}>
-      {/* 記事タイトル */}
-      <div style={{
-        opacity: lerp(frame, [0, 20], [0, 1]),
-        textAlign: 'center',
-      }}>
+      <div style={{ opacity: lerp(frame, [0, 20], [0, 1]), textAlign: 'center' }}>
         <span style={{
           fontFamily: '"Noto Sans JP", sans-serif',
           fontSize: 26,
@@ -289,14 +267,12 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
         </span>
       </div>
 
-      {/* 区切り線 */}
       <div style={{
         width: lerp(frame, [12, 40], [0, 280], EASE.out),
         height: 2,
         background: `linear-gradient(to right, transparent, ${accentColor}, transparent)`,
       }} />
 
-      {/* CTAボタン */}
       <div style={{
         transform: `scale(${interpolate(bounce, [0, 1], [0.65, 1])})`,
         background: `linear-gradient(135deg, ${accentColor} 0%, ${C.orange} 100%)`,
@@ -306,27 +282,15 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
         textAlign: 'center',
         boxShadow: `0 0 40px ${accentColor}60, 0 8px 24px rgba(0,0,0,0.4)`,
       }}>
-        <span style={{
-          fontFamily: font,
-          color: C.black,
-          fontSize: 26,
-          fontWeight: 900,
-          letterSpacing: 1,
-        }}>
+        <span style={{ fontFamily: font, color: C.black, fontSize: 26, fontWeight: 900, letterSpacing: 1 }}>
           {cta}
         </span>
       </div>
 
-      {/* バウンス矢印 */}
-      <div style={{
-        transform: `translateY(${arrowY}px)`,
-        opacity: lerp(frame, [22, 38], [0, 1]),
-        fontSize: 44,
-      }}>
+      <div style={{ transform: `translateY(${arrowY}px)`, opacity: lerp(frame, [22, 38], [0, 1]), fontSize: 44 }}>
         👆
       </div>
 
-      {/* ハッシュタグ */}
       <div style={{
         position: 'absolute',
         bottom: 40,
@@ -344,7 +308,15 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
   );
 };
 
-// ── メインコンポジション ─────────────────────────────────────────
+// ── 型定義 ───────────────────────────────────────────────────
+export interface TaxiVideoTiming {
+  hookFrames: number;
+  infoFrames: number;
+  ctaFrames: number;
+  lineDelays: number[];
+  totalFrames: number;
+}
+
 export interface TaxiVideoProps {
   title: string;
   hook: string;
@@ -352,9 +324,13 @@ export interface TaxiVideoProps {
   cta: string;
   audioSrc?: string;
   bgImageSrc?: string;
+  bgStyle?: BgStyle;
   accentColor?: string;
+  hookLabel?: string;
+  timing?: TaxiVideoTiming;
 }
 
+// ── メインコンポジション ─────────────────────────────────────
 export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   title,
   hook,
@@ -362,27 +338,30 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   cta,
   audioSrc,
   bgImageSrc,
+  bgStyle = 'bokeh',
   accentColor = C.gold,
+  hookLabel,
+  timing,
 }) => {
-  const HOOK_FRAMES = 90;
-  const INFO_FRAMES = 120;
-  const CTA_FRAMES = 90;
-  const T = 15; // transition frames
+  const HOOK_FRAMES = timing?.hookFrames ?? 90;
+  const INFO_FRAMES = timing?.infoFrames ?? 120;
+  const CTA_FRAMES  = timing?.ctaFrames  ?? 90;
+  const T = 15;
+  const total = HOOK_FRAMES + INFO_FRAMES + CTA_FRAMES;
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
-      {/* 音声 */}
       {audioSrc && <Audio src={staticFile(audioSrc)} />}
 
-      {/* Bokeh背景（全シーン共通） */}
-      <Sequence from={0} durationInFrames={HOOK_FRAMES + INFO_FRAMES + CTA_FRAMES}>
-        <TaxiBokehBg bgImageSrc={bgImageSrc} />
+      {/* 背景（ライブラリ + 画像オーバーレイ） */}
+      <Sequence from={0} durationInFrames={total}>
+        <BgLayer bgStyle={bgStyle} bgImageSrc={bgImageSrc} />
       </Sequence>
 
       {/* シーン遷移 */}
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={HOOK_FRAMES}>
-          <HookScene hook={hook} accentColor={accentColor} />
+          <HookScene hook={hook} accentColor={accentColor} label={hookLabel} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -391,7 +370,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
         />
 
         <TransitionSeries.Sequence durationInFrames={INFO_FRAMES}>
-          <InfoScene lines={lines} accentColor={accentColor} />
+          <InfoScene lines={lines} accentColor={accentColor} lineDelays={timing?.lineDelays} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition

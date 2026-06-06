@@ -17,8 +17,16 @@ pnpm-debug.log*
 .env
 .env.production
 
+# 個人情報データ
+data/line-exports/
+data/income-records/
+
 # macOS-specific files
 .DS_Store
 
 # jetbrains setting folder
 .idea/
+
+# 埋め込みgitリポジトリ除外
+buffer-mcp/
+src/video/remotion-scenes/
