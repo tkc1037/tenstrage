@@ -19,6 +19,7 @@ import { join } from 'path';
 import { execSync } from 'child_process';
 import { NlmSession } from './notebooklm-client.js';
 import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
+import { getPostedTopics, getNextPersonalData, markPersonalDataUsed } from './topic-tracker.js';
 
 // ─── コンテキスト読み込み ─────────────────────────────────
 // NLM_KNOWLEDGE_ID が設定済みなら NotebookLM クエリ（~1,500 tokens）
@@ -27,24 +28,37 @@ async function loadContext(env) {
   const knowledgeId = env.NLM_KNOWLEDGE_ID;
   const researchId  = env.NLM_RESEARCH_ID;
 
+  const knowledgeDir = `${OBSIDIAN}/knowledge`;
+  const readIfExists = (p) => existsSync(p) ? readFileSync(p, 'utf8') : '';
+  const readWithFallback = (base) => readIfExists(base) || readIfExists(base.replace('.md', ' 2.md'));
+
+  // 個人体験データ（常に直接読み込み・NotebookLM経由不可）
+  console.log('📖 個人体験データ取得中...');
+  const personalData = getNextPersonalData();
+  if (personalData) {
+    console.log(`  → 今日の体験談: ${personalData.label}`);
+  }
+
+  // 投稿済みトピック（重複防止）
+  const postedTopics = getPostedTopics();
+
   if (knowledgeId && researchId) {
-    console.log('📚 NotebookLM からコンテキスト取得中...');
+    console.log('📚 NotebookLM からトレンド・ルール取得中...');
     const nlm = new NlmSession();
     try {
       await nlm.connect();
 
-      // Knowledge ノートブックからルールを取得
+      // Knowledge ノートブック → SEO・品質ルールのみ（個人データは直接読み込み済みなので不要）
       await nlm.openNotebook(knowledgeId);
       const rules = await nlm.chat(
-        '記事生成に必要な情報を簡潔にまとめてください：' +
+        '記事生成に必要なルールを簡潔にまとめてください：' +
         '①SEOルール（キーワード・タイトル形式）' +
         '②品質基準（文字数・構成・アフィリエイトルール）' +
-        '③SNSルール（X/TikTok/YouTube各投稿の要件）' +
-        '④knowledge.mdの現場情報から特に引用すべき具体的データ。' +
-        '合計500字以内で箇条書き。'
+        '③SNSルール（X/TikTok/YouTube各投稿の要件）。' +
+        '合計400字以内で箇条書き。個人収入データは含めないこと。'
       );
 
-      // Research ノートブックからトレンドを取得
+      // Research ノートブック → トレンドのみ
       await nlm.openNotebook(researchId);
       const trends = await nlm.chat(
         '今日の記事テーマとして優先度の高いトレンド・ネタを3つ挙げてください。' +
@@ -53,7 +67,13 @@ async function loadContext(env) {
       );
 
       console.log('  ✅ NotebookLM クエリ完了');
-      return { fromNotebookLM: true, rules, trends };
+      return {
+        fromNotebookLM: true,
+        rules,
+        trends,
+        personalData,
+        postedTopics,
+      };
     } catch (e) {
       console.warn(`  ⚠️  NotebookLM 失敗、ファイル読み込みにフォールバック: ${e.message}`);
     } finally {
@@ -62,20 +82,15 @@ async function loadContext(env) {
   }
 
   // フォールバック: knowledge/ フォルダから直読み
-  const knowledgeDir = `${OBSIDIAN}/knowledge`;
-  const readIfExists = (p) => existsSync(p) ? readFileSync(p, 'utf8') : '';
-  // iCloud が "file 2.md" にリネームする問題のフォールバック
-  const readWithFallback = (base) => readIfExists(base) || readIfExists(base.replace('.md', ' 2.md'));
   return {
     fromNotebookLM: false,
-    knowledge:    [
-      readIfExists(`${knowledgeDir}/industry.md`),
-      readIfExists(`${knowledgeDir}/income-records.md`),
-    ].filter(Boolean).join('\n\n---\n\n'),
+    knowledge:    readIfExists(`${knowledgeDir}/industry.md`),
     writingRules: readWithFallback(`${OBSIDIAN}/quality/writing-rules.md`),
     seoRules:     readWithFallback(`${OBSIDIAN}/quality/seo-rules.md`),
     snsRules:     readWithFallback(`${OBSIDIAN}/quality/sns-rules.md`),
     trends:       readIfExists(`${knowledgeDir}/trends.md`) || readIfExists(`${OBSIDIAN}/feedback/trends.md`),
+    personalData,
+    postedTopics,
   };
 }
 
@@ -112,20 +127,35 @@ function toSlug(title) {
 async function generateArticles(apiKey, ctx, today) {
   console.log('\n📝 記事生成中（Gemini）...');
 
-  // NotebookLM コンテキスト or ファイル直読み
+  // 個人体験データと投稿済みトピックは共通で構築
+  const personalBlock = ctx.personalData
+    ? `## 【今日の体験談・実データ】（必ず1箇所以上、具体的数値そのままで引用すること）
+ラベル: ${ctx.personalData.label}
+---
+${ctx.personalData.content}
+---`
+    : '';
+
+  const avoidBlock = ctx.postedTopics?.length
+    ? `## 【投稿済みテーマ一覧】（これらと被るテーマ・角度での記事は絶対に生成しないこと）
+${ctx.postedTopics.slice(-50).map(t => `- ${t}`).join('\n')}`
+    : '';
+
   const system = ctx.fromNotebookLM
     ? `あなたはタクシードライバー転職情報の専門ライターです。
-以下はNotebookLMが要約したプロジェクトルールと現場情報です。必ず従ってください。
 
-## ルール・品質基準（SEO・品質・SNS・現場情報）
+## ルール・品質基準（SEO・品質ルール）
 ${ctx.rules}
+
+${personalBlock}
+
+${avoidBlock}
 
 ## 今日の推奨テーマ
 ${ctx.trends}`
     : `あなたはタクシードライバー転職情報の専門ライターです。
-以下の情報を必ず参照して記事を生成してください。
 
-## knowledge.md（現場情報・必ず1箇所以上引用）
+## 業界情報
 ${ctx.knowledge}
 
 ## SEOルール
@@ -134,15 +164,19 @@ ${ctx.seoRules}
 ## 品質ルール
 ${ctx.writingRules}
 
+${personalBlock}
+
+${avoidBlock}
+
 ## 最新トレンド
 ${ctx.trends}`;
 
   const prompt = `以下の条件で記事を3本生成してください。
 
 【条件】
-- 最新トレンドから優先度の高いテーマを3つ選ぶ（既に記事化されていないもの優先）
+- 「投稿済みテーマ一覧」と被らない新しい角度・テーマを選ぶ（必須）
+- 「今日の体験談・実データ」を各記事に1箇所以上、数値をそのまま引用（加工・丸めない）
 - 各記事2,000字以上
-- knowledge.mdの現場情報を1箇所以上引用
 - H2見出し4〜6個、各H2にH3を2〜3個
 - pubDate: ${today}
 
@@ -194,23 +228,30 @@ tags: ["タクシー転職", "東京"]
 async function generateSnsDraft(apiKey, ctx, today, articleTitles) {
   console.log('\n📱 SNSドラフト生成中（Gemini）...');
 
+  const personalBlock = ctx.personalData
+    ? `## 【今日の体験談・実データ】（X投稿1本以上に具体的数値そのままで織り込むこと）
+ラベル: ${ctx.personalData.label}
+---
+${ctx.personalData.content}
+---`
+    : '';
+
   const system = ctx.fromNotebookLM
     ? `あなたはSNSコピーライターです。
-以下はNotebookLMが要約したルールと現場情報です。必ず従ってください。
 
-## SNS・現場情報・ルール（NotebookLM要約）
+## SNSルール（NotebookLM要約）
 ${ctx.rules}
+
+${personalBlock}
 
 ## 今日のトレンド
 ${ctx.trends}`
     : `あなたはSNSコピーライターです。
-以下の情報を参照して投稿文を生成してください。
-
-## knowledge.md
-${ctx.knowledge}
 
 ## SNSルール
 ${ctx.snsRules}
+
+${personalBlock}
 
 ## 最新トレンド
 ${ctx.trends}`;
@@ -328,12 +369,20 @@ async function main() {
   const logs = [];
 
   // Step 1: 記事生成
+  let articleGenerated = false;
   try {
     const titles = await generateArticles(env.GEMINI_TEXT_API_KEY, ctx, today);
     titles.forEach(t => logs.push(`- 記事: ${t}`));
+    articleGenerated = titles.length > 0;
   } catch (e) {
     console.error('❌ 記事生成:', e.message);
     logs.push(`- 記事生成: ❌ ${e.message}`);
+  }
+
+  // 記事生成成功時のみ個人データを使用済みマーク
+  if (articleGenerated && ctx.personalData) {
+    markPersonalDataUsed(ctx.personalData.id);
+    logs.push(`- 体験談使用: ${ctx.personalData.label}`);
   }
 
   // Step 2: SNSドラフト生成
