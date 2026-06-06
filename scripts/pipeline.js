@@ -14,7 +14,7 @@
  *   4. task-diary.md に記録
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
 import { NlmSession } from './notebooklm-client.js';
@@ -22,17 +22,16 @@ import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 import { getPostedTopics, getNextPersonalData, markPersonalDataUsed } from './topic-tracker.js';
 
 // ─── コンテキスト読み込み ─────────────────────────────────
-// NLM_KNOWLEDGE_ID が設定済みなら NotebookLM クエリ（~1,500 tokens）
-// 未設定ならファイル直読み（フォールバック）
+// 個人データ（income-records.md, knowledge.md）→ 直接・小出し
+// 一般ナレッジ（業界情報・トレンド等）→ NotebookLM要約（トークン節約）
 async function loadContext(env) {
   const knowledgeId = env.NLM_KNOWLEDGE_ID;
   const researchId  = env.NLM_RESEARCH_ID;
 
-  const knowledgeDir = `${OBSIDIAN}/knowledge`;
   const readIfExists = (p) => existsSync(p) ? readFileSync(p, 'utf8') : '';
   const readWithFallback = (base) => readIfExists(base) || readIfExists(base.replace('.md', ' 2.md'));
 
-  // 個人体験データ（常に直接読み込み・NotebookLM経由不可）
+  // 今日の体験談（income-records.md + knowledge.md から小出し）
   console.log('📖 個人体験データ取得中...');
   const personalData = getNextPersonalData();
   if (personalData) {
@@ -41,57 +40,58 @@ async function loadContext(env) {
 
   // 投稿済みトピック（重複防止）
   const postedTopics = getPostedTopics();
+  console.log(`  → 投稿済み記事: ${postedTopics.length}件`);
 
+  // 一般ナレッジ + トレンド: NotebookLM要約 → フォールバック: ファイル直読み
+  let nlmContext = '';
+  let trends = '';
   if (knowledgeId && researchId) {
-    console.log('📚 NotebookLM からトレンド・ルール取得中...');
+    console.log('📚 NotebookLM → 一般ナレッジ要約 + トレンド...');
     const nlm = new NlmSession();
     try {
       await nlm.connect();
 
-      // Knowledge ノートブック → SEO・品質ルールのみ（個人データは直接読み込み済みなので不要）
       await nlm.openNotebook(knowledgeId);
-      const rules = await nlm.chat(
-        '記事生成に必要なルールを簡潔にまとめてください：' +
-        '①SEOルール（キーワード・タイトル形式）' +
-        '②品質基準（文字数・構成・アフィリエイトルール）' +
-        '③SNSルール（X/TikTok/YouTube各投稿の要件）。' +
-        '合計400字以内で箇条書き。個人収入データは含めないこと。'
+      nlmContext = await nlm.chat(
+        '記事生成に必要な情報を簡潔にまとめてください：' +
+        '①業界動向（給与相場・勤務形態・需要）' +
+        '②SEOルール（キーワード・タイトル形式）' +
+        '③品質基準（文字数・構成・アフィリエイトルール）' +
+        '④SNSルール（X/TikTok/YouTube各投稿の要件）。' +
+        '合計500字以内で箇条書き。個人の給与明細・現場体験の具体的数値は含めないこと（別途直接引用するため）。'
       );
 
-      // Research ノートブック → トレンドのみ
       await nlm.openNotebook(researchId);
-      const trends = await nlm.chat(
+      trends = await nlm.chat(
         '今日の記事テーマとして優先度の高いトレンド・ネタを3つ挙げてください。' +
         '各テーマに「理由（検索需要・競合状況）」と「推奨キーワード」を含めて。' +
         '箇条書き300字以内。'
       );
 
       console.log('  ✅ NotebookLM クエリ完了');
-      return {
-        fromNotebookLM: true,
-        rules,
-        trends,
-        personalData,
-        postedTopics,
-      };
     } catch (e) {
-      console.warn(`  ⚠️  NotebookLM 失敗、ファイル読み込みにフォールバック: ${e.message}`);
+      console.warn(`  ⚠️  NotebookLM 失敗、ファイルにフォールバック: ${e.message}`);
     } finally {
       nlm.close();
     }
   }
 
-  // フォールバック: knowledge/ フォルダから直読み
-  return {
-    fromNotebookLM: false,
-    knowledge:    readIfExists(`${knowledgeDir}/industry.md`),
-    writingRules: readWithFallback(`${OBSIDIAN}/quality/writing-rules.md`),
-    seoRules:     readWithFallback(`${OBSIDIAN}/quality/seo-rules.md`),
-    snsRules:     readWithFallback(`${OBSIDIAN}/quality/sns-rules.md`),
-    trends:       readIfExists(`${knowledgeDir}/trends.md`) || readIfExists(`${OBSIDIAN}/feedback/trends.md`),
-    personalData,
-    postedTopics,
-  };
+  // フォールバック
+  if (!nlmContext) {
+    const knowledgeDir = `${OBSIDIAN}/knowledge`;
+    nlmContext = [
+      readIfExists(`${knowledgeDir}/industry.md`),
+      readWithFallback(`${OBSIDIAN}/quality/writing-rules.md`).slice(0, 1000),
+      readWithFallback(`${OBSIDIAN}/quality/seo-rules.md`).slice(0, 1000),
+      readWithFallback(`${OBSIDIAN}/quality/sns-rules.md`).slice(0, 1000),
+    ].filter(Boolean).join('\n\n');
+  }
+  if (!trends) {
+    const knowledgeDir = `${OBSIDIAN}/knowledge`;
+    trends = readIfExists(`${knowledgeDir}/trends.md`) || readIfExists(`${OBSIDIAN}/feedback/trends.md`);
+  }
+
+  return { nlmContext, trends, personalData, postedTopics };
 }
 
 // ─── Gemini API 呼び出し ──────────────────────────────────
@@ -141,28 +141,10 @@ ${ctx.personalData.content}
 ${ctx.postedTopics.slice(-50).map(t => `- ${t}`).join('\n')}`
     : '';
 
-  const system = ctx.fromNotebookLM
-    ? `あなたはタクシードライバー転職情報の専門ライターです。
+  const system = `あなたはタクシードライバー転職情報の専門ライターです。
 
-## ルール・品質基準（SEO・品質ルール）
-${ctx.rules}
-
-${personalBlock}
-
-${avoidBlock}
-
-## 今日の推奨テーマ
-${ctx.trends}`
-    : `あなたはタクシードライバー転職情報の専門ライターです。
-
-## 業界情報
-${ctx.knowledge}
-
-## SEOルール
-${ctx.seoRules}
-
-## 品質ルール
-${ctx.writingRules}
+## 業界情報・ルール（NotebookLM要約）
+${ctx.nlmContext}
 
 ${personalBlock}
 
@@ -236,20 +218,10 @@ ${ctx.personalData.content}
 ---`
     : '';
 
-  const system = ctx.fromNotebookLM
-    ? `あなたはSNSコピーライターです。
+  const system = `あなたはSNSコピーライターです。
 
-## SNSルール（NotebookLM要約）
-${ctx.rules}
-
-${personalBlock}
-
-## 今日のトレンド
-${ctx.trends}`
-    : `あなたはSNSコピーライターです。
-
-## SNSルール
-${ctx.snsRules}
+## ルール・業界情報（NotebookLM要約）
+${ctx.nlmContext}
 
 ${personalBlock}
 
@@ -395,7 +367,59 @@ async function main() {
     logs.push(`- SNSドラフト: ❌ ${e.message}`);
   }
 
-  // Step 3: publish.js（git push + Buffer投稿）
+  // Step 3: 検証ステップ（データの正確性・最新性を確認）
+  if (articleGenerated) {
+    console.log('\n🔍 検証ステップ: 記事内容の正確性チェック中...');
+    try {
+      const dateStr = today.replace(/-/g, '');
+      const articlesDir = join(ROOT, 'src', 'content', 'articles');
+      const todayArticles = readdirSync(articlesDir)
+        .filter(f => f.startsWith(dateStr) && f.endsWith('.md'));
+
+      const articlesToCheck = todayArticles
+        .map(f => readFileSync(join(articlesDir, f), 'utf8'))
+        .join('\n---\n');
+
+      const sourceData = ctx.personalData?.content ?? '';
+
+      const verifyPrompt = `以下の記事群にファクトチェックを行ってください。
+
+【チェック項目】
+1. 引用されている数値（年収・月収・歩合率等）が「引用元データ」と一致しているか
+2. 「令和X年」「202X年」等の年号・西暦が現在（${today}）時点で正しいか
+3. 制度名・サービス名（GOアプリ等）が最新の名称か
+4. 記事間で矛盾する記述がないか
+
+【引用元データ】
+${sourceData}
+
+【検証対象の記事】
+${articlesToCheck.slice(0, 6000)}
+
+【出力形式】
+問題なし → "PASS"
+問題あり → "FAIL: [ファイル名] [問題の説明]" を箇条書き`;
+
+      const result = await callGemini(env.GEMINI_TEXT_API_KEY,
+        'あなたはファクトチェッカーです。記事内の数値・固有名詞・年号の正確性を検証してください。',
+        verifyPrompt
+      );
+
+      if (result.trim().startsWith('PASS')) {
+        console.log('  ✅ 検証PASS: データ正確性OK');
+        logs.push('- 検証: ✅ PASS');
+      } else {
+        console.warn(`  ⚠️  検証で問題検出:\n${result}`);
+        logs.push(`- 検証: ⚠️ ${result.slice(0, 200)}`);
+        // FAIL時は修正ログを残すが投稿は続行（手動確認のため）
+      }
+    } catch (e) {
+      console.warn(`  ⚠️  検証スキップ: ${e.message}`);
+      logs.push(`- 検証: スキップ (${e.message.slice(0, 50)})`);
+    }
+  }
+
+  // Step 4: publish.js（git push + Buffer投稿）
   console.log('\n📤 publish.js 実行中...');
   try {
     execSync('node scripts/publish.js', { cwd: ROOT, stdio: 'inherit' });

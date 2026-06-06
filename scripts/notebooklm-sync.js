@@ -14,7 +14,8 @@
  * 初回セットアップ時に1回実行。ファイル更新時も再実行可。
  */
 
-import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync, readdirSync } from 'fs';
+import { join } from 'path';
 import { NlmSession } from './notebooklm-client.js';
 import { OBSIDIAN, loadEnv } from './paths.js';
 
@@ -43,14 +44,26 @@ async function main() {
     process.exit(1);
   }
 
-  // ─── 1セッションで全ファイルをアップロード（Chrome プロファイルロック防止）──
+  // ─── アップロード対象を自動収集 ──────────────────────────
   const knowledgeFiles = [
     { path: `${OBSIDIAN}/CLAUDE.md`,                        title: 'CLAUDE.md - プロジェクトルール' },
-    { path: `${OBSIDIAN}/knowledge.md`,                     title: 'knowledge.md - タクシー業界現場情報' },
     { path: `${OBSIDIAN}/quality/writing-rules.md`,         title: 'writing-rules.md - 記事品質ルール' },
     { path: `${OBSIDIAN}/quality/seo-rules.md`,             title: 'seo-rules.md - SEOルール' },
     { path: `${OBSIDIAN}/quality/sns-rules.md`,             title: 'sns-rules.md - SNSルール' },
   ];
+
+  // knowledge/ 配下の全.mdファイルを自動追加
+  const knowledgeDir = join(OBSIDIAN, 'knowledge');
+  if (existsSync(knowledgeDir)) {
+    const mdFiles = readdirSync(knowledgeDir).filter(f => f.endsWith('.md'));
+    for (const file of mdFiles) {
+      knowledgeFiles.push({
+        path: join(knowledgeDir, file),
+        title: `knowledge/${file}`,
+      });
+    }
+    console.log(`  📂 knowledge/ ${mdFiles.length}ファイル検出: ${mdFiles.join(', ')}`);
+  }
 
   console.log('📚 NotebookLM に接続中...');
   const nlm = new NlmSession();

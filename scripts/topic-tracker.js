@@ -1,9 +1,13 @@
 /**
  * topic-tracker.js — 投稿済みトピック管理 & 個人体験データ小出し管理
  *
+ * 直接小出し対象ファイル:
+ *   - knowledge/income-records.md（給与明細・営業履歴）
+ *   - knowledge.md（てんの現場経験・業界知識）
+ *
  * 役割:
- *   1. getPostedTopics()    — 既存記事タイトル一覧（重複防止用）
- *   2. getNextPersonalData() — income-records.md から未使用セクションを1つ取得
+ *   1. getPostedTopics()      — 既存記事タイトル一覧（重複防止用）
+ *   2. getNextPersonalData()  — 未使用セクションを1つ取得
  *   3. markPersonalDataUsed() — 使用済みにマーク
  */
 
@@ -11,8 +15,13 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { ROOT, OBSIDIAN } from './paths.js';
 
-const USAGE_FILE  = join(ROOT, 'data', 'personal-data-usage.json');
-const INCOME_FILE = join(OBSIDIAN, 'knowledge', 'income-records.md');
+const USAGE_FILE = join(ROOT, 'data', 'personal-data-usage.json');
+
+// ── 直接引用する個人データファイル一覧 ──────────────────────────
+const PERSONAL_FILES = [
+  { path: join(OBSIDIAN, 'knowledge', 'income-records.md'), prefix: 'income' },
+  { path: join(OBSIDIAN, 'knowledge.md'),                   prefix: 'knowledge' },
+];
 
 // ─── 投稿済み記事タイトル一覧 ─────────────────────────────────
 export function getPostedTopics() {
@@ -26,30 +35,29 @@ export function getPostedTopics() {
     const match = raw.match(/^title:\s*"?(.+?)"?\s*$/m);
     if (match?.[1]) titles.push(match[1].trim());
   }
-  // 重複除去して最新50件（タイトルが長すぎるのでsliceは不要）
   return [...new Set(titles)];
 }
 
-// ─── income-records.md をセクション単位でパース ───────────────
-function parseIncomeSections() {
-  if (!existsSync(INCOME_FILE)) return [];
+// ─── mdファイルをセクション単位でパース ─────────────────────────
+function parseSections(filePath, prefix) {
+  if (!existsSync(filePath)) return [];
 
-  const raw = readFileSync(INCOME_FILE, 'utf8');
+  const raw = readFileSync(filePath, 'utf8');
   const sections = [];
-
-  // "## カテゴリ" と "### セクション" を拾う
   const lines = raw.split('\n');
   let currentH2 = '';
   let currentH3 = '';
   let buffer = [];
 
   const flush = () => {
-    if (currentH3 && buffer.length > 0) {
+    if (currentH2 && buffer.length > 0) {
       const content = buffer.join('\n').trim();
-      if (content.length > 30) {
+      // 「追記待ち」のみのセクションやコメントだけのセクションはスキップ
+      const stripped = content.replace(/<!--[\s\S]*?-->/g, '').replace(/（追記待ち）/g, '').trim();
+      if (stripped.length > 30) {
         sections.push({
-          id: `${currentH2}/${currentH3}`,
-          label: `${currentH2} > ${currentH3}`,
+          id: `${prefix}/${currentH2}${currentH3 ? '/' + currentH3 : ''}`,
+          label: `${prefix} > ${currentH2}${currentH3 ? ' > ' + currentH3 : ''}`,
           content,
         });
       }
@@ -74,6 +82,15 @@ function parseIncomeSections() {
   return sections;
 }
 
+// ─── 全個人データファイルからセクションを収集 ────────────────────
+function parseAllPersonalSections() {
+  const all = [];
+  for (const { path, prefix } of PERSONAL_FILES) {
+    all.push(...parseSections(path, prefix));
+  }
+  return all;
+}
+
 // ─── 使用履歴ファイルの読み書き ──────────────────────────────
 function loadUsage() {
   if (!existsSync(USAGE_FILE)) {
@@ -88,13 +105,10 @@ function saveUsage(usage) {
 
 // ─── キューを初期化（未登録セクションを追加） ────────────────
 function syncQueue(usage) {
-  const sections = parseIncomeSections();
-  const allIds = sections.map(s => s.id);
-
-  // queueにないIDを末尾に追加（used含め全IDを管理）
+  const sections = parseAllPersonalSections();
   const known = new Set([...usage.used, ...usage.queue]);
-  for (const id of allIds) {
-    if (!known.has(id)) usage.queue.push(id);
+  for (const s of sections) {
+    if (!known.has(s.id)) usage.queue.push(s.id);
   }
   return sections;
 }
@@ -105,7 +119,6 @@ export function getNextPersonalData() {
   const sections = syncQueue(usage);
 
   if (usage.queue.length === 0) {
-    // 全部使い切ったらリセット
     console.log('  ♻️  個人データをリセット（全セクション再利用）');
     usage.queue = sections.map(s => s.id);
     usage.used = [];
@@ -119,14 +132,14 @@ export function getNextPersonalData() {
     return null;
   }
 
-  saveUsage(usage); // キュー状態を保存（まだ使用済みにしない）
+  saveUsage(usage);
   return section; // { id, label, content }
 }
 
 // ─── 使用済みにマーク ─────────────────────────────────────────
 export function markPersonalDataUsed(id) {
   const usage = loadUsage();
-  usage.queue  = usage.queue.filter(q => q !== id);
+  usage.queue = usage.queue.filter(q => q !== id);
   if (!usage.used.includes(id)) usage.used.push(id);
   saveUsage(usage);
   console.log(`  ✅ 個人データ使用済み: ${id}`);
@@ -137,5 +150,6 @@ export function showStatus() {
   const usage = loadUsage();
   const sections = syncQueue(usage);
   console.log(`個人データ: 残り${usage.queue.length}件 / 使用済み${usage.used.length}件`);
-  console.log('次のセクション:', usage.queue[0] ?? 'なし');
+  if (usage.queue[0]) console.log('次:', usage.queue[0]);
+  saveUsage(usage);
 }
