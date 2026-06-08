@@ -5,18 +5,16 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
+import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
 // --- 設定 ---
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const X_BEARER_TOKEN = process.env.X_BEARER_TOKEN;
-const X_API_KEY = process.env.X_API_KEY;
-const X_API_SECRET = process.env.X_API_SECRET;
-const X_ACCESS_TOKEN = process.env.X_ACCESS_TOKEN;
-const X_ACCESS_TOKEN_SECRET = process.env.X_ACCESS_TOKEN_SECRET;
+const env = loadEnv();
+const GEMINI_API_KEY = env.GEMINI_API_KEY;
+const X_BEARER_TOKEN = env.X_BEARER_TOKEN;
+const X_API_KEY = env.X_API_KEY;
+const X_API_SECRET = env.X_API_SECRET;
+const X_ACCESS_TOKEN = env.X_ACCESS_TOKEN;
+const X_ACCESS_TOKEN_SECRET = env.X_ACCESS_TOKEN_SECRET;
 
 // --- Gemini TTS ---
 async function generateAudio(script, outputPath) {
@@ -143,7 +141,7 @@ async function postToX(text, videoPath) {
 // --- メイン ---
 async function runVideoAgent(scriptFile) {
   // 台本ファイル読み込み
-  const scriptPath = scriptFile || join(ROOT, '../Obsidian/自動化/Tenstrage/video-scripts/latest.md');
+  const scriptPath = scriptFile || join(ROOT, 'video-scripts/latest.md');
   const scriptContent = readFileSync(scriptPath, 'utf-8');
 
   // フロントマターから情報抽出

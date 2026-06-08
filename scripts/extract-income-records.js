@@ -15,12 +15,12 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
-import { extname, basename } from 'path';
-import { OBSIDIAN, loadEnv } from './paths.js';
+import { extname, basename, join } from 'path';
+import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
-const INPUT_DIR = 'C:/Users/wtknt/Documents/tenstrage/data/income-records';
-const OUTPUT_FILE = `${OBSIDIAN}/knowledge/income-records.md`;
-const PROCESSED_LOG = 'C:/Users/wtknt/Documents/tenstrage/data/income-records/.processed.json';
+const INPUT_DIR = join(ROOT, 'data/income-records');
+const OUTPUT_FILE = join(OBSIDIAN, 'knowledge/income-records.md');
+const PROCESSED_LOG = join(ROOT, 'data/income-records/.processed.json');
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.heic']);
 
