@@ -3,6 +3,7 @@
  * x-search.js — X APIでタクシー転職系の生の声を収集
  *
  * 実行: node scripts/x-search.js
+ * 確認: node scripts/x-search.js --check（API呼び出しなし）
  * 出力: Obsidian vault の raw/x-search/YYYYMMDD.md
  *
  * 注意:
@@ -10,7 +11,7 @@
  * - 実行前にユーザー承認を取ること。
  */
 
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { OBSIDIAN, loadEnv } from './paths.js';
 
@@ -25,10 +26,43 @@ const DEFAULT_KEYWORDS = [
 ];
 
 const DEFAULT_MAX_RESULTS = 10;
+const DEFAULT_INTERVAL_DAYS = 14;
 const SEARCH_ENDPOINT = 'https://api.twitter.com/2/tweets/search/recent';
 
 function todayStamp() {
   return new Date().toISOString().slice(0, 10).replace(/-/g, '');
+}
+
+function parseDateStamp(stamp) {
+  const match = stamp.match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (!match) return null;
+  return new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
+}
+
+function findLatestSearchDate(outDir) {
+  if (!existsSync(outDir)) return null;
+  const stamps = readdirSync(outDir)
+    .map((file) => file.match(/^(\d{8})\.md$/)?.[1])
+    .filter(Boolean)
+    .sort();
+  return stamps.length > 0 ? stamps.at(-1) : null;
+}
+
+function shouldSkipSearch(outDir, intervalDays, force) {
+  if (force) return null;
+  const latestStamp = findLatestSearchDate(outDir);
+  if (!latestStamp) return null;
+
+  const latestDate = parseDateStamp(latestStamp);
+  const elapsedMs = Date.now() - latestDate.getTime();
+  const elapsedDays = Math.floor(elapsedMs / 86_400_000);
+  if (elapsedDays >= intervalDays) return null;
+
+  return {
+    latestStamp,
+    elapsedDays,
+    remainingDays: intervalDays - elapsedDays,
+  };
 }
 
 function parseKeywords(env) {
@@ -138,9 +172,38 @@ async function main() {
 
   const keywords = parseKeywords(env);
   const maxResults = parseMaxResults(env);
+  const intervalDays = Math.max(
+    Number(env.X_SEARCH_INTERVAL_DAYS ?? DEFAULT_INTERVAL_DAYS) || DEFAULT_INTERVAL_DAYS,
+    1,
+  );
+  const force = process.argv.includes('--force');
+  const checkOnly = process.argv.includes('--check');
   const date = todayStamp();
   const outDir = join(OBSIDIAN, 'raw', 'x-search');
   const outFile = join(outDir, `${date}.md`);
+
+  const skip = shouldSkipSearch(outDir, intervalDays, force);
+  if (checkOnly) {
+    console.log('✅ X検索設定チェック');
+    console.log(`  Bearer token: ${bearerToken ? '設定済み' : '未設定'}`);
+    console.log(`  キーワード: ${keywords.length}件`);
+    console.log(`  取得上限: ${maxResults}件/キーワード`);
+    console.log(`  収集間隔: ${intervalDays}日`);
+    console.log(`  出力先: ${outDir}`);
+    console.log(skip
+      ? `  実行判定: スキップ（次回まで約${skip.remainingDays}日）`
+      : '  実行判定: 実行可能（API呼び出しはしていません）');
+    return;
+  }
+
+  if (skip) {
+    console.log(
+      `⏭️ X検索をスキップ: 前回=${skip.latestStamp}, 経過=${skip.elapsedDays}日, ` +
+      `次回まで約${skip.remainingDays}日`,
+    );
+    console.log('   緊急時のみ --force を指定してください。');
+    return;
+  }
 
   console.log(`🔎 X検索: ${keywords.length} keywords × max ${maxResults}`);
 

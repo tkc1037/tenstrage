@@ -79,7 +79,7 @@ C:/Users/wtknt/Documents/iCloudDrive/iCloud~md~obsidian/Tenstrage/
 | Gemini API (Vision/TTS) | GEMINI_API_KEY | gen-lang-client-0049892373 | ✅ 課金有効 |
 | Gemini API (Text) | GEMINI_TEXT_API_KEY | gen-lang-client-0049892373 | ✅ 課金有効 |
 | Buffer (SNS投稿) | BUFFER_API_KEY | — | ✅ |
-| Cloudflare (Analytics) | CLOUDFLARE_API_TOKEN | — | ✅ |
+| Cloudflare Pages | 不要（GitHub連携） | — | ✅ 自動デプロイ |
 | xAI Grok (Xリサーチ) | XAI_API_KEY | — | ✅ |
 
 ---
