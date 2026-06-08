@@ -1,3 +1,3 @@
 @echo off
-cd /d "C:\Users\wtknt\Documents\tenstrage"
+cd /d "%~dp0.."
 node scripts\pipeline.js >> logs\pipeline.log 2>&1

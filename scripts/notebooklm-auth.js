@@ -13,7 +13,7 @@ import * as readline from 'readline';
 
 console.log('🔐 NotebookLM 認証スクリプト\n');
 
-const proc = spawn('npx', ['notebooklm-mcp@latest', '--headless=false'], {
+const proc = spawn('npx', ['notebooklm-mcp@2.0.0', '--headless=false'], {
   stdio: ['pipe', 'pipe', 'pipe'],
   shell: true,
 });

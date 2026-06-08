@@ -15,7 +15,7 @@ await new Promise(r => setTimeout(r, 2000));
 console.log('🔍 --headless=false でデバッグ起動...');
 
 const env = { ...process.env, NOTEBOOKLM_HEADLESS: 'false' };
-const proc = spawn('npx', ['notebooklm-mcp@latest', '--headless=false'], {
+const proc = spawn('npx', ['notebooklm-mcp@2.0.0', '--headless=false'], {
   stdio: ['pipe', 'pipe', 'pipe'],
   shell: true,
   env,

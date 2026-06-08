@@ -49,7 +49,7 @@ async function main() {
         let content = null;
         try {
           const { execSync } = await import('child_process');
-          const md = execSync(`npx defuddle parse "${url}" --md`, {
+          const md = execSync(`npx defuddle@0.18.1 parse "${url}" --md`, {
             encoding: 'utf8', timeout: 30000, shell: true,
           });
           content = md.trim().slice(0, 8000); // NotebookLM の上限に合わせて切り詰め

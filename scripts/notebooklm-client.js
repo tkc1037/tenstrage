@@ -17,8 +17,12 @@
  */
 
 import { spawn, execSync } from 'child_process';
+import { rmSync } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
 
 const NLM_BASE = 'https://notebooklm.google.com/notebook';
+const NLM_PACKAGE = 'notebooklm-mcp@2.0.0';
 const toUrl = (id) => `${NLM_BASE}/${id}`;
 
 // notebooklm-mcp が使う Chrome プロファイルのロックを解放
@@ -30,10 +34,22 @@ function killNotebooklmChrome() {
     );
   } catch {}
   // ロックファイル削除
-  try {
-    execSync('del /F /Q "C:\\Users\\wtknt\\AppData\\Local\\notebooklm-mcp\\Data\\chrome_profile\\Default\\LOCK" 2>nul', { stdio: 'ignore', shell: true });
-    execSync('del /F /Q "C:\\Users\\wtknt\\AppData\\Local\\notebooklm-mcp\\Data\\chrome_profile\\lockfile" 2>nul', { stdio: 'ignore', shell: true });
-  } catch {}
+  const profileDir = join(
+    homedir(),
+    'AppData',
+    'Local',
+    'notebooklm-mcp',
+    'Data',
+    'chrome_profile',
+  );
+  for (const lockPath of [
+    join(profileDir, 'Default', 'LOCK'),
+    join(profileDir, 'lockfile'),
+  ]) {
+    try {
+      rmSync(lockPath, { force: true });
+    } catch {}
+  }
 }
 
 // ─── MCP クライアント（接続を維持するセッション型） ──────
@@ -51,7 +67,7 @@ export class NlmSession {
     killNotebooklmChrome();
     await new Promise(r => setTimeout(r, 1500));
 
-    this.proc = spawn('npx', ['notebooklm-mcp@latest'], {
+    this.proc = spawn('npx', [NLM_PACKAGE], {
       stdio: ['pipe', 'pipe', 'pipe'],
       shell: true,
       env: { ...process.env, STEALTH_ENABLED: 'false' },

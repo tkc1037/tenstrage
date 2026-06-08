@@ -6,7 +6,7 @@
  */
 
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
 
@@ -129,8 +129,8 @@ async function main() {
   const draftsDir = join(ROOT, 'sns-drafts');
   let draftDate = today;
   if (!existsSync(join(draftsDir, `${today}.md`))) {
-    const files = execSync(`ls -1 "${draftsDir}"`, { encoding: 'utf8' })
-      .trim().split('\n').filter(f => f.endsWith('.md')).sort();
+    const files = readdirSync(draftsDir)
+      .filter(f => f.endsWith('.md')).sort();
     draftDate = files.at(-1)?.replace('.md', '') ?? today;
     console.log(`⚠️  ${today}.md なし → ${draftDate}.md を使用`);
   }
@@ -199,8 +199,8 @@ async function main() {
     : [];
 
   if (existsSync(videoDir)) {
-    const videoFiles = execSync(`ls "${videoDir}"`, { encoding: 'utf8' })
-      .trim().split('\n').filter(f => f.endsWith('.mp4') && !postedLog.includes(f));
+    const videoFiles = readdirSync(videoDir)
+      .filter(f => f.endsWith('.mp4') && !postedLog.includes(f));
 
     if (videoFiles.length > 0) {
       console.log(`\n🎬 動画投稿: ${videoFiles.length}本`);

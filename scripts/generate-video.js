@@ -7,9 +7,8 @@
  *       node scripts/generate-video.js all  ← video-scripts/ 全件処理
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import { execSync } from 'child_process';
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
 import { ROOT, OBSIDIAN, loadEnv } from './paths.js';
@@ -329,8 +328,7 @@ async function main() {
 
   let targets = [];
   if (!arg || arg === 'all') {
-    targets = execSync(`ls "${SCRIPTS_DIR}"`, { encoding: 'utf8' })
-      .trim().split('\n').filter(f => f.endsWith('.md'));
+    targets = readdirSync(SCRIPTS_DIR).filter(f => f.endsWith('.md'));
     console.log(`📂 全台本処理: ${targets.length}件`);
   } else {
     targets = [arg];
