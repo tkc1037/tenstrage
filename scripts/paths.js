@@ -42,10 +42,9 @@ export function loadEnv() {
     `${OBSIDIAN}/.env`,
     `${OBSIDIAN}/.env 2`,
   ];
-  for (const path of candidates) {
-    if (existsSync(path)) {
-      return readEnvFile(path);
-    }
-  }
-  throw new Error('.env が見つかりません');
+  const existing = candidates.filter(existsSync);
+  if (existing.length === 0) throw new Error('.env が見つかりません');
+
+  // 優先順位が高いファイルを後から重ねる（project .env > vault .env > vault .env 2）
+  return Object.assign({}, ...existing.reverse().map(readEnvFile));
 }

@@ -1,6 +1,9 @@
 /**
  * Video Agent
  * 台本 → Gemini TTS音声 → Remotion動画 → X投稿
+ *
+ * @deprecated 動画生成の正本は generate-video.js。
+ * このファイルは過去互換用で、新規運用では使用しない。
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';

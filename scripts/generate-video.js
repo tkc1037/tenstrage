@@ -4,6 +4,7 @@
  *
  * 実行: node scripts/generate-video.js [script-file]
  * 例:   node scripts/generate-video.js 20260529-fares-raise-income-up.md
+ *       node scripts/generate-video.js 20260529-fares-raise-income-up.md --regenerate-audio
  *       node scripts/generate-video.js all  ← video-scripts/ 全件処理
  */
 
@@ -20,6 +21,7 @@ const AUDIO_DIR = join(ROOT, 'public', 'audio');
 // ─── 台本パース ──────────────────────────────────────────
 function parseScript(filePath) {
   const raw = readFileSync(filePath, 'utf8');
+  const withoutFrontmatter = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '');
 
   // タイトル抽出（# タイトル 行）
   const titleMatch = raw.match(/^# (.+)$/m);
@@ -50,7 +52,7 @@ function parseScript(filePath) {
   const cta = ctaRaw?.slice(0, 30) ?? 'プロフのリンクをチェック👆';
 
   // マーク除去したプレーンテキスト（TTS用）
-  const plain = raw
+  const plain = withoutFrontmatter
     .replace(/\[強調\](.*?)\[\/強調\]/g, '$1')
     .replace(/\[速\](.*?)\[\/速\]/g, '$1')
     .replace(/\[間\]/g, ' ')
@@ -131,8 +133,12 @@ async function generateBackground(title, apiKey, outputPath) {
 }
 
 // ─── Gemini TTS 音声生成 ─────────────────────────────────
-async function generateAudio(text, apiKey, outputPath) {
+async function generateAudio(text, apiKey, outputPath, voiceName = 'Achird') {
   console.log('🎤 Gemini TTS 音声生成中...');
+  const directedText =
+    '落ち着いた、信頼感のある日本人男性ナレーターとして、' +
+    '誇張せず、聞き取りやすい自然な速度で読んでください。\n\n' +
+    text;
 
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
@@ -140,12 +146,12 @@ async function generateAudio(text, apiKey, outputPath) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text }] }],
+        contents: [{ parts: [{ text: directedText }] }],
         generationConfig: {
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Achird' }, // 親しみやすい男性声（friendly and kind）
+              prebuiltVoiceConfig: { voiceName },
             },
           },
         },
@@ -192,11 +198,23 @@ async function generateAudio(text, apiKey, outputPath) {
 // ─── WAV duration 取得（ヘッダーから計算） ──────────────
 function getWavDuration(filePath) {
   const buf = readFileSync(filePath);
-  const sampleRate = buf.readUInt32LE(24);
-  const channels   = buf.readUInt16LE(22);
-  const bitDepth   = buf.readUInt16LE(34);
-  const dataSize   = buf.readUInt32LE(40);
-  return dataSize / (sampleRate * channels * (bitDepth / 8)); // 秒
+  let offset = 12;
+  let byteRate = 0;
+  let dataSize = 0;
+
+  while (offset + 8 <= buf.length) {
+    const chunkId = buf.toString('ascii', offset, offset + 4);
+    const chunkSize = buf.readUInt32LE(offset + 4);
+    if (chunkId === 'fmt ') byteRate = buf.readUInt32LE(offset + 16);
+    if (chunkId === 'data') {
+      dataSize = chunkSize;
+      break;
+    }
+    offset += 8 + chunkSize + (chunkSize % 2);
+  }
+
+  if (!byteRate || !dataSize) throw new Error(`WAV形式を解析できません: ${filePath}`);
+  return dataSize / byteRate;
 }
 
 // ─── 音声長 → テロップ同期タイミング計算 ───────────────
@@ -274,7 +292,7 @@ async function renderVideo(props, outputPath) {
 }
 
 // ─── 1本処理 ────────────────────────────────────────────
-async function processScript(scriptFile, env) {
+async function processScript(scriptFile, env, options) {
   const slug = basename(scriptFile, '.md');
   const audioPath = join(AUDIO_DIR, `${slug}.wav`);
   const bgPath = join(ROOT, 'public', 'images', `${slug}-bg.jpg`);
@@ -285,11 +303,13 @@ async function processScript(scriptFile, env) {
   const { title, hook, cta, plain, lines, bgStyle, accentColor, hookLabel } = parseScript(join(SCRIPTS_DIR, scriptFile));
 
   // 背景画像生成（Gemini Imagen）
-  const hasBg = await generateBackground(title, env.GEMINI_API_KEY, bgPath);
+  const hasBg = options.skipBackground
+    ? existsSync(bgPath)
+    : await generateBackground(title, env.GEMINI_API_KEY, bgPath);
 
   // TTS音声生成
-  if (!existsSync(audioPath)) {
-    await generateAudio(plain, env.GEMINI_API_KEY, audioPath);
+  if (options.regenerateAudio || !existsSync(audioPath)) {
+    await generateAudio(plain, env.GEMINI_API_KEY, audioPath, env.GEMINI_TTS_VOICE || 'Achird');
   } else {
     console.log(`⚡ 音声キャッシュ利用: ${audioPath}`);
   }
@@ -319,7 +339,12 @@ async function processScript(scriptFile, env) {
 // ─── メイン ──────────────────────────────────────────────
 async function main() {
   const env = loadEnv();
-  const arg = process.argv[2];
+  const args = process.argv.slice(2);
+  const arg = args.find((value) => !value.startsWith('--'));
+  const options = {
+    regenerateAudio: args.includes('--regenerate-audio'),
+    skipBackground: args.includes('--skip-background'),
+  };
 
   mkdirSync(OUTPUT_DIR, { recursive: true });
   mkdirSync(AUDIO_DIR, { recursive: true });
@@ -337,7 +362,7 @@ async function main() {
   const videos = [];
   for (const f of targets) {
     try {
-      const videoPath = await processScript(f, env);
+      const videoPath = await processScript(f, env, options);
       videos.push(videoPath);
     } catch (e) {
       console.error(`❌ ${f} 失敗: ${e.message}`);
