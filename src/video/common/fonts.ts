@@ -1,12 +1,12 @@
 /**
  * Font loading for remotion-scenes
- * latin subset + 使用ウェイトのみロード（700/800/900）
+ * 日本語表示に必要なウェイトのみロード（700/800/900）
  */
 
-import { loadFont as loadInter } from "@remotion/google-fonts/Inter";
+import { loadFont as loadNotoSansJP } from "@remotion/google-fonts/NotoSansJP";
 
-const { fontFamily } = loadInter("normal", {
-  subsets: ["latin"],
+const { fontFamily } = loadNotoSansJP("normal", {
+  subsets: ["japanese", "latin"],
   weights: ["700", "800", "900"],
 });
 

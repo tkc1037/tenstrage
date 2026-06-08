@@ -302,7 +302,7 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
         textAlign: 'right',
         lineHeight: 1.6,
       }}>
-        #Takuzo_taxi{'\n'}#タクゾータクシー
+        tenstrage.pages.dev{'\n'}#タクシー転職
       </div>
     </AbsoluteFill>
   );
