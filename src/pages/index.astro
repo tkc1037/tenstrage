@@ -26,7 +26,7 @@ articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
         <ul>
           {articles.map((article) => (
             <li>
-              <a href={`/articles/${article.slug}/`}>
+              <a href={`/articles/${article.id}/`}>
                 <h2>{article.data.title}</h2>
                 <p>{article.data.description}</p>
                 <time datetime={article.data.pubDate.toISOString()}>
