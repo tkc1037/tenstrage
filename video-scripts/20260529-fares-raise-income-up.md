@@ -1,3 +1,12 @@
+---
+title: 運賃改定と年収への影響
+hook: 運賃改定で収入はどう変わる？
+cta: 詳細はプロフから確認
+bgStyle: grid
+accentColor: "#fbbf24"
+hookLabel: 数字で確認
+---
+
 # YouTube Shorts台本：運賃改定で年収アップ
 
 **タイトル**: 「2026年4月の運賃改定、東京タクシードライバーの年収が60万円UP？」

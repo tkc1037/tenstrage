@@ -1,7 +1,8 @@
 import React from 'react';
-import { Composition, registerRoot } from 'remotion';
+import { Composition, registerRoot, type CalculateMetadataFunction } from 'remotion';
 import { TaxiVideo } from './TaxiVideo';
 import { C } from './common';
+import type { TaxiVideoProps } from './TaxiVideo';
 
 // デフォルトprops（bgStyleのみ変えてテーマ切り替え可能なコンポジション群）
 const baseProps = {
@@ -16,75 +17,23 @@ const baseProps = {
   cta: '詳細はプロフのリンクをチェック👆',
 };
 
+const calculateMetadata: CalculateMetadataFunction<TaxiVideoProps> = ({ props }) => ({
+  durationInFrames: props.timing?.totalFrames ?? 900,
+  props,
+});
+
 const RemotionRoot: React.FC = () => {
   return (
-    <>
-      {/* ── メイン（bokeh・ゴールド） ─── */}
-      <Composition
-        id="TaxiVideo"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'bokeh', accentColor: C.gold }}
-      />
-
-      {/* ── オーロラ（インディゴ） ─── */}
-      <Composition
-        id="TaxiVideo-Aurora"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'aurora', accentColor: C.accent }}
-      />
-
-      {/* ── 波（シアン） ─── */}
-      <Composition
-        id="TaxiVideo-Waves"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'waves', accentColor: C.cyan }}
-      />
-
-      {/* ── グリッド（白・テック系） ─── */}
-      <Composition
-        id="TaxiVideo-Grid"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'grid', accentColor: C.white }}
-      />
-
-      {/* ── 幾何学（オレンジ） ─── */}
-      <Composition
-        id="TaxiVideo-Geometric"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'geometric', accentColor: C.orange }}
-      />
-
-      {/* ── グラデーション（ピンク） ─── */}
-      <Composition
-        id="TaxiVideo-Gradient"
-        component={TaxiVideo}
-        durationInFrames={900}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{ ...baseProps, bgStyle: 'gradient', accentColor: C.secondary }}
-      />
-    </>
+    <Composition
+      id="TaxiVideo"
+      component={TaxiVideo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+      defaultProps={{ ...baseProps, bgStyle: 'bokeh', accentColor: C.gold }}
+      calculateMetadata={calculateMetadata}
+    />
   );
 };
 

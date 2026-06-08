@@ -1,0 +1,46 @@
+import { mkdirSync } from 'fs';
+import { join } from 'path';
+import { bundle } from '@remotion/bundler';
+import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
+import { COMPOSITION_ID, QA_DIR, REMOTION_ENTRY } from './config.js';
+
+export async function createRenderContext(inputProps) {
+  const serveUrl = await bundle({ entryPoint: REMOTION_ENTRY });
+  const composition = await selectComposition({
+    serveUrl,
+    id: COMPOSITION_ID,
+    inputProps,
+  });
+  return { serveUrl, composition };
+}
+
+export async function renderVideo(context, inputProps, outputPath) {
+  await renderMedia({
+    ...context,
+    codec: 'h264',
+    outputLocation: outputPath,
+    inputProps,
+  });
+}
+
+export async function renderQaStills(context, inputProps, slug) {
+  const outputDir = join(QA_DIR, slug);
+  mkdirSync(outputDir, { recursive: true });
+  const lastFrame = context.composition.durationInFrames - 1;
+  const frames = {
+    hook: Math.round(lastFrame * 0.1),
+    info: Math.round(lastFrame * 0.5),
+    cta: Math.round(lastFrame * 0.9),
+  };
+
+  for (const [name, frame] of Object.entries(frames)) {
+    await renderStill({
+      ...context,
+      output: join(outputDir, `${name}.png`),
+      inputProps,
+      frame,
+    });
+  }
+
+  return outputDir;
+}

@@ -1,13 +1,12 @@
-/**
- * Font loading for remotion-scenes
- * 日本語表示に必要なウェイトのみロード（700/800/900）
- */
+import { loadFont } from "@remotion/fonts";
+import { staticFile } from "remotion";
 
-import { loadFont as loadNotoSansJP } from "@remotion/google-fonts/NotoSansJP";
+export const font = "Noto Sans JP";
 
-const { fontFamily } = loadNotoSansJP("normal", {
-  subsets: ["japanese", "latin"],
-  weights: ["700", "800", "900"],
-});
-
-export const font = fontFamily;
+for (const weight of ["700", "800", "900"] as const) {
+  loadFont({
+    family: font,
+    url: staticFile(`fonts/noto-sans-jp-${weight}.woff2`),
+    weight,
+  });
+}

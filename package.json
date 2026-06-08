@@ -9,17 +9,21 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "validate:video": "node scripts/validate-video-scripts.js",
+    "qa:video": "node scripts/check-video.js",
+    "test:video": "node scripts/test-video-timing.js && npm run validate:video"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
-    "@remotion/bundler": "^4.0.466",
-    "@remotion/google-fonts": "^4.0.469",
-    "@remotion/renderer": "^4.0.466",
-    "@remotion/transitions": "^4.0.469",
+    "@remotion/bundler": "4.0.469",
+    "@remotion/fonts": "4.0.469",
+    "@remotion/renderer": "4.0.469",
+    "@remotion/transitions": "4.0.469",
     "astro": "^6.3.7",
+    "mediabunny": "^1.45.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "remotion": "^4.0.466"
+    "remotion": "4.0.469"
   }
 }

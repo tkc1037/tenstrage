@@ -29,4 +29,6 @@ data/income-records/
 
 # 埋め込みgitリポジトリ除外
 buffer-mcp/
-src/video/remotion-scenes/
+
+# local video QA stills
+.video-qa/

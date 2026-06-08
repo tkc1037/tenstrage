@@ -1,5 +1,5 @@
 /**
- * TaxiVideo — remotion-scenes ライブラリ統合版
+ * TaxiVideo — Tenstrage縦型動画テンプレート
  *
  * bgStyle で背景を動的切り替え:
  *   'bokeh'     (default) BackgroundBokeh  — ボケ光源
@@ -27,13 +27,13 @@ import { slide } from '@remotion/transitions/slide';
 import { fade } from '@remotion/transitions/fade';
 import { C, lerp, EASE, font } from './common';
 
-// ── remotion-scenes ライブラリから背景コンポーネントをインポート ──
-import { BackgroundBokeh }           from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundBokeh';
-import { BackgroundAurora }          from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundAurora';
-import { BackgroundWaves }           from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundWaves';
-import { BackgroundGrid }            from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundGrid';
-import { BackgroundGeometric }       from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundGeometric';
-import { BackgroundFlowingGradient } from './remotion-scenes/src/scenes/BackgroundAnimations/BackgroundFlowingGradient';
+// remotion-scenes (MIT) を元に、使用する背景だけをプロジェクト内で管理
+import { BackgroundBokeh }           from './backgrounds/BackgroundBokeh';
+import { BackgroundAurora }          from './backgrounds/BackgroundAurora';
+import { BackgroundWaves }           from './backgrounds/BackgroundWaves';
+import { BackgroundGrid }            from './backgrounds/BackgroundGrid';
+import { BackgroundGeometric }       from './backgrounds/BackgroundGeometric';
+import { BackgroundFlowingGradient } from './backgrounds/BackgroundFlowingGradient';
 
 export type BgStyle = 'bokeh' | 'aurora' | 'waves' | 'grid' | 'geometric' | 'gradient';
 
