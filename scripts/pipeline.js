@@ -9,7 +9,7 @@
  *
  * ステップ:
  *   1. 今日の生成済みコンテンツを確認
- *   2. publish.js 実行（git push + Buffer投稿）
+ *   2. publish.js 実行（記事・生成物のgit pushのみ）
  *   3. log.md に記録
  */
 
@@ -66,10 +66,10 @@ async function main() {
   articles.forEach(f => logs.push(`- 記事: ${f}`));
   if (snsDraft) logs.push(`- SNSドラフト: sns-drafts/${dateStr}.md`);
 
-  // Step 2: publish.js（git push + Buffer投稿）
+  // Step 2: publish.js（SNSは専用レビュー経由のため対象外）
   console.log('\n📤 publish.js 実行中...');
   try {
-    execSync('node scripts/publish.js', { cwd: ROOT, stdio: 'inherit' });
+    execSync('node scripts/publish.js --articles-only', { cwd: ROOT, stdio: 'inherit' });
     logs.push('- publish.js: ✅');
   } catch (e) {
     console.error('❌ publish.js:', e.message);

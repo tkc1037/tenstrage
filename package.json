@@ -12,7 +12,12 @@
     "astro": "astro",
     "validate:video": "node scripts/validate-video-scripts.js",
     "qa:video": "node scripts/check-video.js",
-    "test:video": "node scripts/test-video-timing.js && npm run validate:video"
+    "test:video": "node scripts/test-video-timing.js && npm run validate:video",
+    "review:video": "node scripts/video-review.js",
+    "review:x": "node scripts/x-review.js",
+    "validate:x": "node scripts/validate-x-review.js",
+    "remember:review": "node scripts/remember-review.js",
+    "test:review": "node scripts/test-review-workflow.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
@@ -24,6 +29,8 @@
     "mediabunny": "^1.45.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "remotion": "4.0.469"
+    "remotion": "4.0.469",
+    "twitter-text": "^3.1.0",
+    "yaml": "^2.8.3"
   }
 }

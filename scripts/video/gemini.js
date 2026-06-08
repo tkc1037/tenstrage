@@ -1,10 +1,9 @@
 import { dirname } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
-export async function generateBackground(title, apiKey, outputPath) {
+export async function generateBackground(prompt, apiKey, outputPath) {
   if (existsSync(outputPath)) return true;
 
-  const prompt = `Cinematic vertical photo for social media short video. ${title.slice(0, 30)}. Tokyo taxi at night, neon city lights reflecting on wet asphalt, dark moody atmosphere, bokeh background, ultra realistic, 4K quality. NO text, NO watermarks.`;
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-fast-generate-001:predict?key=${apiKey}`,
     {
@@ -29,11 +28,8 @@ export async function generateBackground(title, apiKey, outputPath) {
   return true;
 }
 
-export async function generateAudio(text, apiKey, outputPath, voiceName = 'Achird') {
-  const directedText =
-    '落ち着いた、信頼感のある日本人男性ナレーターとして、' +
-    '誇張せず、聞き取りやすい自然な速度で読んでください。\n\n' +
-    text;
+export async function generateAudio(text, apiKey, outputPath, voiceName = 'Achird', instruction = '') {
+  const directedText = `${instruction.trim()}\n\n${text}`.trim();
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
     {

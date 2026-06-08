@@ -21,14 +21,17 @@ GEMINI_TTS_VOICE=Achird
 ## 実行
 
 ```powershell
-# キャッシュ済み音声を利用
-node scripts/generate-video.js 20260608-first-introduction.md --skip-background
+# 確認ファイルを作る
+node scripts/video-review.js 20260608-first-introduction.md
 
-# Geminiで音声を作り直す
-node scripts/generate-video.js 20260608-first-introduction.md --regenerate-audio --skip-background
+# レビュー内のscriptApproved / speechApprovedをtrueにして音声だけ生成
+node scripts/generate-video.js 20260608-first-introduction.md --audio-only
+
+# 試聴後にaudioApproved / visualApprovedをtrueにして映像生成
+node scripts/generate-video.js 20260608-first-introduction.md --render-only --skip-background
 ```
 
-`--regenerate-audio` は既存WAVを上書きし、Gemini APIを消費する。背景画像も再生成したい場合だけ `--skip-background` を外す。
+確認ファイルはVaultの `reviews/video/` に作成される。承認フラグが不足している場合、生成処理は停止する。
 
 ## 実装上の注意
 
