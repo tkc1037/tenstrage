@@ -3,10 +3,12 @@ import { basename, resolve, join } from 'path';
 import { createHash } from 'crypto';
 import { existsSync, readFileSync } from 'fs';
 import { execFileSync } from 'child_process';
+import { parse } from 'yaml';
 import { loadEnv, ROOT } from './paths.js';
 import { getCodeBlock, getSection, readReview, updateReviewData } from './review/markdown.js';
 import { parseMemoryCommands } from './review/memory.js';
 import { runVideoQa } from './video/qa.js';
+import { validateRemotionSettings } from './video/settings.js';
 import { AUDIO_DIR, VIDEO_DIR } from './video/config.js';
 
 const reviewPath = process.argv[2] ? resolve(process.argv[2]) : null;
@@ -16,7 +18,18 @@ const memoryCommands = parseMemoryCommands(getCodeBlock(getSection(review.body, 
 if (memoryCommands.length > 0 && review.data.memoryApplied !== true) {
   throw new Error('恒久修正が未登録です。先に remember-review.js を実行してください');
 }
-const required = ['factChecked', 'videoApproved', 'publishApproved'];
+const required = [
+  'scriptApproved',
+  'speechApproved',
+  'ttsPromptApproved',
+  'audioApproved',
+  'backgroundPromptApproved',
+  'visualApproved',
+  'remotionApproved',
+  'factChecked',
+  'videoApproved',
+  'publishApproved',
+];
 const missing = required.filter((key) => review.data[key] !== true);
 if (missing.length) throw new Error(`未承認: ${missing.join(', ')}`);
 
@@ -27,7 +40,10 @@ if (sourceHash !== review.data.scriptHash) throw new Error('台本変更後に�
 const audioPath = join(AUDIO_DIR, `${slug}.wav`);
 const videoPath = join(VIDEO_DIR, `${slug}.mp4`);
 if (!existsSync(videoPath)) throw new Error(`動画がありません: ${videoPath}`);
-const qa = await runVideoQa({ audioPath, videoPath });
+const remotionInput = parse(getCodeBlock(getSection(review.body, 'Remotion設定'))) ?? {};
+const { settings, errors: settingsErrors } = validateRemotionSettings(remotionInput);
+if (settingsErrors.length) throw new Error(`Remotion設定エラー:\n- ${settingsErrors.join('\n- ')}`);
+const qa = await runVideoQa({ audioPath, videoPath, expected: settings });
 if (qa.errors.length) throw new Error(qa.errors.join('\n'));
 
 const youtubeTitle = getCodeBlock(getSection(review.body, 'YouTubeタイトル'));

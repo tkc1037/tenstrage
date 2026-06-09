@@ -20,6 +20,7 @@ import {
 import { validateVideoScript } from './video/parse-script.js';
 import { generateAudio, generateBackground } from './video/gemini.js';
 import { calculateTiming } from './video/timing.js';
+import { validateRemotionSettings } from './video/settings.js';
 import { inspectWav } from './video/wav.js';
 import { createRenderContext, renderQaStills, renderVideo } from './video/render.js';
 import { runVideoQa } from './video/qa.js';
@@ -51,14 +52,21 @@ async function processScript(scriptFile, env, options) {
   if (review.data.scriptHash !== currentHash) {
     throw new Error('台本がレビュー作成後に変更されています。レビューを更新してください');
   }
-  if (review.data.scriptApproved !== true || review.data.speechApproved !== true) {
-    throw new Error('scriptApproved と speechApproved の承認が必要です');
+  if (
+    review.data.scriptApproved !== true
+    || review.data.speechApproved !== true
+    || review.data.ttsPromptApproved !== true
+  ) {
+    throw new Error('scriptApproved、speechApproved、ttsPromptApprovedの承認が必要です');
   }
 
   const speechText = getCodeBlock(getSection(review.body, '読み上げ原稿'));
   const display = parse(getCodeBlock(getSection(review.body, '表示設定'))) ?? {};
+  const remotionInput = parse(getCodeBlock(getSection(review.body, 'Remotion設定'))) ?? {};
+  const { settings, errors: settingsErrors } = validateRemotionSettings(remotionInput);
   const ttsPrompt = getCodeBlock(getSection(review.body, 'TTSプロンプト'));
   const backgroundPrompt = getCodeBlock(getSection(review.body, '背景画像プロンプト'));
+  if (settingsErrors.length > 0) throw new Error(`Remotion設定エラー:\n- ${settingsErrors.join('\n- ')}`);
   if (!speechText || !ttsPrompt || !backgroundPrompt || !display.hook || !display.cta || !Array.isArray(display.lines)) {
     throw new Error('レビューの表示設定、原稿またはプロンプトが不完全です');
   }
@@ -85,8 +93,13 @@ async function processScript(scriptFile, env, options) {
   }
 
   if (!options.renderOnly) throw new Error('--audio-only または --render-only を指定してください');
-  if (review.data.audioApproved !== true || review.data.visualApproved !== true) {
-    throw new Error('audioApproved と visualApproved の承認が必要です');
+  if (
+    review.data.audioApproved !== true
+    || review.data.visualApproved !== true
+    || review.data.backgroundPromptApproved !== true
+    || review.data.remotionApproved !== true
+  ) {
+    throw new Error('audioApproved、visualApproved、backgroundPromptApproved、remotionApprovedの承認が必要です');
   }
   if (!existsSync(audioPath)) throw new Error('音声がありません。先に --audio-only を実行してください');
 
@@ -97,7 +110,7 @@ async function processScript(scriptFile, env, options) {
   }
 
   const wav = inspectWav(audioPath);
-  const timing = calculateTiming(wav.durationSeconds, display.hook, display.lines, display.cta);
+  const timing = calculateTiming(wav.durationSeconds, display.hook, display.lines, display.cta, settings);
   const inputProps = {
     title: display.title,
     hook: display.hook,
@@ -109,16 +122,18 @@ async function processScript(scriptFile, env, options) {
     accentColor: display.accentColor,
     hookLabel: display.hookLabel,
     timing,
+    settings,
   };
 
   console.log('🎬 Remotionレンダリング');
   const renderContext = await createRenderContext(inputProps);
-  await renderVideo(renderContext, inputProps, videoPath);
+  await renderVideo(renderContext, inputProps, videoPath, settings.codec);
 
   console.log('🔍 自動QA');
   const qa = await runVideoQa({
     audioPath,
     videoPath,
+    expected: settings,
     secrets: [env.GEMINI_API_KEY],
   });
   if (qa.errors.length > 0) throw new Error(`動画QAエラー:\n- ${qa.errors.join('\n- ')}`);

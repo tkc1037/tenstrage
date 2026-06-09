@@ -6,7 +6,8 @@ import { stringify } from 'yaml';
 import { OBSIDIAN } from './paths.js';
 import { VIDEO_SCRIPTS_DIR } from './video/config.js';
 import { validateVideoScript } from './video/parse-script.js';
-import { applyContentMemory } from './review/memory.js';
+import { DEFAULT_REMOTION_SETTINGS, validateRemotionSettings } from './video/settings.js';
+import { applyContentMemory, loadContentMemory } from './review/memory.js';
 import { writeReview } from './review/markdown.js';
 
 const arg = process.argv[2];
@@ -24,12 +25,22 @@ if (existsSync(reviewPath) && !process.argv.includes('--refresh')) {
 
 mkdirSync(reviewDir, { recursive: true });
 const speech = applyContentMemory(parsed.plain, 'video', { pronunciation: true });
-const ttsPrompt = [
+const memory = loadContentMemory();
+const fallbackTtsPrompt = [
   '落ち着いた、信頼感のある日本人男性ナレーター。',
   '誇張せず、聞き取りやすい自然な速度で読む。',
   '句読点では自然な間を置く。',
 ].join('\n');
-const backgroundPrompt = `Cinematic vertical photo for social media short video. ${parsed.title}. Tokyo taxi at night, neon city lights reflecting on wet asphalt, dark moody atmosphere, bokeh background, ultra realistic. NO text, NO watermarks.`;
+const fallbackBackgroundPrompt = 'Cinematic vertical photo for social media short video. {{title}}. Tokyo taxi at night, neon city lights reflecting on wet asphalt, dark moody atmosphere, bokeh background, ultra realistic. NO text, NO watermarks.';
+const ttsPrompt = memory.videoDefaults.ttsPrompt || fallbackTtsPrompt;
+const backgroundPrompt = (memory.videoDefaults.backgroundPromptTemplate || fallbackBackgroundPrompt)
+  .split('{{title}}')
+  .join(parsed.title);
+const { settings: remotionSettings, errors: remotionErrors } = validateRemotionSettings({
+  ...DEFAULT_REMOTION_SETTINGS,
+  ...(memory.videoDefaults.remotion ?? {}),
+});
+if (remotionErrors.length > 0) throw new Error(`記憶済みRemotion設定が不正です:\n- ${remotionErrors.join('\n- ')}`);
 const scriptHash = createHash('sha256').update(parsed.raw).digest('hex');
 
 const body = `# 動画公開前レビュー：${parsed.title}
@@ -50,6 +61,14 @@ ${stringify({
 }, { lineWidth: 0 }).trim()}
 \`\`\`
 
+## Remotion設定
+
+安全範囲内で数値を編集できます。縦型・H.264以外は現在停止します。
+
+\`\`\`yaml
+${stringify(remotionSettings, { lineWidth: 0 }).trim()}
+\`\`\`
+
 ## 読み上げ原稿
 
 \`\`\`text
@@ -58,11 +77,15 @@ ${speech}
 
 ## TTSプロンプト
 
+Geminiへ渡す音声指示です。内容を直接編集できます。
+
 \`\`\`text
 ${ttsPrompt}
 \`\`\`
 
 ## 背景画像プロンプト
+
+背景生成へ渡す指示です。内容を直接編集できます。
 
 \`\`\`text
 ${backgroundPrompt}
@@ -106,11 +129,13 @@ ${parsed.cta}
 ## 確認手順
 
 1. 表示設定・読み上げ原稿・各プロンプトを修正
-2. 恒久修正があれば「記憶する修正」へ記載
-3. 台本と音声を承認したら \`scriptApproved\` と \`speechApproved\` をtrue
-4. 音声試聴後に \`audioApproved\` をtrue
-5. 背景・映像方針確認後に \`visualApproved\` をtrue
-6. 動画確認後に \`videoApproved\`、公開直前に \`publishApproved\` をtrue
+2. Remotion設定を確認し、TTS・背景プロンプトを確認
+3. 恒久修正があれば「記憶する修正」へ記載
+4. 今回の設定とプロンプトを次回も使う場合は \`node scripts/remember-review.js <レビュー.md> --video-defaults\`
+5. 台本・読み上げ・TTSプロンプトを承認したら \`scriptApproved\`、\`speechApproved\`、\`ttsPromptApproved\` をtrue
+6. 音声試聴後に \`audioApproved\` をtrue
+7. 背景プロンプト・映像方針・Remotion設定を承認したら \`backgroundPromptApproved\`、\`visualApproved\`、\`remotionApproved\` をtrue
+8. 動画確認後に \`videoApproved\`、公開直前に \`publishApproved\` をtrue
 `;
 
 writeReview(reviewPath, {
@@ -121,8 +146,11 @@ writeReview(reviewPath, {
   status: 'draft',
   scriptApproved: false,
   speechApproved: false,
+  ttsPromptApproved: false,
   audioApproved: false,
+  backgroundPromptApproved: false,
   visualApproved: false,
+  remotionApproved: false,
   videoApproved: false,
   publishApproved: false,
   factChecked: false,

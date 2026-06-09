@@ -38,7 +38,12 @@ import { BackgroundFlowingGradient } from './backgrounds/BackgroundFlowingGradie
 export type BgStyle = 'bokeh' | 'aurora' | 'waves' | 'grid' | 'geometric' | 'gradient';
 
 // ── 背景セレクタ ─────────────────────────────────────────────────
-const BgLayer: React.FC<{ bgStyle: BgStyle; bgImageSrc?: string }> = ({ bgStyle, bgImageSrc }) => {
+const BgLayer: React.FC<{
+  bgStyle: BgStyle;
+  bgImageSrc?: string;
+  imageOpacity: number;
+  gradientOpacity: number;
+}> = ({ bgStyle, bgImageSrc, imageOpacity, gradientOpacity }) => {
   const BgMap: Record<BgStyle, React.FC<{ startDelay?: number }>> = {
     bokeh:     BackgroundBokeh,
     aurora:    BackgroundAurora,
@@ -59,14 +64,14 @@ const BgLayer: React.FC<{ bgStyle: BgStyle; bgImageSrc?: string }> = ({ bgStyle,
         <AbsoluteFill>
           <Img
             src={staticFile(bgImageSrc)}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.2 }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: imageOpacity }}
           />
         </AbsoluteFill>
       )}
 
       {/* 下部グラデ（テキスト可読性確保） */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)',
+        background: `linear-gradient(to top, rgba(0,0,0,${gradientOpacity}) 0%, transparent 55%)`,
       }} />
     </AbsoluteFill>
   );
@@ -132,8 +137,13 @@ const KineticText: React.FC<{
 };
 
 // ── シーン1: フック ──────────────────────────────────────────────
-const HookScene: React.FC<{ hook: string; accentColor: string; label?: string }> = ({
-  hook, accentColor, label = '知ってた？',
+const HookScene: React.FC<{
+  hook: string;
+  accentColor: string;
+  label?: string;
+  settings: TaxiVideoSettings;
+}> = ({
+  hook, accentColor, settings, label = '知ってた？',
 }) => {
   const frame = useCurrentFrame();
 
@@ -142,7 +152,7 @@ const HookScene: React.FC<{ hook: string; accentColor: string; label?: string }>
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      padding: '100px 64px',
+      padding: `100px ${settings.horizontalPadding}px`,
       gap: 28,
     }}>
       <div style={{
@@ -154,7 +164,7 @@ const HookScene: React.FC<{ hook: string; accentColor: string; label?: string }>
         borderRadius: 6,
         boxShadow: `0 0 20px ${accentColor}80`,
       }}>
-        <span style={{ fontFamily: font, color: C.black, fontSize: 20, fontWeight: 800, letterSpacing: 3 }}>
+        <span style={{ fontFamily: font, color: C.black, fontSize: settings.hookLabelFontSize, fontWeight: 800, letterSpacing: 3 }}>
           {label}
         </span>
       </div>
@@ -163,7 +173,7 @@ const HookScene: React.FC<{ hook: string; accentColor: string; label?: string }>
         <KineticText
           text={hook}
           startFrame={12}
-          fontSize={56}
+          fontSize={settings.hookFontSize}
           color={C.white}
           accentColor={accentColor}
           showUnderline
@@ -178,7 +188,8 @@ const InfoScene: React.FC<{
   lines: string[];
   accentColor: string;
   lineDelays?: number[];
-}> = ({ lines, accentColor, lineDelays }) => {
+  settings: TaxiVideoSettings;
+}> = ({ lines, accentColor, lineDelays, settings }) => {
   const frame = useCurrentFrame();
 
   return (
@@ -186,7 +197,7 @@ const InfoScene: React.FC<{
       justifyContent: 'center',
       alignItems: 'flex-start',
       flexDirection: 'column',
-      padding: '80px 64px',
+      padding: `80px ${settings.horizontalPadding}px`,
       gap: 36,
     }}>
       <div style={{
@@ -215,7 +226,7 @@ const InfoScene: React.FC<{
           >
             <span style={{
               fontFamily: font,
-              fontSize: 22,
+              fontSize: settings.infoNumberFontSize,
               fontWeight: 900,
               color: accentColor,
               flexShrink: 0,
@@ -226,7 +237,7 @@ const InfoScene: React.FC<{
             </span>
             <span style={{
               fontFamily: '"Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif',
-              fontSize: 32,
+              fontSize: settings.infoFontSize,
               fontWeight: 700,
               color: C.white,
               lineHeight: 1.5,
@@ -241,7 +252,12 @@ const InfoScene: React.FC<{
 };
 
 // ── シーン3: CTA ─────────────────────────────────────────────
-const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = ({ cta, title, accentColor }) => {
+const CtaScene: React.FC<{
+  cta: string;
+  title: string;
+  accentColor: string;
+  settings: TaxiVideoSettings;
+}> = ({ cta, title, accentColor, settings }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -253,13 +269,13 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      padding: '80px 64px',
+      padding: `80px ${settings.horizontalPadding}px`,
       gap: 32,
     }}>
       <div style={{ opacity: lerp(frame, [0, 20], [0, 1]), textAlign: 'center' }}>
         <span style={{
           fontFamily: '"Noto Sans JP", sans-serif',
-          fontSize: 26,
+          fontSize: settings.ctaTitleFontSize,
           color: C.gray[300],
           lineHeight: 1.6,
         }}>
@@ -282,7 +298,7 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
         textAlign: 'center',
         boxShadow: `0 0 40px ${accentColor}60, 0 8px 24px rgba(0,0,0,0.4)`,
       }}>
-        <span style={{ fontFamily: font, color: C.black, fontSize: 26, fontWeight: 900, letterSpacing: 1 }}>
+        <span style={{ fontFamily: font, color: C.black, fontSize: settings.ctaFontSize, fontWeight: 900, letterSpacing: 1 }}>
           {cta}
         </span>
       </div>
@@ -297,7 +313,7 @@ const CtaScene: React.FC<{ cta: string; title: string; accentColor: string }> = 
         right: 44,
         fontFamily: font,
         color: C.gray[600],
-        fontSize: 15,
+        fontSize: settings.watermarkFontSize,
         letterSpacing: 1,
         textAlign: 'right',
         lineHeight: 1.6,
@@ -317,6 +333,25 @@ export interface TaxiVideoTiming {
   totalFrames: number;
 }
 
+export interface TaxiVideoSettings {
+  width: number;
+  height: number;
+  fps: number;
+  codec: 'h264';
+  transitionFrames: number;
+  audioVolume: number;
+  backgroundImageOpacity: number;
+  bottomGradientOpacity: number;
+  horizontalPadding: number;
+  hookFontSize: number;
+  hookLabelFontSize: number;
+  infoFontSize: number;
+  infoNumberFontSize: number;
+  ctaTitleFontSize: number;
+  ctaFontSize: number;
+  watermarkFontSize: number;
+}
+
 export interface TaxiVideoProps {
   title: string;
   hook: string;
@@ -328,6 +363,7 @@ export interface TaxiVideoProps {
   accentColor?: string;
   hookLabel?: string;
   timing?: TaxiVideoTiming;
+  settings?: TaxiVideoSettings;
 }
 
 // ── メインコンポジション ─────────────────────────────────────
@@ -342,26 +378,51 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   accentColor = C.gold,
   hookLabel,
   timing,
+  settings: inputSettings,
 }) => {
+  const settings: TaxiVideoSettings = {
+    width: 1080,
+    height: 1920,
+    fps: 30,
+    codec: 'h264',
+    transitionFrames: 15,
+    audioVolume: 1,
+    backgroundImageOpacity: 0.2,
+    bottomGradientOpacity: 0.88,
+    horizontalPadding: 64,
+    hookFontSize: 56,
+    hookLabelFontSize: 20,
+    infoFontSize: 32,
+    infoNumberFontSize: 22,
+    ctaTitleFontSize: 26,
+    ctaFontSize: 26,
+    watermarkFontSize: 15,
+    ...inputSettings,
+  };
   const HOOK_FRAMES = timing?.hookFrames ?? 90;
   const INFO_FRAMES = timing?.infoFrames ?? 120;
   const CTA_FRAMES  = timing?.ctaFrames  ?? 90;
-  const T = 15;
+  const T = settings.transitionFrames;
   const total = HOOK_FRAMES + INFO_FRAMES + CTA_FRAMES;
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
-      {audioSrc && <Audio src={staticFile(audioSrc)} />}
+      {audioSrc && <Audio src={staticFile(audioSrc)} volume={settings.audioVolume} />}
 
       {/* 背景（ライブラリ + 画像オーバーレイ） */}
       <Sequence from={0} durationInFrames={total}>
-        <BgLayer bgStyle={bgStyle} bgImageSrc={bgImageSrc} />
+        <BgLayer
+          bgStyle={bgStyle}
+          bgImageSrc={bgImageSrc}
+          imageOpacity={settings.backgroundImageOpacity}
+          gradientOpacity={settings.bottomGradientOpacity}
+        />
       </Sequence>
 
       {/* シーン遷移 */}
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={HOOK_FRAMES}>
-          <HookScene hook={hook} accentColor={accentColor} label={hookLabel} />
+          <HookScene hook={hook} accentColor={accentColor} label={hookLabel} settings={settings} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -370,7 +431,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
         />
 
         <TransitionSeries.Sequence durationInFrames={INFO_FRAMES}>
-          <InfoScene lines={lines} accentColor={accentColor} lineDelays={timing?.lineDelays} />
+          <InfoScene lines={lines} accentColor={accentColor} lineDelays={timing?.lineDelays} settings={settings} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -379,7 +440,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
         />
 
         <TransitionSeries.Sequence durationInFrames={CTA_FRAMES}>
-          <CtaScene cta={cta} title={title} accentColor={accentColor} />
+          <CtaScene cta={cta} title={title} accentColor={accentColor} settings={settings} />
         </TransitionSeries.Sequence>
       </TransitionSeries>
     </AbsoluteFill>

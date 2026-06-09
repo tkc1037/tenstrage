@@ -14,10 +14,10 @@ export async function createRenderContext(inputProps) {
   return { serveUrl, composition };
 }
 
-export async function renderVideo(context, inputProps, outputPath) {
+export async function renderVideo(context, inputProps, outputPath, codec = 'h264') {
   await renderMedia({
     ...context,
-    codec: 'h264',
+    codec,
     outputLocation: outputPath,
     inputProps,
   });

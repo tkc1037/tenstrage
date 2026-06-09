@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { ALL_FORMATS, FilePathSource, Input } from 'mediabunny';
-import { HEIGHT, WIDTH, FPS } from './config.js';
 import { inspectWav } from './wav.js';
 
 export async function inspectVideo(videoPath) {
@@ -28,7 +27,12 @@ export async function inspectVideo(videoPath) {
   }
 }
 
-export async function runVideoQa({ audioPath, videoPath, secrets = [] }) {
+export async function runVideoQa({
+  audioPath,
+  videoPath,
+  expected = { width: 1080, height: 1920, fps: 30, codec: 'h264' },
+  secrets = [],
+}) {
   const wav = inspectWav(audioPath);
   const video = await inspectVideo(videoPath);
   const errors = [];
@@ -37,11 +41,12 @@ export async function runVideoQa({ audioPath, videoPath, secrets = [] }) {
     errors.push(`WAV仕様不一致: ${wav.sampleRate}Hz/${wav.channels}ch/${wav.bitDepth}bit`);
   }
   if (wav.peak < 100) errors.push('音声が無音または極端に小さい可能性があります');
-  if (video.width !== WIDTH || video.height !== HEIGHT) {
+  if (video.width !== expected.width || video.height !== expected.height) {
     errors.push(`動画解像度不一致: ${video.width}x${video.height}`);
   }
-  if (Math.abs(video.fps - FPS) > 0.1) errors.push(`FPS不一致: ${video.fps}`);
-  if (video.videoCodec !== 'avc') errors.push(`動画codec不一致: ${video.videoCodec}`);
+  if (Math.abs(video.fps - expected.fps) > 0.1) errors.push(`FPS不一致: ${video.fps}`);
+  const expectedCodec = expected.codec === 'h264' ? 'avc' : expected.codec;
+  if (video.videoCodec !== expectedCodec) errors.push(`動画codec不一致: ${video.videoCodec}`);
   if (Math.abs(video.durationSeconds - wav.durationSeconds) > 1) {
     errors.push(`音声と動画の尺差が大きい: 音声${wav.durationSeconds.toFixed(2)}秒 / 動画${video.durationSeconds.toFixed(2)}秒`);
   }

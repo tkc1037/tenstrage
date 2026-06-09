@@ -2,7 +2,8 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { parse, stringify } from 'yaml';
 import { OBSIDIAN } from '../paths.js';
-import { getSection, readReview, updateReviewData } from './markdown.js';
+import { validateRemotionSettings } from '../video/settings.js';
+import { getCodeBlock, getSection, readReview, updateReviewData } from './markdown.js';
 
 export const MEMORY_PATH = join(OBSIDIAN, 'rules', 'content-memory.yml');
 const CORRECTIONS_PATH = join(OBSIDIAN, 'rules', 'corrections.md');
@@ -12,6 +13,11 @@ const emptyMemory = () => ({
   pronunciations: {},
   replacements: { global: [], video: [], x: [] },
   avoid: { global: [], video: [], x: [] },
+  videoDefaults: {
+    remotion: {},
+    ttsPrompt: '',
+    backgroundPromptTemplate: '',
+  },
 });
 
 export function loadContentMemory() {
@@ -23,7 +29,35 @@ export function loadContentMemory() {
     pronunciations: loaded.pronunciations ?? {},
     replacements: { ...emptyMemory().replacements, ...(loaded.replacements ?? {}) },
     avoid: { ...emptyMemory().avoid, ...(loaded.avoid ?? {}) },
+    videoDefaults: { ...emptyMemory().videoDefaults, ...(loaded.videoDefaults ?? {}) },
   };
+}
+
+export function rememberVideoDefaults(reviewPath) {
+  const review = readReview(reviewPath);
+  if (review.data.type !== 'video-review') throw new Error('動画レビューだけが対象です');
+
+  const remotion = parse(getCodeBlock(getSection(review.body, 'Remotion設定'))) ?? {};
+  const ttsPrompt = getCodeBlock(getSection(review.body, 'TTSプロンプト'));
+  const backgroundPrompt = getCodeBlock(getSection(review.body, '背景画像プロンプト'));
+  const display = parse(getCodeBlock(getSection(review.body, '表示設定'))) ?? {};
+  const { settings, errors } = validateRemotionSettings(remotion);
+  if (errors.length > 0) throw new Error(`Remotion設定エラー:\n- ${errors.join('\n- ')}`);
+  if (!ttsPrompt || !backgroundPrompt) throw new Error('保存するプロンプトが空です');
+
+  const memory = loadContentMemory();
+  memory.videoDefaults = {
+    remotion: settings,
+    ttsPrompt,
+    backgroundPromptTemplate: display.title
+      ? backgroundPrompt.split(display.title).join('{{title}}')
+      : backgroundPrompt,
+  };
+  saveContentMemory(memory);
+  updateReviewData(reviewPath, {
+    videoDefaultsAppliedAt: new Date().toISOString(),
+  });
+  return memory.videoDefaults;
 }
 
 export function saveContentMemory(memory) {

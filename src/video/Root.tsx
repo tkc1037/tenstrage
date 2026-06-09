@@ -19,6 +19,10 @@ const baseProps = {
 
 const calculateMetadata: CalculateMetadataFunction<TaxiVideoProps> = ({ props }) => ({
   durationInFrames: props.timing?.totalFrames ?? 900,
+  width: props.settings?.width ?? 1080,
+  height: props.settings?.height ?? 1920,
+  fps: props.settings?.fps ?? 30,
+  defaultCodec: props.settings?.codec ?? 'h264',
   props,
 });
 
