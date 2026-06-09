@@ -17,7 +17,9 @@
     "review:x": "node scripts/x-review.js",
     "validate:x": "node scripts/validate-x-review.js",
     "remember:review": "node scripts/remember-review.js",
-    "test:review": "node scripts/test-review-workflow.js"
+    "test:review": "node scripts/test-review-workflow.js",
+    "collect:source": "node scripts/collect-source.js",
+    "health:knowledge": "node scripts/knowledge-health.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
