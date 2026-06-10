@@ -7,8 +7,8 @@
  * アップロード対象:
  *   - CLAUDE.md（プロジェクトルール）
  *   - knowledge.md（現場情報）
- *   - quality/writing-rules.md
- *   - quality/seo-rules.md
+ *   - quality/article-guidelines.md
+ *   - quality/seo-guidelines.md
  *   - quality/sns-rules.md
  *
  * 初回セットアップ時に1回実行。ファイル更新時も再実行可。
@@ -47,8 +47,8 @@ async function main() {
   // ─── アップロード対象を自動収集 ──────────────────────────
   const knowledgeFiles = [
     { path: `${OBSIDIAN}/CLAUDE.md`,                        title: 'CLAUDE.md - プロジェクトルール' },
-    { path: `${OBSIDIAN}/quality/writing-rules.md`,         title: 'writing-rules.md - 記事品質ルール' },
-    { path: `${OBSIDIAN}/quality/seo-rules.md`,             title: 'seo-rules.md - SEOルール' },
+    { path: `${OBSIDIAN}/quality/article-guidelines.md`,    title: 'article-guidelines.md - 記事品質ルール' },
+    { path: `${OBSIDIAN}/quality/seo-guidelines.md`,        title: 'seo-guidelines.md - SEOルール' },
     { path: `${OBSIDIAN}/quality/sns-rules.md`,             title: 'sns-rules.md - SNSルール' },
   ];
 

@@ -20,8 +20,8 @@ const BATCH_LOG = join(__dirname, 'batch-log.json');
 // ─── コンテキスト読み込み ────────────────────────────────
 function loadContext() {
   const knowledge  = readFileSync(`${OBSIDIAN}/knowledge/industry.md`, 'utf8');
-  const seoRules   = readFileSync(`${OBSIDIAN}/quality/seo-rules.md`, 'utf8');
-  const writingRules = readFileSync(`${OBSIDIAN}/quality/writing-rules.md`, 'utf8');
+  const seoRules   = readFileSync(`${OBSIDIAN}/quality/seo-guidelines.md`, 'utf8');
+  const writingRules = readFileSync(`${OBSIDIAN}/quality/article-guidelines.md`, 'utf8');
   const snsRules   = readFileSync(`${OBSIDIAN}/quality/sns-rules.md`, 'utf8');
   const trends     = readFileSync(`${OBSIDIAN}/feedback/trends.md`, 'utf8');
   const today      = new Date().toISOString().slice(0, 10);

@@ -41,12 +41,12 @@ const response = await client.messages.create({
       content: [
         {
           type: "text",
-          text: writingRulesContent, // quality/writing-rules.md
+          text: writingRulesContent, // quality/article-guidelines.md
           cache_control: { type: "ephemeral" },
         },
         {
           type: "text",
-          text: seoRulesContent, // quality/seo-rules.md
+          text: seoRulesContent, // quality/seo-guidelines.md
           cache_control: { type: "ephemeral" },
         },
         {
@@ -71,9 +71,9 @@ const response = await client.messages.create({
 | ファイル | 効果 | キャッシュタイプ |
 |---------|------|-----------------|
 | CLAUDE.md | 毎回読み込みの削減 | system（常駐） |
-| quality/writing-rules.md | 記事生成時の重複削減 | ephemeral |
-| quality/seo-rules.md | SEO設定時の重複削減 | ephemeral |
-| quality/sns-copywriting-rules.md | SNS生成時の重複削減 | ephemeral |
+| quality/article-guidelines.md | 記事生成時の重複削減 | ephemeral |
+| quality/seo-guidelines.md | SEO設定時の重複削減 | ephemeral |
+| quality/sns-rules.md | SNS生成時の重複削減 | ephemeral |
 | knowledge.md | 毎回読み込みの削減 | ephemeral（月1更新） |
 | feedback/trends.md | トレンド検索時の削減 | ephemeral |
 
@@ -94,8 +94,8 @@ const response = await client.messages.create({
 
 キャッシュなし：
 - CLAUDE.md：500トークン × 3回 = 1,500トークン
-- writing-rules.md：2,000トークン × 3回 = 6,000トークン
-- seo-rules.md：2,000トークン × 3回 = 6,000トークン
+- article-guidelines.md：2,000トークン × 3回 = 6,000トークン
+- seo-guidelines.md：2,000トークン × 3回 = 6,000トークン
 - 合計入力削減対象：13,500トークン
 
 キャッシュあり（ephemeral）：
