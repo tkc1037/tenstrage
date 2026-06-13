@@ -1,4 +1,4 @@
-# 2026年6月 タクシードライバー業界トレンド分析（更新日：6月12日）
+# 2026年6月 タクシードライバー業界トレンド分析（更新日：6月13日）
 
 ## 今週のXトレンド
 
@@ -109,6 +109,28 @@
 - [カラフルキャリアタイムズ - タクシー求人の支度金](https://colorful-career.jp/media/contents/taxi-recruitment-preparation-fee/)
 - [タクノート - 入社祝い金のからくりとは](https://www.drivers-work.com/column/knowledge/congratulatory-money/)
 - [タクQ - 入社祝い金のからくり](https://www.taxi-qjin.com/contents/detail/52)
+
+**参考ソース（2026年6月13日追加分）**:
+- [ピーチャンタクシー - 2026年6月最新タクシー運転手の平均年収・給料](https://p-chan.jp/taxi/column/salary)
+- [カラフルキャリアタイムズ - 2026最新タクシードライバーの年収](https://colorful-career.jp/media/contents/taxi-driver-annual-income/)
+- [タクシー転職ネット - 2026年4月最新タクシーで稼げる地域ランキング](https://taxi-tenshoku.net/taxi-income-region-ranking-2026/)
+- [日本交通横浜 - タクシー運転手の年収と給料事情](https://recruit.nikko-yokohama.com/category-12/taxi_salary/)
+- [タクシージョブ全国版 - 年収・給料シミュレーション2026](https://taxi-job.net/advanced-income-simulator/)
+- [GOジョブ - タクシードライバー入社祝い金解説](https://gojob.go.goinc.jp/useful/taxi-tensyoku/25zZSbzPOUvs0YbsBmDnhN)
+- [転職道.com - 東京都の入社祝い金支給タクシードライバー求人](https://www.tenshokudou.com/tokyo/search?sc%5B8%5D=%E5%85%A5%E7%A4%BE%E7%A5%9D%E3%81%84%E9%87%91%E6%94%AF%E7%B5%A6)
+- [カラフルキャリアタイムズ - タクシー求人の支度金・入社祝い金](https://colorful-career.jp/media/contents/taxi-recruitment-preparation-fee/)
+- [ドライバーズワーク - 入社祝い金ありのタクシードライバー求人](https://www.drivers-work.com/search/feature/f05/)
+- [タクQ - タクシー求人の入社祝い金のからくり](https://www.taxi-qjin.com/contents/detail/52)
+- [タクシー転職ネット - 2026年最新版東京タクシー入社祝い金比較](https://taxi-tenshoku.net/tokyo-taxi-company-signing-bonus-ranking/)
+- [タクシージョブ全国版 - 全国タクシー値上げまとめ2025～2026](https://taxi-tenshoku.net/national-taxi-fare-increases-summary-2025-2026/)
+- [GOジョブ（ポーターズ株式会社PR）- タクシー業界の人材不足への挑戦](https://prtimes.jp/main/html/rd/p/000000138.000033277.html)
+- [求人ボックス - GO株式会社の採用情報](https://xn--pckua2a7gp15o89zb.com/cmp/7366-0622)
+- [Indeed - 東京都のタクシーアプリGO専用ドライバー求人](https://jp.indeed.com/q-%E3%82%BF%E3%82%AF%E3%82%B7%E3%83%BC%E3%82%A2%E3%83%97%E3%83%AAgo%E5%B0%82%E7%94%A8%E3%83%89%E3%83%A9%E3%82%A4%E3%83%90%E3%83%BC-l-%E6%9D%B1%E4%BA%AC%E9%83%BD-%E6%B1%82%E4%BA%BA.html)
+- [GOジョブ - ドライバー専門の仕事探し](https://gojob.go.goinc.jp/)
+- [Wantedly - GO株式会社の募集・採用・募集条件](https://sg.wantedly.com/companies/GOinc/projects)
+- [ピーチャンタクシー - 2026年4月最新タクシードライバーに転職する時期はいつ](https://p-chan.jp/taxi/column/timing)
+- [doda - タクシードライバーの転職・求人・中途採用情報](https://doda.jp/DodaFront/View/JobSearchList/j_k__/%E3%82%BF%E3%82%AF%E3%82%B7%E3%83%BC%E3%83%89%E3%83%A9%E3%82%A4%E3%83%90%E3%83%BC/)
+- [GOジョブ - 転職前に知りたい！タクシー運転手は稼げる？](https://gojob.go.goinc.jp/useful/taxi-tensyoku/1Z3N37qGHqZaVX7hLkDgHB)
 
 **既存参考ソース**: 
 - [ドライバーズワーク - タクシードライバー求人](https://www.drivers-work.com/)
