@@ -70,4 +70,30 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ❌ publish.js: Command failed: node scripts/publish.js
 
 ✅ pipeline.js 完了（170.5秒）
-^C
+^C🚀 pipeline.js 開始（公開モード）
+
+📋 今日のコンテンツ確認（2026-06-10）:
+  記事: 0本
+  SNSドラフト: ❌ なし
+
+⚠️  公開するコンテンツがありません。
+  記事生成: Claude Code で /article-agent を実行
+  SNS生成:  Claude Code で /sns-agent を実行
+🚀 pipeline.js 開始（公開モード）
+
+📋 今日のコンテンツ確認（2026-06-11）:
+  記事: 0本
+  SNSドラフト: ❌ なし
+
+⚠️  公開するコンテンツがありません。
+  記事生成: Claude Code で /article-agent を実行
+  SNS生成:  Claude Code で /sns-agent を実行
+🚀 pipeline.js 開始（公開モード）
+
+📋 今日のコンテンツ確認（2026-06-12）:
+  記事: 0本
+  SNSドラフト: ❌ なし
+
+⚠️  公開するコンテンツがありません。
+  記事生成: Claude Code で /article-agent を実行
+  SNS生成:  Claude Code で /sns-agent を実行
