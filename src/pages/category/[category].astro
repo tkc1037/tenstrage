@@ -23,7 +23,7 @@ export async function getStaticPaths() {
 }
 
 const { category, articles } = Astro.props as { category: string; articles: any[] };
-const config = categoryConfig[category] || { label: category, description: '' };
+const config = categoryConfig[category] || { label: category, emoji: '', description: '' };
 ---
 
 <BaseLayout
@@ -32,7 +32,7 @@ const config = categoryConfig[category] || { label: category, description: '' };
 >
   <section class="category-page">
     <header class="category-header">
-      <h1>{config.label}</h1>
+      <h1>{config.emoji}{config.label}</h1>
       {config.description && <p class="category-desc">{config.description}</p>}
     </header>
 
