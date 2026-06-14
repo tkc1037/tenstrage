@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+import { categoryConfig } from '../../lib/categories';
+
+export async function getStaticPaths() {
+  const { categoryConfig } = await import('../../lib/categories');
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  const categories = [...new Set(articles.map((a) => a.data.category).filter(Boolean))];
+
+  const allCategories = new Set([...categories, ...Object.keys(categoryConfig)]);
+
+  return [...allCategories].map((category) => ({
+    params: { category },
+    props: {
+      category,
+      articles: articles
+        .filter((a) => a.data.category === category)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { category, articles } = Astro.props as { category: string; articles: any[] };
+const config = categoryConfig[category] || { label: category, description: '' };
+---
+
+<BaseLayout
+  title={config.label}
+  description={config.description}
+>
+  <section class="category-page">
+    <header class="category-header">
+      <h1>{config.label}</h1>
+      {config.description && <p class="category-desc">{config.description}</p>}
+    </header>
+
+    {articles.length === 0 ? (
+      <p class="empty-state">このカテゴリの記事を準備中です。</p>
+    ) : (
+      <div class="article-grid">
+        {articles.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            description={article.data.description}
+            href={`/articles/${article.id}/`}
+            pubDate={article.data.pubDate}
+            updatedDate={article.data.updatedDate}
+            category={article.data.category}
+            heroImage={article.data.heroImage}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .category-page {
+    padding: 2rem 0 var(--space-section-gap);
+  }
+
+  .category-header {
+    margin-bottom: 2rem;
+  }
+
+  .category-header h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    margin-bottom: 0.75rem;
+  }
+
+  .category-desc {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    color: var(--color-text-muted);
+    max-width: var(--content-max-width);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 3rem 0;
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-card-gap);
+  }
+
+  @media (min-width: 48rem) {
+    .article-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

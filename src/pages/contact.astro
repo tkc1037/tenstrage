@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="お問い合わせ"
+  description="TAKUZO TAXIへのお問い合わせ方法。記事の誤り、ご質問、取材のお問い合わせはこちらから。"
+>
+  <div class="static-page">
+    <h1>お問い合わせ</h1>
+
+    <p>
+      記事の内容に関するご質問、誤りのご指摘、取材・掲載のご依頼などは、
+      以下の方法でお問い合わせください。
+    </p>
+
+    <section>
+      <h2>X（旧Twitter）</h2>
+      <p>
+        DM（ダイレクトメッセージ）でお気軽にご連絡ください。
+      </p>
+      <p>
+        <a href="https://x.com/" class="contact-link" rel="noopener noreferrer" target="_blank">
+          @TakuzoTaxi（X）
+        </a>
+      </p>
+    </section>
+
+    <section>
+      <h2>お問い合わせの際のお願い</h2>
+      <ul>
+        <li>記事の誤りのご指摘には、該当記事のURLと該当箇所を添えていただけると助かります</li>
+        <li>個別の転職相談や会社の推薦は行っておりません</li>
+        <li>返信にはお時間をいただく場合があります</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 2rem 0 var(--space-section-gap);
+  }
+
+  .static-page h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    margin-bottom: 2rem;
+  }
+
+  .contact-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-ink);
+    color: var(--color-warm-paper);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--text-button);
+    min-height: var(--tap-min);
+    transition: opacity var(--duration-fast) var(--easing-default);
+  }
+
+  .contact-link:hover {
+    opacity: 0.85;
+    color: var(--color-warm-paper);
+  }
+</style>

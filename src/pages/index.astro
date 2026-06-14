@@ -1,42 +1,305 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
 import { getCollection } from 'astro:content';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
 articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const categories = [
+  { slug: 'beginner', label: '初めての方へ', emoji: '🔰', desc: 'タクシー転職の基礎知識' },
+  { slug: 'pre-career', label: '転職前に必見', emoji: '⚠️', desc: '会社選び・免許・研修' },
+  { slug: 'income', label: '収入を知る', emoji: '💰', desc: '歩合率・給与・年収' },
+  { slug: 'real-field', label: '現場のリアル情報', emoji: '', desc: '営業・アプリ・乗り場' },
+  { slug: 'vehicle', label: '車両・道具', emoji: '', desc: 'JPN TAXI・装備・持ち物' },
+  { slug: 'note', label: 'Takuzoの乗務ノート', emoji: '', desc: '日々の気づき・改善' },
+];
+
+const intents = [
+  { text: '転職するか迷っている', href: '/category/beginner/' },
+  { text: '会社選びで失敗したくない', href: '/category/pre-career/' },
+  { text: '収入と勤務時間を知りたい', href: '/category/income/' },
+  { text: '現場で売上を伸ばしたい', href: '/category/real-field/' },
+  { text: 'JPN TAXIや乗り場を調べたい', href: '/category/vehicle/' },
+];
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>東京タクシードライバー転職ガイド | Tenstrage</title>
-    <meta name="description" content="東京のタクシードライバーへの転職情報を徹底解説。年収・歩合・入社祝い金・大手グループの違いまで現場情報をお届け。" />
-  </head>
-  <body>
-    <header>
-      <h1>東京タクシードライバー転職ガイド</h1>
-      <p>現場情報に基づく転職・収入・待遇の最新情報</p>
-    </header>
-    <main>
-      {articles.length === 0 ? (
-        <p>記事準備中...</p>
-      ) : (
-        <ul>
-          {articles.map((article) => (
-            <li>
-              <a href={`/articles/${article.id}/`}>
-                <h2>{article.data.title}</h2>
-                <p>{article.data.description}</p>
-                <time datetime={article.data.pubDate.toISOString()}>
-                  {article.data.pubDate.toLocaleDateString('ja-JP')}
-                </time>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title=""
+  description="東京のタクシードライバーへの転職情報を徹底解説。年収・歩合・入社祝い金・大手グループの違いまで現場情報をお届け。"
+>
+  <!-- Hero -->
+  <section class="home-hero">
+    <h1>東京タクシー転職ノート</h1>
+    <p class="hero-lead">
+      東京でタクシー転職を考える人が、収入・勤務・会社選びを<br class="sp-only" />
+      誇張なしで判断できる場所。
+    </p>
+  </section>
+
+  <!-- Intent navigation -->
+  <section class="home-intents">
+    <h2 class="section-heading">何を知りたいですか？</h2>
+    <ul class="intent-list">
+      {intents.map(({ text, href }) => (
+        <li>
+          <a href={href} class="intent-link">{text}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Categories -->
+  <section class="home-categories">
+    <h2 class="section-heading">カテゴリ</h2>
+    <div class="category-grid">
+      {categories.map(({ slug, label, emoji, desc }) => (
+        <a href={`/category/${slug}/`} class="category-chip">
+          {emoji && <span class="chip-emoji" aria-hidden="true">{emoji}</span>}
+          <span class="chip-label">{label}</span>
+          <span class="chip-desc">{desc}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Latest articles -->
+  <section class="home-articles">
+    <h2 class="section-heading">最新記事</h2>
+    {articles.length === 0 ? (
+      <p class="empty-state">記事準備中...</p>
+    ) : (
+      <div class="article-grid">
+        {articles.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            description={article.data.description}
+            href={`/articles/${article.id}/`}
+            pubDate={article.data.pubDate}
+            updatedDate={article.data.updatedDate}
+            category={article.data.category}
+            heroImage={article.data.heroImage}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+
+  <!-- About Takuzo -->
+  <section class="home-about">
+    <h2 class="section-heading">運営者について</h2>
+    <div class="about-card">
+      <p class="about-name">Takuzo</p>
+      <p class="about-desc">
+        IT企業の営業職から東京のタクシードライバーに転職。
+        1年目の年収814万円。隔日勤務で日本交通グループに在籍中。
+        このブログでは、自分の実体験と公開データをもとに、
+        タクシー転職に必要な情報を誇張なくまとめています。
+      </p>
+      <a href="/about/" class="about-link">プロフィールを見る</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* --- Hero --- */
+  .home-hero {
+    padding: var(--space-section-gap) 0 2rem;
+    text-align: center;
+  }
+
+  .home-hero h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-lead {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+    max-width: 32em;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .sp-only {
+    display: inline;
+  }
+
+  @media (min-width: 48rem) {
+    .sp-only {
+      display: none;
+    }
+  }
+
+  /* --- Section headings --- */
+  .section-heading {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    margin-top: var(--space-section-gap);
+    margin-bottom: var(--space-heading-body);
+  }
+
+  /* --- Intent navigation --- */
+  .intent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .intent-list li {
+    margin-bottom: 0;
+  }
+
+  .intent-link {
+    display: block;
+    padding: 0.875rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-ink);
+    font-weight: 500;
+    min-height: var(--tap-min);
+    transition: border-color var(--duration-fast) var(--easing-default),
+                box-shadow var(--duration-fast) var(--easing-default);
+  }
+
+  .intent-link:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 48rem) {
+    .intent-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .intent-link {
+      padding: 0.75rem 1.25rem;
+    }
+  }
+
+  /* --- Categories --- */
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .category-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-ink);
+    background: var(--color-surface);
+    min-height: var(--tap-min);
+    transition: border-color var(--duration-fast) var(--easing-default),
+                box-shadow var(--duration-fast) var(--easing-default);
+  }
+
+  .category-chip:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-ink);
+  }
+
+  .chip-emoji {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    width: 1.5rem;
+    text-align: center;
+  }
+
+  .chip-label {
+    font-weight: 600;
+    font-size: var(--text-body);
+    white-space: nowrap;
+  }
+
+  .chip-desc {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 48rem) {
+    .category-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .category-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* --- Articles --- */
+  .home-articles {
+    padding-bottom: 1rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 3rem 0;
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-card-gap);
+  }
+
+  @media (min-width: 48rem) {
+    .article-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* --- About --- */
+  .home-about {
+    padding-bottom: var(--space-section-gap);
+  }
+
+  .about-card {
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    max-width: var(--content-max-width);
+  }
+
+  .about-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-card-title);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-desc {
+    font-size: var(--text-card-summary);
+    line-height: var(--leading-card-summary);
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .about-link {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-link);
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+/**
+ * BaseLayout — html lang="ja", font stack, global CSS, Header + Footer
+ * Blueprint §8: OS標準ゴシック優先、英数字にGeist/Inter
+ */
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  noindex = false,
+  ogImage,
+  jsonLd,
+} = Astro.props;
+
+const siteTitle = 'TAKUZO TAXI｜東京タクシー転職ノート';
+const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+const canonical = canonicalUrl || Astro.url.href;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- OGP -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={siteTitle} />
+    <meta property="og:locale" content="ja_JP" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+  </head>
+  <body>
+    <Header currentPath={Astro.url.pathname} />
+
+    <main class="site-main">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  .site-main {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 var(--space-page-x);
+    min-height: 60vh;
+  }
+</style>

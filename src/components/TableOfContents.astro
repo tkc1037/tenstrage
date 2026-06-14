@@ -1,0 +1,133 @@
+---
+/**
+ * TableOfContents — 折りたたみ目次
+ * Blueprint §6/§8.1: スマホでは折りたたみ目次
+ *
+ * Extracts H2 headings from rendered HTML via a slot-based approach.
+ * Headings are passed as props extracted by the parent page.
+ */
+interface TocItem {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: TocItem[];
+}
+
+const { headings } = Astro.props;
+
+// Only show H2 and H3
+const filtered = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{filtered.length > 0 && (
+  <details class="toc" open>
+    <summary class="toc-summary">
+      <span class="toc-title">目次</span>
+    </summary>
+    <nav class="toc-nav" aria-label="目次">
+      <ol class="toc-list">
+        {filtered.map((heading) => (
+          <li class:list={['toc-item', { 'toc-h3': heading.depth === 3 }]}>
+            <a href={`#${heading.slug}`} class="toc-link">{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </details>
+)}
+
+<style>
+  .toc {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0;
+    margin: 1.5rem 0 2rem;
+    background: var(--color-surface);
+  }
+
+  .toc-summary {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.875rem 1.25rem;
+    font-weight: 600;
+    font-size: var(--text-body);
+    list-style: none;
+    user-select: none;
+    min-height: var(--tap-min);
+  }
+
+  .toc-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-summary::before {
+    content: '▶';
+    display: inline-block;
+    font-size: 0.625rem;
+    margin-right: 0.5rem;
+    transition: transform var(--duration-fast) var(--easing-default);
+    color: var(--color-text-muted);
+  }
+
+  .toc[open] > .toc-summary::before {
+    transform: rotate(90deg);
+  }
+
+  .toc-nav {
+    padding: 0 1.25rem 1rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: toc;
+  }
+
+  .toc-item {
+    margin-bottom: 0;
+  }
+
+  .toc-link {
+    display: block;
+    padding: 0.375rem 0;
+    font-size: var(--text-card-summary);
+    line-height: 1.5;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(212, 207, 197, 0.5);
+    transition: color var(--duration-fast) var(--easing-default);
+  }
+
+  .toc-link:hover {
+    color: var(--color-link);
+  }
+
+  .toc-item:last-child .toc-link {
+    border-bottom: none;
+  }
+
+  .toc-h3 {
+    padding-left: 1.25rem;
+  }
+
+  .toc-h3 .toc-link {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+  }
+
+  /* Desktop: always open */
+  @media (min-width: 48rem) {
+    .toc-summary {
+      pointer-events: none;
+    }
+
+    .toc-summary::before {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,126 @@
+/* ============================================
+   TAKUZO TAXI Design Tokens
+   Blueprint: reports/blog-redesign-blueprint-20260612.md
+   ============================================ */
+
+:root {
+  /* --- Colors --- */
+  --color-ink: #101418;
+  --color-warm-paper: #F7F4ED;
+  --color-taxi-amber: #F4B000;
+  --color-signal-blue: #2367A8;
+  --color-muted-gray: #687078;
+
+  --color-success: #2D7D46;
+  --color-warning: #C47F17;
+  --color-error: #C53030;
+
+  /* Semantic aliases */
+  --color-bg: var(--color-warm-paper);
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-muted-gray);
+  --color-accent: var(--color-taxi-amber);
+  --color-link: var(--color-signal-blue);
+  --color-link-hover: #1B4F82;
+  --color-border: #D4CFC5;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FDFCF9;
+
+  /* --- Typography --- */
+  --font-body: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
+    "Yu Gothic", "Meiryo", system-ui, sans-serif;
+  --font-heading: "Geist", "Inter", var(--font-body);
+  --font-mono: "Geist Mono", "SF Mono", "Consolas", monospace;
+
+  /* Body */
+  --text-body: 1.0625rem;         /* 17px */
+  --leading-body: 1.8;
+  --tracking-body: 0.02em;
+
+  /* Lead / intro */
+  --text-lead: 1.125rem;          /* 18px */
+  --leading-lead: 1.8;
+
+  /* Headings — mobile-first */
+  --text-h1: clamp(1.625rem, 7vw, 2rem);  /* 26-32px */
+  --leading-h1: 1.4;
+  --tracking-h1: 0;
+
+  --text-h2: clamp(1.375rem, 5vw, 1.5rem); /* 22-24px */
+  --leading-h2: 1.5;
+
+  --text-h3: clamp(1.1875rem, 4.5vw, 1.25rem); /* 19-20px */
+  --leading-h3: 1.55;
+
+  /* Small text */
+  --text-card-title: 1.125rem;    /* 18px */
+  --leading-card-title: 1.55;
+
+  --text-card-summary: 0.9375rem; /* 15px */
+  --leading-card-summary: 1.7;
+
+  --text-caption: 0.8125rem;      /* 13px */
+  --leading-caption: 1.5;
+
+  --text-button: 1rem;            /* 16px — prevents iOS zoom */
+  --leading-button: 1.4;
+
+  /* --- Spacing --- */
+  --space-page-x: 1.125rem;      /* 18px */
+  --space-page-x-min: 1rem;      /* 16px */
+  --space-section-gap: 3rem;     /* 48px, up to 64px */
+  --space-heading-body: 1.125rem; /* 18px */
+  --space-paragraph: 1.625rem;   /* 26px */
+  --space-card-gap: 2rem;        /* 32px */
+
+  /* --- Layout --- */
+  --content-max-width: 40em;     /* ~640px for article body */
+  --header-height: 3.75rem;      /* 60px */
+
+  /* --- Breakpoints (for reference, use in @media) --- */
+  /* Mobile: 320-767px (default) */
+  /* Tablet/Desktop: 768px+ (48rem) */
+  /* Wide Desktop: 1152px+ (72rem) */
+
+  /* --- Interaction --- */
+  --tap-min: 2.75rem;            /* 44px target */
+  --tap-gap: 0.5rem;             /* 8px between targets */
+  --focus-ring: 2px solid var(--color-signal-blue);
+  --focus-offset: 2px;
+
+  /* --- Motion --- */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --easing-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* --- Borders --- */
+  --radius-sm: 0.25rem;          /* 4px */
+  --radius-md: 0.5rem;           /* 8px */
+  --radius-lg: 0.75rem;          /* 12px */
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px rgba(16, 20, 24, 0.06);
+  --shadow-md: 0 2px 8px rgba(16, 20, 24, 0.08);
+  --shadow-lg: 0 4px 16px rgba(16, 20, 24, 0.10);
+
+  /* --- Marker colors (information separation) --- */
+  --marker-experience-bg: #FEF7E0;
+  --marker-experience-border: var(--color-taxi-amber);
+  --marker-verified-bg: #E8F0F8;
+  --marker-verified-border: var(--color-signal-blue);
+  --marker-varies-bg: #F0EDE8;
+  --marker-varies-border: var(--color-muted-gray);
+  --marker-opinion-bg: var(--color-surface-raised);
+  --marker-opinion-border: var(--color-border);
+}
+
+/* --- Desktop overrides --- */
+@media (min-width: 48rem) {
+  :root {
+    --space-page-x: 2rem;
+    --space-section-gap: 4rem;
+    --space-card-gap: 2.25rem;
+    --header-height: 4rem;
+  }
+}

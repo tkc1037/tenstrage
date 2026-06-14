@@ -1,0 +1,320 @@
+---
+/**
+ * Header — mobile: logo + search + hamburger → full-screen drawer
+ * Blueprint §8.1: ヘッダー高56〜64px, ロゴ・検索・メニューのみ表示
+ */
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+
+const navItems = [
+  { label: '初めての方へ', emoji: '🔰', href: '/category/beginner/' },
+  { label: '転職前に必見', emoji: '⚠️', href: '/category/pre-career/' },
+  { label: '収入を知る', emoji: '💰', href: '/category/income/' },
+  { label: '現場のリアル情報', emoji: '', href: '/category/real-field/' },
+  { label: '車両・道具', emoji: '', href: '/category/vehicle/' },
+  { label: 'Takuzoの乗務ノート', emoji: '', href: '/category/note/' },
+];
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="header-logo" aria-label="TAKUZO TAXI トップページ">
+      <span class="logo-text">TAKUZO TAXI</span>
+    </a>
+
+    <!-- Desktop: inline nav between logo and actions -->
+    <div id="nav-drawer" class="nav-drawer" aria-hidden="true">
+      <nav class="drawer-nav" aria-label="メインナビゲーション">
+        <ul class="drawer-list">
+          {navItems.map(({ label, emoji, href }) => (
+            <li>
+              <a
+                href={href}
+                class:list={['drawer-link', { 'is-current': currentPath.startsWith(href) }]}
+                aria-current={currentPath.startsWith(href) ? 'page' : undefined}
+              >
+                {emoji && <span class="drawer-emoji" aria-hidden="true">{emoji}</span>}
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="header-btn header-search-btn"
+        aria-label="検索を開く"
+        data-search-toggle
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="header-btn header-menu-btn"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="nav-drawer"
+        data-menu-toggle
+      >
+        <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+        <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* --- Header bar --- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+    padding: 0 var(--space-page-x);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  /* --- Logo --- */
+  .header-logo {
+    text-decoration: none;
+    color: var(--color-ink);
+    flex-shrink: 0;
+  }
+
+  .header-logo:hover {
+    color: var(--color-ink);
+  }
+
+  .logo-text {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* --- Action buttons --- */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--tap-gap);
+  }
+
+  .header-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    border: none;
+    background: none;
+    color: var(--color-ink);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-fast) var(--easing-default);
+  }
+
+  .header-btn:hover {
+    background: rgba(16, 20, 24, 0.06);
+  }
+
+  .header-btn:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- Full-screen drawer (mobile) --- */
+  .nav-drawer {
+    position: fixed;
+    inset: var(--header-height) 0 0 0;
+    background: var(--color-bg);
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem var(--space-page-x);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform var(--duration-slow) var(--easing-default),
+                opacity var(--duration-slow) var(--easing-default),
+                visibility 0s var(--duration-slow);
+  }
+
+  .nav-drawer[aria-hidden="false"] {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    transition: transform var(--duration-slow) var(--easing-default),
+                opacity var(--duration-slow) var(--easing-default),
+                visibility 0s;
+  }
+
+  .drawer-nav {
+    flex: 1;
+  }
+
+  .drawer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .drawer-list li {
+    margin-bottom: 0;
+  }
+
+  .drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    transition: color var(--duration-fast) var(--easing-default);
+    min-height: var(--tap-min);
+  }
+
+  .drawer-link:hover {
+    color: var(--color-accent);
+  }
+
+  .drawer-link.is-current {
+    color: var(--color-accent);
+  }
+
+  .drawer-emoji {
+    font-size: 1.25rem;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* --- Desktop: inline nav --- */
+  @media (min-width: 48rem) {
+    .header-menu-btn {
+      display: none;
+    }
+
+    .nav-drawer {
+      position: static;
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+      overflow: visible;
+      background: none;
+      inset: auto;
+    }
+
+    .nav-drawer[aria-hidden="true"] {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+
+    .header-inner {
+      gap: 1rem;
+    }
+
+    .drawer-nav {
+      flex: none;
+    }
+
+    .drawer-list {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .drawer-link {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-bottom: none;
+      border-radius: var(--radius-sm);
+      min-height: auto;
+      white-space: nowrap;
+    }
+
+    .drawer-link:hover {
+      background: rgba(16, 20, 24, 0.06);
+      color: var(--color-ink);
+    }
+
+    .drawer-link.is-current {
+      background: rgba(244, 176, 0, 0.12);
+      color: var(--color-ink);
+    }
+
+    .drawer-emoji {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const menuBtn = document.querySelector('[data-menu-toggle]') as HTMLButtonElement;
+  const drawer = document.getElementById('nav-drawer');
+  const iconMenu = menuBtn?.querySelector('.icon-menu') as SVGElement;
+  const iconClose = menuBtn?.querySelector('.icon-close') as SVGElement;
+
+  function toggleMenu() {
+    if (!menuBtn || !drawer) return;
+    const isOpen = drawer.getAttribute('aria-hidden') === 'false';
+
+    drawer.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+    menuBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    menuBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+
+    if (iconMenu && iconClose) {
+      iconMenu.style.display = isOpen ? '' : 'none';
+      iconClose.style.display = isOpen ? 'none' : '';
+    }
+
+    // Prevent body scroll when drawer is open
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+
+  menuBtn?.addEventListener('click', toggleMenu);
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer?.getAttribute('aria-hidden') === 'false') {
+      toggleMenu();
+      menuBtn?.focus();
+    }
+  });
+</script>

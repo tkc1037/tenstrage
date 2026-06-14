@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
     "@remotion/bundler": "4.0.469",
     "@remotion/fonts": "4.0.469",
     "@remotion/renderer": "4.0.469",

@@ -1,4 +1,7 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -10,29 +13,148 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
-const { Content } = await render(article);
+import { categoryLabels } from '../../lib/categories';
+
+const { Content, headings } = await render(article);
+
+const category = article.data.category;
+const breadcrumbItems = [
+  ...(category ? [{ label: categoryLabels[category] || category, href: `/category/${category}/` }] : []),
+  { label: article.data.title },
+];
+
+const articleUrl = new URL(`/articles/${article.id}/`, Astro.site || 'https://takuzo-taxi.pages.dev');
+
+const blogPostingLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: article.data.title,
+  description: article.data.description,
+  datePublished: article.data.pubDate.toISOString(),
+  ...(article.data.updatedDate && { dateModified: article.data.updatedDate.toISOString() }),
+  author: {
+    '@type': 'Person',
+    name: article.data.author || 'Takuzo',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'TAKUZO TAXI',
+  },
+  url: articleUrl.href,
+  ...(article.data.heroImage && { image: article.data.heroImage }),
+};
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{article.data.title} | Tenstrage</title>
-    <meta name="description" content={article.data.description} />
-  </head>
-  <body>
-    <header>
-      <a href="/">← トップに戻る</a>
-    </header>
-    <main>
-      <article>
-        <h1>{article.data.title}</h1>
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  canonicalUrl={article.data.canonical}
+  noindex={article.data.noindex}
+  ogImage={article.data.heroImage}
+  jsonLd={blogPostingLd}
+>
+  <article class="article-page">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <header class="article-header">
+      {category && (
+        <span class="article-category">{categoryLabels[category] || category}</span>
+      )}
+      <h1>{article.data.title}</h1>
+      <div class="article-meta">
         <time datetime={article.data.pubDate.toISOString()}>
           {article.data.pubDate.toLocaleDateString('ja-JP')}
         </time>
-        <Content />
-      </article>
-    </main>
-  </body>
-</html>
+        {article.data.updatedDate && (
+          <span class="meta-updated">
+            （更新: <time datetime={article.data.updatedDate.toISOString()}>
+              {article.data.updatedDate.toLocaleDateString('ja-JP')}
+            </time>）
+          </span>
+        )}
+        <span class="meta-author">/ {article.data.author}</span>
+      </div>
+    </header>
+
+    <TableOfContents headings={headings} />
+
+    <div class="article-body">
+      <Content />
+    </div>
+
+    {article.data.sources.length > 0 && (
+      <footer class="article-sources">
+        <h2>出典・参考資料</h2>
+        <ol>
+          {article.data.sources.map((source: string) => (
+            <li>{source}</li>
+          ))}
+        </ol>
+      </footer>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .article-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 2rem 0 var(--space-section-gap);
+  }
+
+  .article-header {
+    margin-bottom: 2rem;
+  }
+
+  .article-category {
+    display: inline-block;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .article-header h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    letter-spacing: var(--tracking-h1);
+    margin-bottom: 0.75rem;
+  }
+
+  .article-meta {
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+    color: var(--color-text-muted);
+  }
+
+  .meta-updated {
+    color: var(--color-text-muted);
+  }
+
+  .meta-author {
+    color: var(--color-text-muted);
+  }
+
+  .article-body {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-body);
+  }
+
+  .article-sources {
+    margin-top: var(--space-section-gap);
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .article-sources h2 {
+    font-size: var(--text-h3);
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .article-sources ol {
+    font-size: var(--text-card-summary);
+    line-height: 1.7;
+  }
+</style>

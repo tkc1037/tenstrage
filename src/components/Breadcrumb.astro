@@ -1,0 +1,86 @@
+---
+/**
+ * Breadcrumb — パンくずリスト
+ * Blueprint §6: パンくず（横スクロールまたは短縮表示）
+ */
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="パンくずリスト">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="/">トップ</a>
+    </li>
+    {items.map((item, i) => (
+      <li class="breadcrumb-item">
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        {item.href && i < items.length - 1 ? (
+          <a href={item.href}>{item.label}</a>
+        ) : (
+          <span aria-current="page">{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    scrollbar-width: none;
+  }
+
+  .breadcrumb::-webkit-scrollbar {
+    display: none;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+    gap: 0.25rem;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-item a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb-item a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .breadcrumb-item span[aria-current] {
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb-sep {
+    color: var(--color-border);
+    user-select: none;
+  }
+</style>

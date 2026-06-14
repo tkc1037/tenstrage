@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="プライバシーポリシー"
+  description="TAKUZO TAXIのプライバシーポリシー。個人情報の取り扱い、アクセス解析、広告について説明します。"
+>
+  <div class="static-page">
+    <h1>プライバシーポリシー</h1>
+
+    <p>
+      TAKUZO TAXI（以下「当サイト」）は、利用者のプライバシーを尊重し、
+      個人情報の保護に努めます。
+    </p>
+
+    <section>
+      <h2>個人情報の収集</h2>
+      <p>
+        当サイトでは、お問い合わせフォームからご連絡いただく際に、
+        メールアドレスなどの個人情報をご提供いただく場合があります。
+        これらの情報は、お問い合わせへの回答にのみ使用し、
+        ご本人の同意なく第三者に提供することはありません。
+      </p>
+    </section>
+
+    <section>
+      <h2>アクセス解析</h2>
+      <p>
+        当サイトでは、サイトの利用状況を把握するために
+        Cloudflare Web Analytics を使用する場合があります。
+        Cloudflare Web Analytics はCookieを使用せず、
+        個人を特定する情報を収集しません。
+      </p>
+    </section>
+
+    <section>
+      <h2>広告について</h2>
+      <p>
+        当サイトでは、第三者配信の広告サービスやアフィリエイトプログラムを
+        利用する場合があります。これらのサービスは、利用者の興味に応じた
+        広告を表示するためにCookieを使用することがあります。
+      </p>
+      <p>
+        広告配信事業者の詳細やCookieの無効化については、
+        各事業者のプライバシーポリシーをご確認ください。
+      </p>
+    </section>
+
+    <section>
+      <h2>免責事項</h2>
+      <p>
+        当サイトに掲載された情報は、可能な限り正確であるよう努めていますが、
+        正確性や安全性を保証するものではありません。
+        当サイトの情報をもとに行動された結果について、
+        当サイトは一切の責任を負いかねます。
+      </p>
+      <p>
+        タクシー業界の制度・条件は会社・地域・時期によって異なります。
+        転職や契約に関する判断は、必ず最新の公式情報をご自身でご確認ください。
+      </p>
+    </section>
+
+    <section>
+      <h2>著作権</h2>
+      <p>
+        当サイトに掲載されている文章・画像などのコンテンツは、
+        著作権法により保護されています。
+        無断転載・複製はお断りします。
+        引用される場合は、出典として当サイト名とURLを明記してください。
+      </p>
+    </section>
+
+    <section>
+      <h2>ポリシーの変更</h2>
+      <p>
+        本ポリシーの内容は、必要に応じて変更することがあります。
+        変更後のポリシーは、当ページに掲載した時点で効力を生じます。
+      </p>
+      <p class="note">最終更新日: 2026年6月14日</p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 2rem 0 var(--space-section-gap);
+  }
+
+  .static-page h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    margin-bottom: 2rem;
+  }
+
+  .note {
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+  }
+</style>

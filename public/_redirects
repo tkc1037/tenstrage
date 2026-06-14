@@ -1,0 +1,9 @@
+# Cloudflare Pages Redirects
+# 旧記事URL → 新記事URL（検索意図が一致するもののみ）
+
+# 会社選び系 → ゴールデン記事
+/articles/20260530-taxi-company-selection/ /articles/taxi-company-selection-guide/ 301
+/articles/20260604-company-selection-guide/ /articles/taxi-company-selection-guide/ 301
+
+# 旧サイトのトップ
+/articles/ / 301

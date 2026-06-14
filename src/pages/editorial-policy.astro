@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="編集方針"
+  description="TAKUZO TAXIの編集方針。情報の正確性、出典の明示、広告と編集の分離について説明します。"
+>
+  <div class="static-page">
+    <h1>編集方針</h1>
+
+    <p class="lead">
+      TAKUZO TAXIは、東京でタクシー転職を考える人が、
+      収入・勤務・会社選びを誇張なしで判断できる情報を提供します。
+    </p>
+
+    <section>
+      <h2>情報の分類</h2>
+
+      <p>
+        すべての記事で、情報の出どころを4つのマーカーで明示しています。
+      </p>
+
+      <div class="marker-guide">
+        <div class="marker-item">
+          <span class="marker-badge marker-badge-experience">体験談</span>
+          <p>Takuzo本人が実際に体験した情報です。</p>
+        </div>
+        <div class="marker-item">
+          <span class="marker-badge marker-badge-verified">検証済み</span>
+          <p>公式サイト、法令、統計データなど一次資料で確認した情報です。</p>
+        </div>
+        <div class="marker-item">
+          <span class="marker-badge marker-badge-varies">条件次第</span>
+          <p>所属会社・地域・勤務形態によって条件が変わる情報です。</p>
+        </div>
+        <div class="marker-item">
+          <span class="marker-badge marker-badge-opinion">個人の意見</span>
+          <p>Takuzo個人の分析・推測・意見です。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>数字と出典</h2>
+      <ul>
+        <li>金額を含む情報には、対象期間・地域・出典をセットで記載します</li>
+        <li>Takuzoの年収・営収データは、住民税通知書および給与明細に基づいています</li>
+        <li>統計データは原則として官公庁・業界団体の公開資料を使用し、出典を明記します</li>
+        <li>「稼げる」と断言するのではなく、条件・幅・例外を説明します</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>広告・アフィリエイトについて</h2>
+      <ul>
+        <li>記事内にアフィリエイトリンクを含む場合があります</li>
+        <li>広告リンクは編集本文と明確に分離し、広告であることを表示します</li>
+        <li>広告の有無が記事の評価や推奨に影響することはありません</li>
+        <li>実際に利用・確認していないサービスは推奨しません</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>避ける表現</h2>
+      <ul>
+        <li>【衝撃】【驚愕】【完全版】のような煽り表現</li>
+        <li>根拠のない「成功率」「最大」「必ず」「確実」</li>
+        <li>実在確認できない体験談や給与明細</li>
+        <li>受けていない「弁護士監修」「専門家監修」</li>
+        <li>検索キーワードの不自然な繰り返し</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>訂正について</h2>
+      <p>
+        記事の内容に誤りがあった場合は、判明次第すみやかに訂正し、
+        訂正箇所と日付を記事内に明記します。
+        誤りのご指摘は<a href="/contact/">お問い合わせページ</a>からお寄せください。
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 2rem 0 var(--space-section-gap);
+  }
+
+  .static-page h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    margin-bottom: 1rem;
+  }
+
+  .lead {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .marker-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .marker-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .marker-item p {
+    margin-bottom: 0;
+  }
+
+  .marker-badge {
+    display: inline-block;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    padding: 0.2em 0.5em;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .marker-badge-experience {
+    background: rgba(244, 176, 0, 0.2);
+    color: #8B6914;
+  }
+
+  .marker-badge-verified {
+    background: rgba(35, 103, 168, 0.15);
+    color: #1B4F82;
+  }
+
+  .marker-badge-varies {
+    background: rgba(104, 112, 120, 0.15);
+    color: var(--color-muted-gray);
+  }
+
+  .marker-badge-opinion {
+    background: rgba(16, 20, 24, 0.06);
+    color: var(--color-muted-gray);
+  }
+</style>

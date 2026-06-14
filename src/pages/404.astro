@@ -1,19 +1,53 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 Astro.response.status = 404;
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="robots" content="noindex" />
-    <title>ページが見つかりません | Tenstrage</title>
-  </head>
-  <body>
-    <main>
-      <h1>ページが見つかりません</h1>
-      <p>指定されたページは存在しないか、公開を終了しています。</p>
-      <a href="/">トップページへ戻る</a>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title="ページが見つかりません"
+  description="指定されたページは存在しないか、公開を終了しています。"
+  noindex={true}
+>
+  <div class="not-found">
+    <h1>ページが見つかりません</h1>
+    <p>指定されたページは存在しないか、公開を終了しています。</p>
+    <a href="/" class="back-link">トップページへ戻る</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: var(--space-section-gap) 0;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+  }
+
+  .not-found h1 {
+    font-size: var(--text-h1);
+    margin-bottom: 1rem;
+  }
+
+  .not-found p {
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-accent);
+    color: var(--color-ink);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--text-button);
+    min-height: var(--tap-min);
+    transition: opacity var(--duration-fast) var(--easing-default);
+  }
+
+  .back-link:hover {
+    opacity: 0.85;
+    color: var(--color-ink);
+  }
+</style>
