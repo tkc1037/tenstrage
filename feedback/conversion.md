@@ -1,12 +1,12 @@
 # Conversion & Revenue Tracking
 
-## Weekly Report: 2026-06-07
+## Weekly Report: 2026-06-14
 
 ### Article Metrics
-- **Weekly Article Count**: 24 articles (June 1-7)
-- **Total Articles**: 43 articles
-- **Git Commits**: 32 commits this week
-- **Publishing Frequency**: ~3-5 articles per day
+- **Weekly Article Count**: 15 articles (June 8-14)
+- **Total Articles**: 63 articles
+- **Git Commits**: 44 commits this week
+- **Publishing Frequency**: ~2 articles per day
 
 ### Revenue Tracking
 - Site URL: https://tenstrage.pages.dev
@@ -14,22 +14,24 @@
 - Affiliate Programs: Active links for GO Crew, taxi company partnerships
 
 ### Notes & Observations
-- Strong content velocity: 24 new articles in one week indicates active content production
+- Consistent content velocity: 15 new articles published this week maintains momentum
+- Notable pattern shift: Lower volume (15 vs 24) but more strategic focus
 - Recent focus areas:
-  - Entry bonuses and return risk analysis
-  - Fare raise income simulations
-  - Job market salary negotiation strategies
-  - GO Crew sideline work opportunities
-  - Seasonal demand patterns (rainy/summer season)
-  - Area earnings rankings
-- Articles are data-driven and SEO-optimized
-- Mix of Japanese titles targets primary Tokyo taxi driver audience
-- Multiple article variations on similar topics (area rankings, GO Crew, seasonal strategies) suggest A/B testing or content depth approach
-- Published with Japanese and English title strategies
+  - Tax deduction guides for taxi drivers
+  - Career path guides for 40s-50s workers
+  - Entry bonus risk/refund analysis (strategic guidance)
+  - Company selection and comparison frameworks
+  - GO Crew flexible work arrangements
+  - 800 yen income strategies
+  - Signing bonus risk assessment
+- Articles increasingly emphasize risk mitigation and informed decision-making
+- Strong emphasis on mid-career professionals and financial literacy
+- Git activity shows continued site rebuilds and link replacements (SEO optimization)
+- Mix of guide-style and data-driven content for different audience segments
 
 ### Next Week Priorities
-1. Continue seasonal content (summer taxi demand strategies)
-2. Expand GO Crew/rideshare operator content
-3. Develop more income simulation tools
-4. Geographic area profiling (Shibuya, Shinjuku, Haneda rankings)
-5. Monitor conversion performance on affiliate links
+1. Expand mid-career taxi driver content (40s-50s demographic)
+2. Develop comprehensive comparison articles (company vs company, shift types)
+3. Create financial literacy content (tax, bonuses, negotiation)
+4. Strengthen GO Crew positioning as alternative work arrangement
+5. Monitor conversion performance on risk-mitigation content
