@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://takuzo-taxi.pages.dev/sitemap-index.xml
+Sitemap: https://tenstrage.pages.dev/sitemap-index.xml
