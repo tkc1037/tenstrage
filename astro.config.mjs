@@ -5,7 +5,7 @@ import rehypeContentMarkers from './src/plugins/rehype-content-markers.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://tenstrage.pages.dev',
+  site: 'https://takuzo-taxi.com',
   integrations: [sitemap()],
   markdown: {
     rehypePlugins: [rehypeContentMarkers],

@@ -23,7 +23,7 @@ article_title = "未経験からタクシー運転手で年収800万円は本当
 tweet_text = f"""{article_title}
 
 詳しくはプロフのリンクから↓
-https://tenstrage.pages.dev
+https://takuzo-taxi.com
 
 #タクシー転職 #東京タクシー"""
 
