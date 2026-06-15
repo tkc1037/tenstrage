@@ -27,9 +27,29 @@ const intents = [
 <BaseLayout
   title=""
   description="東京のタクシードライバーへの転職情報を徹底解説。年収・歩合・入社祝い金・大手グループの違いまで現場情報をお届け。"
+  ogImage={new URL('/images/takuzo-main-hero-1200.webp', Astro.url).href}
 >
   <!-- Hero -->
   <section class="home-hero">
+    <picture class="hero-media">
+      <source
+        srcset="
+          /images/takuzo-main-hero-768.webp 768w,
+          /images/takuzo-main-hero-1200.webp 1200w,
+          /images/takuzo-main-hero-1600.webp 1600w
+        "
+        sizes="(max-width: 767px) 100vw, 1152px"
+        type="image/webp"
+      />
+      <img
+        src="/images/takuzo-main-hero-1200.webp"
+        width="1200"
+        height="675"
+        alt="営業職の年収454万円からタクシードライバー転職1年目で814万円になったTakuzoとTAKUZO TAXI"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
     <h1>東京タクシー転職ノート</h1>
     <p class="hero-lead">
       都内の現役タクシードライバーが、<br />
@@ -105,8 +125,25 @@ const intents = [
 <style>
   /* --- Hero --- */
   .home-hero {
-    padding: var(--space-section-gap) 0 2rem;
+    padding: 0 0 2rem;
     text-align: center;
+  }
+
+  .hero-media {
+    display: block;
+    width: calc(100% + (var(--space-page-x) * 2));
+    max-width: none;
+    margin-inline: calc(var(--space-page-x) * -1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    background: #07101d;
+    border-bottom: 1px solid rgba(16, 20, 24, 0.16);
+  }
+
+  .hero-media img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
   }
 
   .home-hero h1 {
@@ -130,6 +167,19 @@ const intents = [
   }
 
   @media (min-width: 48rem) {
+    .home-hero {
+      padding-top: 2rem;
+    }
+
+    .hero-media {
+      width: 100%;
+      margin-inline: 0;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(16, 20, 24, 0.14);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
     .sp-only {
       display: none;
     }
