@@ -52,7 +52,7 @@ const tiktokText = getCodeBlock(getSection(review.body, 'TikTok本文'));
 if (!youtubeTitle || !youtubeText || !tiktokText) throw new Error('SNS公開文が空です');
 
 const env = loadEnv();
-const videoUrl = `https://tenstrage.pages.dev/video/${basename(videoPath)}`;
+const videoUrl = `https://takuzo-taxi.com/video/${basename(videoPath)}`;
 
 function deployApprovedVideo() {
   const relativeVideoPath = `public/video/${basename(videoPath)}`;

@@ -7,7 +7,7 @@ const jsonLd = {
   name: 'Takuzo',
   jobTitle: 'タクシードライバー',
   description: '東京都内で隔日勤務のタクシードライバー。IT営業職から転職し、1年目の年収814万円。',
-  url: 'https://tenstrage.pages.dev/about/',
+  url: 'https://takuzo-taxi.com/about/',
 };
 ---
 
@@ -21,6 +21,10 @@ const jsonLd = {
 
     <section class="profile-section">
       <h2>Takuzo（タクゾー）について</h2>
+
+      <div class="profile-image-wrap">
+        <img src="/images/takuzo-profile.png" alt="Takuzo — JPN TAXIの前に立つイラスト" width="400" height="400" class="profile-image" />
+      </div>
 
       <p>
         30代後半。東京都内で隔日勤務のタクシードライバーをしています。乗務2年目。
@@ -121,7 +125,7 @@ const jsonLd = {
       <table>
         <tbody>
           <tr><td>サイト名</td><td>TAKUZO TAXI｜東京タクシー転職ノート</td></tr>
-          <tr><td>URL</td><td>https://tenstrage.pages.dev</td></tr>
+          <tr><td>URL</td><td>https://takuzo-taxi.com</td></tr>
           <tr><td>運営者</td><td>Takuzo</td></tr>
           <tr><td>お問い合わせ</td><td><a href="/contact/">お問い合わせページ</a></td></tr>
         </tbody>
@@ -141,6 +145,19 @@ const jsonLd = {
     font-size: var(--text-h1);
     line-height: var(--leading-h1);
     margin-bottom: 2rem;
+  }
+
+  .profile-image-wrap {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .profile-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
   }
 
   .note {

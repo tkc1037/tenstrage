@@ -318,7 +318,7 @@ const CtaScene: React.FC<{
         textAlign: 'right',
         lineHeight: 1.6,
       }}>
-        tenstrage.pages.dev{'\n'}#タクシー転職
+        takuzo-taxi.com{'\n'}#タクシー転職
       </div>
     </AbsoluteFill>
   );
