@@ -3,9 +3,9 @@ title: "東京でタクシー転職した人の収入推移1年間 — 転職1�
 slug: taxi-income-1year-transition
 description: "タクシー転職後の1年間、月収はどう変わるのか。1ヶ月目〜12ヶ月目の実際の数字と転換点、GOアプリ活用・歩合率選びまで正直に解説します。"
 pubDate: 2026-05-27
-author: Tenstrage
-category: タクシー転職
-tags: [タクシー, 転職, 年収, 東京, 月収, 1年目, 転職後]
+author: "Takuzo"
+category: "income"
+tags: ["タクシー転職", "年収", "東京", "月収", "1年目"]
 draft: true
 ---
 
