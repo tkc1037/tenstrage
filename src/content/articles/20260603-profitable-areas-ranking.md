@@ -256,7 +256,7 @@ draft: true
 
 詳しい企業別エリア特性や営業戦略については、以下のリンクで最新の求人・企業情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：エリア選択で年収が決まる
 
@@ -266,6 +266,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業情報、給与比較、エリア別営業戦略については、以下のリンクで最新情報を確認してください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 エリア選択を正しく行い、年収600万円以上のタクシードライバーを目指しましょう。

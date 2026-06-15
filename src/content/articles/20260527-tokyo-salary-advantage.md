@@ -263,6 +263,6 @@ GOアプリなどの配車アプリを活用することで、さらなる営収
 
 詳しい企業情報、給与比較、エリア別営収データについては、以下のリンクで最新情報をご確認ください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 あなたの年収を最大化するタクシー転職を応援します。

@@ -374,7 +374,7 @@ B企業：年収630万円
 と述べています。
 ```
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 戦略3：給与体系の詳細な計算
 
@@ -441,4 +441,4 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 より詳しい企業情報と最新の求人比較は以下をご覧ください：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

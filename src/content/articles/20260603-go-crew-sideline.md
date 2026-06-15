@@ -227,7 +227,7 @@ GO Crewで3～6ヶ月間の実務経験を積んだ人材は、正社員採用�
 
 詳しい求人情報や申し込みについては、以下のリンクで最新情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：複業時代に最適な新しい働き方
 
@@ -237,6 +237,6 @@ GO Crewは、従来のタクシー運転手というイメージを大きく変�
 
 詳しい求人情報、応募方法、給与シミュレーションについては、以下のリンクから確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 あなたのライフスタイルに合った働き方を実現しましょう。

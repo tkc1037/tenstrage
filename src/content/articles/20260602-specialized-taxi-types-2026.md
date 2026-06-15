@@ -342,7 +342,7 @@ draft: true
 
 詳しい企業比較については、以下のリンクで最新情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 複数の特化型タクシーを組み合わせた営業戦略
 
@@ -375,4 +375,4 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい特化型タクシーの企業情報や実績については、以下のリンクでご確認ください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

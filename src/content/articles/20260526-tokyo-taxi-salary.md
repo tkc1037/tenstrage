@@ -208,7 +208,7 @@ draft: true
 
 詳しい企業情報と営業エリアの特徴については、以下のリンクで確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 #### ステップ2：営収管理と目標設定
 
@@ -314,6 +314,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 年収600万円を超えるためには、六本木・銀座・新宿などの特一級エリアでの営業が重要です。詳しい企業情報、営業エリアの選択肢、給与保証の条件については、以下のリンクで最新情報をご確認ください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 東京でのタクシー転職は、生涯年収を大きく向上させるチャンスです。今がその時です。

@@ -561,4 +561,4 @@ draft: true
 
 今が参入のベストタイミングです。最新の企業情報と言語対応サポート体制については、以下をご確認ください：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

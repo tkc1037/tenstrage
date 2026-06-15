@@ -594,4 +594,4 @@ IT・デジタルスキル
 
 最新の企業情報と若年層向けの採用条件については、以下をご確認ください：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

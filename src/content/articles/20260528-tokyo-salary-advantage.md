@@ -210,7 +210,7 @@ draft: true
 
 詳しい企業比較や最新の求人情報については、以下のリンクで確認できます：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 #### キャリアロードマップ：未経験から502万円達成まで
 
@@ -246,6 +246,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業情報や給与比較については、以下のリンクで最新の求人情報を確認してください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 東京でのタクシー転職で、年収502万円以上の実現を目指しましょう。

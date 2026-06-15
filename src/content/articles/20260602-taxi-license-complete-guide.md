@@ -306,7 +306,7 @@ A: はい、法的に年齢制限はありません。ただし、企業によ�
 
 詳しい企業比較や最新の採用条件については、以下のリンクで確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：未経験からのタクシー転職は「二種免許の不安」を解消できる
 
@@ -320,4 +320,4 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 未経験からのタクシー転職を成功させるには、「二種免許取得制度が充実している企業」を選ぶことが重要です。詳しい企業選択のポイントや最新の採用情報については、こちらでご確認ください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

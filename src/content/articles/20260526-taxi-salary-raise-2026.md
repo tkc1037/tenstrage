@@ -120,7 +120,7 @@ GO Inc.のタクシー配車アプリGOを導入している企業での勤務�
 
 詳しい企業比較や給与保証の条件については、以下のリンクで最新の求人情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 #### ステップ2：営業エリア戦略
 
@@ -150,6 +150,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 未経験からでも月給保証と入社祝い金の充実により、安心して転職できる環境が整っています。今がタクシー転職を検討する絶好の機会です。詳しい企業情報や給与比較については、以下のリンクで最新情報を確認してください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 あなたのキャリアチェンジを応援します。

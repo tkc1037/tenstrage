@@ -251,7 +251,7 @@ draft: true
 
 詳しい営業戦略や企業選択については、以下のリンクで最新情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：梅雨～夏の東京タクシーは「稼ぎ時」を活かしきる
 
@@ -261,4 +261,4 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 東京のタクシードライバーキャリアを成功させるには、季節ごとの需要パターンを理解し、機動的にエリアや営業時間を調整することが不可欠です。詳しい営業戦略や企業選択についてはこちらで最新情報をご確認ください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

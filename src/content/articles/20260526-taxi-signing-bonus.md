@@ -95,7 +95,7 @@ draft: true
 
 詳しい企業比較と条件の見積もりは、以下のプラットフォームで最新情報が確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 #### ステップ2：入社時期の最適化
 
@@ -218,6 +218,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 入社祝い金と給与保証の充実した環境であれば、未経験からでも3年で年収600万円を超えることは十分に現実的です。詳しい企業情報と祝い金の最新条件については、以下のリンクで確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 あなたの新しいキャリアをスタートさせるなら、今がチャンスです。

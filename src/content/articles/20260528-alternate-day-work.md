@@ -350,7 +350,7 @@ Eさんのように、営業エリアを最高単価エリアに集中させ、G
 
 詳しい企業比較や最新の求人情報については、以下のリンクで確認できます：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：隔日勤務で年収600万円超は十分に実現可能
 
@@ -377,6 +377,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業情報や給与条件については、以下のリンクで最新の求人情報を確認してください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 隔日勤務でワーク・ライフ・バランスと年収600万円超を両立させる、あなたのタクシー転職を応援します。

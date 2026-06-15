@@ -496,4 +496,4 @@ B社を選択（一見、祝い金が最低だが）
 
 詳しい企業比較と最新の給与条件については、以下のリンクで確認できます：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH

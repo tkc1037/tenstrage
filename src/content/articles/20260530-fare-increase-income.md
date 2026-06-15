@@ -131,7 +131,7 @@ draft: true
 - 利用客の動向が変わる前に、アプリユーザーは改定を受け入れている
 - 実際の営収増加を最初に享受できるのはアプリ利用ドライバー
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 戦略3：クレジットカード決済・キャッシュレス対応
 
@@ -211,7 +211,7 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 より詳しい最新の求人情報と、改定後の企業別条件比較は、以下の専門サイトをご覧ください：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 最後に：成功する転職のチェックリスト
 

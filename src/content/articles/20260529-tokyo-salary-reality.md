@@ -360,7 +360,7 @@ GOアプリ連携：配車リクエストの自動受付
 
 より詳しい年収シミュレーションと求人情報については、以下のサイトで確認できます：
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ## まとめ：東京タクシーで年収502万円から800万円への道筋
 

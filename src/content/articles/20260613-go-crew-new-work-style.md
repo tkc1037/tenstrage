@@ -400,7 +400,7 @@ GO Crewで最高の時給を実現するには、エリア選定が重要です�
 - 1乗客ごとに手数料を獲得
 - 月1回（15日、月末）の給与振込
 
-詳細な登録方法と最新情報はhttps://px.a8.net/svt/ejp?a8mat=TENSTRAGEから確認できます。
+詳細な登録方法と最新情報はhttps://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOHから確認できます。
 
 ---
 

@@ -252,7 +252,7 @@ draft: true
 
 詳しい企業選択や給与保証の条件については、以下のリンクで最新の求人情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 梅雨・夏季特化ドライバーのキャリアモデル
 
@@ -324,7 +324,7 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業選択については、以下のリンクで確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### 梅雨・夏季限定求人と企業選択
 
@@ -358,7 +358,7 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業比較については、以下のリンクで最新の求人情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 ### まとめ：梅雨・夏季は東京タクシーの稼ぎ時
 
@@ -370,6 +370,6 @@ https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 詳しい企業情報や求人については、以下のリンクで最新情報を確認してください。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH
 
 この梅雨・夏季の好機を生かして、東京のタクシードライバーとして高収入を実現しましょう。
