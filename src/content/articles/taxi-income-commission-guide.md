@@ -5,6 +5,7 @@ pubDate: 2026-06-14
 updatedDate: 2026-06-14
 category: "income"
 tags: ["タクシー年収", "歩合率", "タクシー転職", "収入", "東京"]
+heroImage: "/images/hero-income-commission.png"
 author: "Takuzo"
 reviewStatus: "published"
 factChecked: true

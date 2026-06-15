@@ -5,6 +5,7 @@ pubDate: 2026-06-14
 updatedDate: 2026-06-14
 category: "beginner"
 tags: ["タクシー転職", "未経験", "ロードマップ", "二種免許", "研修"]
+heroImage: "/images/hero-career-roadmap.png"
 author: "Takuzo"
 reviewStatus: "published"
 factChecked: true

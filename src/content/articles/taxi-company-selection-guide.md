@@ -5,6 +5,7 @@ pubDate: 2026-06-14
 updatedDate: 2026-06-14
 category: "company-selection"
 tags: ["タクシー転職", "会社選び", "歩合率", "GOアプリ", "東京"]
+heroImage: "/images/hero-company-selection.png"
 author: "Takuzo"
 reviewStatus: "published"
 factChecked: true
