@@ -3,11 +3,12 @@
  *
  * 使い方:
  *   node scripts/check-duplicate.js                  # 既存記事一覧を表示
+ *   node scripts/check-duplicate.js --suggest         # trends.mdから未カバーテーマを抽出
  *   node scripts/check-duplicate.js "提案タイトル"    # 重複チェック
  *
  * 記事生成前に必ず実行する。exit code 1 = 重複あり。
  */
-import { readdirSync, readFileSync } from 'fs';
+import { readdirSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { ROOT } from './paths.js';
 
@@ -95,7 +96,72 @@ for (const file of files) {
   }
 }
 
-const proposedTitle = process.argv[2];
+const arg = process.argv[2];
+
+// --suggest モード: trends.mdから未カバーのテーマだけ抽出
+if (arg === '--suggest') {
+  const trendsPath = join(ROOT, 'feedback/trends.md');
+  if (!existsSync(trendsPath)) {
+    console.error('feedback/trends.md が見つかりません');
+    process.exit(1);
+  }
+  const trendsContent = readFileSync(trendsPath, 'utf8');
+
+  // テーブル行からテーマ列を抽出（| テーマ | 優先度 | ... のパターン）
+  const themeRows = [];
+  for (const line of trendsContent.split('\n')) {
+    const m = line.match(/^\|\s*(.+?)\s*\|\s*(高|中|低)\s*\|/);
+    if (m && !m[1].startsWith('テーマ') && !m[1].startsWith('--')) {
+      themeRows.push({ theme: m[1].trim(), priority: m[2] });
+    }
+  }
+
+  const available = [];
+  const covered = [];
+
+  for (const row of themeRows) {
+    const kw = extractKeywords(row.theme);
+    let isDuplicate = false;
+    let matchedArticle = null;
+
+    for (const a of articles) {
+      const score = overlapScore(kw, a.keywords);
+      if (score >= 0.5 || a.title === row.theme) {
+        isDuplicate = true;
+        matchedArticle = a;
+        break;
+      }
+    }
+
+    if (isDuplicate) {
+      covered.push({ ...row, matchedArticle });
+    } else {
+      available.push(row);
+    }
+  }
+
+  console.log(`\n📊 テーマ候補フィルタ結果（trends.md → ${themeRows.length}件）\n`);
+
+  if (available.length > 0) {
+    console.log(`✅ 執筆可能（${available.length}件）:\n`);
+    for (const t of available) {
+      console.log(`  [${t.priority}] ${t.theme}`);
+    }
+  }
+
+  if (covered.length > 0) {
+    console.log(`\n❌ カバー済み（${covered.length}件 — これらは選ばない）:\n`);
+    for (const t of covered) {
+      console.log(`  [${t.priority}] ${t.theme}`);
+      console.log(`    → 既存: ${t.matchedArticle.file}`);
+    }
+  }
+
+  console.log(`\n結果: ${available.length}件が執筆可能 / ${covered.length}件はカバー済み`);
+  process.exit(0);
+}
+
+const proposedTitle = arg;
 
 if (!proposedTitle) {
   // 引数なし → 既存記事一覧を出力
