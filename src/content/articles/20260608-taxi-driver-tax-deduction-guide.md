@@ -337,4 +337,4 @@ draft: true
 
 詳しい企業選択や給与体系については、以下のリンクで最新情報を確認できます。
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE

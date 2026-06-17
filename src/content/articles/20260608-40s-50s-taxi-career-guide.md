@@ -270,7 +270,7 @@ draft: true
 
 **詳しい企業情報と最新の採用条件については、以下のリンクで確認できます：**
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 ### まとめ：40代・50代こそがタクシー転職に有利な時代
 
@@ -284,4 +284,4 @@ draft: true
 
 「今しかない」という自覚で、自分に合った企業を選び、段階的にステップアップしていくことが、40代・50代のタクシー転職を成功させる秘訣です。詳しい企業比較や最新の入社祝い金情報については、こちらで確認してください。
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE

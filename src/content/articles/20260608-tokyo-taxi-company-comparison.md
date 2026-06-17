@@ -330,7 +330,7 @@ draft: true
 
 詳しい企業比較情報と最新の採用条件については、以下のリンクで確認できます。
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
 
 ### まとめ：企業選びは「年収」だけでは決まらない
 
@@ -342,4 +342,4 @@ draft: true
 
 「どの会社が最高か」ではなく、「あなたのキャリアステージと人生設計に最適な会社はどこか」という視点での選択が成功の秘訣です。詳しい企業情報と応募方法については、こちらで確認してください。
 
-[AFFILIATE_LINK]
+https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
