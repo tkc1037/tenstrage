@@ -21,6 +21,7 @@
     "collect:source": "node scripts/collect-source.js",
     "health:knowledge": "node scripts/knowledge-health.js",
     "check:duplicate": "node scripts/check-duplicate.js",
+    "audit:consistency": "node scripts/check-content-consistency.js",
     "audit:duplicates": "node scripts/check-duplicate.js --audit --public"
   },
   "dependencies": {
