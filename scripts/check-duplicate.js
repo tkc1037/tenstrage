@@ -1,104 +1,173 @@
-/**
- * check-duplicate.js — 記事重複チェッカー
- *
- * 使い方:
- *   node scripts/check-duplicate.js                  # 既存記事一覧を表示
- *   node scripts/check-duplicate.js --suggest         # trends.mdから未カバーテーマを抽出
- *   node scripts/check-duplicate.js "提案タイトル"    # 重複チェック
- *
- * 記事生成前に必ず実行する。exit code 1 = 重複あり。
- */
-import { readdirSync, readFileSync, existsSync } from 'fs';
+﻿import { readdirSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { ROOT } from './paths.js';
+import { ROOT, OBSIDIAN } from './paths.js';
 
 const ARTICLES_DIR = join(ROOT, 'src/content/articles');
+const TOPIC_REGISTRY = join(OBSIDIAN, 'rules/topic-registry.md');
 
-/** frontmatterからtitleを抽出 */
 function extractTitle(content) {
   const m = content.match(/^title:\s*"?(.+?)"?\s*$/m);
   return m ? m[1] : null;
 }
 
-/** frontmatterからtagsを抽出 */
 function extractTags(content) {
   const m = content.match(/^tags:\s*\[(.+)\]\s*$/m);
   if (!m) return [];
   return m[1].split(',').map(t => t.trim().replace(/^"|"$/g, ''));
 }
 
-/**
- * パターン → canonical キーワードへの正規化マップ
- * 同じトピックの表記ゆれを1つの正規形に統一する
- */
+function extractDescription(content) {
+  const m = content.match(/^description:\s*"?(.+?)"?\s*$/m);
+  return m ? m[1] : '';
+}
+
+function stripFrontmatter(content) {
+  return content.replace(/^---[\s\S]*?---\s*/, '');
+}
+
+function normalizeText(text) {
+  return text
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[\s\p{P}\p{S}]+/gu, '')
+    .trim();
+}
+
+function shingles(text, size = 5, limit = 1800) {
+  const normalized = normalizeText(text).slice(0, limit);
+  const set = new Set();
+  for (let i = 0; i <= normalized.length - size; i++) set.add(normalized.slice(i, i + size));
+  return set;
+}
+
+function jaccard(a, b) {
+  if (a.size === 0 || b.size === 0) return 0;
+  let intersection = 0;
+  for (const x of a) if (b.has(x)) intersection++;
+  return intersection / (a.size + b.size - intersection);
+}
+
 const TOPIC_PATTERNS = [
-  { pattern: /入社祝い金|祝い金|signing.?bonus/gi, canonical: '祝い金' },
+  { pattern: /求人サイト|転職サイト|求人媒体|求人検索|転職支援|求人サービス/gi, canonical: '求人サイト比較' },
+  { pattern: /入社祝い金|祝い金|支度金|返金条件|signing.?bonus/gi, canonical: '祝い金' },
   { pattern: /GO\s*Crew|GOクルー|ゴークルー|go\s*crew/gi, canonical: 'gocrew' },
-  { pattern: /GOアプリ|配車アプリ|GO\s*アプリ/gi, canonical: '配車アプリ' },
+  { pattern: /GOアプリ|配車アプリ|S\.RIDE|Uber|DiDi|連続配車|サンキューチケット/gi, canonical: '配車アプリ' },
   { pattern: /年収800万|800万円|年収800/gi, canonical: '年収800万' },
   { pattern: /年収502万|502万円|平均年収/gi, canonical: '年収502万' },
   { pattern: /年収600万|600万円/gi, canonical: '年収600万' },
-  { pattern: /年収1000万|1000万円/gi, canonical: '年収1000万' },
+  { pattern: /収入シミュレーション|年収シミュレーション|月収シミュレーション/gi, canonical: '収入シミュレーション' },
+  { pattern: /手取り|手取り計算|控除/gi, canonical: '手取り' },
   { pattern: /歩合|歩合率|歩合制|歩合給/gi, canonical: '歩合' },
   { pattern: /隔日勤務|夜日勤|昼日勤|勤務形態|シフト/gi, canonical: '勤務形態' },
-  { pattern: /二種免許|免許取得|免許/gi, canonical: '二種免許' },
-  { pattern: /会社の選び方|会社選び|企業選び|会社比較/gi, canonical: '会社選び' },
-  { pattern: /エリアランキング|稼げるエリア|エリア別/gi, canonical: 'エリア' },
-  { pattern: /梅雨|夏の稼ぎ|季節需要/gi, canonical: '季節需要' },
-  { pattern: /運賃改定|運賃値上げ|運賃/gi, canonical: '運賃改定' },
+  { pattern: /二種免許|2種免許|免許取得|資格取得/gi, canonical: '二種免許' },
+  { pattern: /会社の選び方|会社選び|企業選び|会社比較|企業比較|生き残る企業/gi, canonical: '会社選び' },
+  { pattern: /求人倍率|求人市場|売り手市場|人手不足/gi, canonical: '求人市場' },
+  { pattern: /エリアランキング|稼げるエリア|羽田|新宿|渋谷/gi, canonical: 'エリア' },
+  { pattern: /運賃改定|運賃値上げ|初乗り|改定率/gi, canonical: '運賃改定' },
   { pattern: /40代|50代|中高年|ミドル/gi, canonical: '中高年転職' },
   { pattern: /転職ロードマップ|転職ステップ|転職の流れ/gi, canonical: 'ロードマップ' },
-  { pattern: /手取り|手取り計算|手取り額/gi, canonical: '手取り' },
-  { pattern: /JPN\s*TAXI|ジャパンタクシー/gi, canonical: 'jpntaxi' },
+  { pattern: /JPN\s*TAXI|ジャパンタクシー|車両選び/gi, canonical: 'jpntaxi' },
   { pattern: /確定申告|節税|税金|税金対策/gi, canonical: '税金' },
   { pattern: /外国人|インバウンド|観光客/gi, canonical: 'インバウンド' },
   { pattern: /事故負担|負担金|事故リスク/gi, canonical: '事故負担' },
-  { pattern: /廃業|倒産|生き残り/gi, canonical: '廃業' },
-  { pattern: /副業|副収入|ダブルワーク/gi, canonical: '副業' },
+  { pattern: /廃業|倒産|休廃業/gi, canonical: '廃業' },
+  { pattern: /副業|副収入|ダブルワーク|Wワーク/gi, canonical: '副業' },
 ];
 
-/** タイトルからcanonicalキーワードを抽出 */
-function extractKeywords(title) {
+function extractKeywords(text) {
   const keywords = new Set();
   for (const { pattern, canonical } of TOPIC_PATTERNS) {
-    if (pattern.test(title)) {
-      keywords.add(canonical);
-    }
-    pattern.lastIndex = 0; // reset global regex
+    if (pattern.test(text)) keywords.add(canonical);
+    pattern.lastIndex = 0;
   }
   return keywords;
 }
 
-/** 2つのセットの重複率を計算 */
 function overlapScore(a, b) {
   if (a.size === 0 || b.size === 0) return 0;
   let overlap = 0;
-  for (const k of a) {
-    for (const k2 of b) {
-      if (k === k2 || k.includes(k2) || k2.includes(k)) overlap++;
-    }
-  }
+  for (const k of a) for (const k2 of b) if (k === k2 || k.includes(k2) || k2.includes(k)) overlap++;
   return overlap / Math.min(a.size, b.size);
 }
 
-// --- Main ---
-
-const files = readdirSync(ARTICLES_DIR).filter(f => f.endsWith('.md'));
-const articles = [];
-
-for (const file of files) {
-  const content = readFileSync(join(ARTICLES_DIR, file), 'utf8');
-  const title = extractTitle(content);
-  const tags = extractTags(content);
-  const isDraft = /^draft:\s*true/m.test(content);
-  if (title) {
-    articles.push({ file, title, tags, isDraft, keywords: extractKeywords(title) });
-  }
+function registryText() {
+  return existsSync(TOPIC_REGISTRY) ? readFileSync(TOPIC_REGISTRY, 'utf8') : '';
 }
 
-const arg = process.argv[2];
+function loadArticles() {
+  const files = readdirSync(ARTICLES_DIR).filter(f => f.endsWith('.md'));
+  return files.map(file => {
+    const content = readFileSync(join(ARTICLES_DIR, file), 'utf8');
+    const title = extractTitle(content);
+    const tags = extractTags(content);
+    const isDraft = /^draft:\s*true/m.test(content);
+    const body = stripFrontmatter(content).replace(/## 関連記事[\s\S]*$/m, '');
+    const description = extractDescription(content);
+    const topicText = `${title ?? ''} ${description} ${tags.join(' ')}`;
+    return {
+      file,
+      slug: file.replace(/\.md$/, ''),
+      title,
+      tags,
+      isDraft,
+      keywords: extractKeywords(topicText),
+      titleShingles: shingles(title ?? '', 3, 300),
+      bodyShingles: shingles(body, 5, 2600),
+    };
+  }).filter(a => a.title);
+}
 
-// --suggest モード: trends.mdから未カバーのテーマだけ抽出
+function findDuplicatesForProposal(proposedTitle, articles) {
+  const proposedKeywords = extractKeywords(proposedTitle);
+  const proposedTitleShingles = shingles(proposedTitle, 3, 300);
+  const duplicates = [];
+  for (const a of articles) {
+    const keywordScore = overlapScore(proposedKeywords, a.keywords);
+    const titleScore = jaccard(proposedTitleShingles, a.titleShingles);
+    if (a.title === proposedTitle) duplicates.push({ ...a, reason: '完全一致', score: 1 });
+    else if (keywordScore >= 0.5) duplicates.push({ ...a, reason: `キーワード重複 ${Math.round(keywordScore * 100)}%`, score: keywordScore });
+    else if (titleScore >= 0.35) duplicates.push({ ...a, reason: `タイトル類似 ${Math.round(titleScore * 100)}%`, score: titleScore });
+  }
+  return duplicates.sort((a, b) => b.score - a.score);
+}
+
+function audit(articles, publicOnly = false) {
+  const target = publicOnly ? articles.filter(a => !a.isDraft) : articles;
+  const pairs = [];
+  for (let i = 0; i < target.length; i++) {
+    for (let j = i + 1; j < target.length; j++) {
+      const a = target[i], b = target[j];
+      const keywordScore = overlapScore(a.keywords, b.keywords);
+      const titleScore = jaccard(a.titleShingles, b.titleShingles);
+      const bodyScore = jaccard(a.bodyShingles, b.bodyShingles);
+      const score = Math.max(keywordScore, titleScore, bodyScore);
+      const strongKeywordWithSimilarity = keywordScore >= 0.75 && (titleScore >= 0.12 || bodyScore >= 0.12);
+      if (titleScore >= 0.35 || bodyScore >= 0.42 || strongKeywordWithSimilarity) {
+        pairs.push({ a, b, score, keywordScore, titleScore, bodyScore });
+      }
+    }
+  }
+  return pairs.sort((x, y) => y.score - x.score);
+}
+
+const articles = loadArticles();
+const args = process.argv.slice(2);
+const arg = args.find(a => !a.startsWith('--'));
+const publicOnly = args.includes('--public');
+
+if (args.includes('--audit')) {
+  const pairs = audit(articles, publicOnly);
+  console.log(`\n🔎 重複監査: ${publicOnly ? '公開記事のみ' : '全記事'} / ${pairs.length}件\n`);
+  for (const p of pairs) {
+    console.log(`❌ ${p.a.file}  <->  ${p.b.file}`);
+    console.log(`   ${p.a.title}`);
+    console.log(`   ${p.b.title}`);
+    console.log(`   score=${p.score.toFixed(2)} keyword=${p.keywordScore.toFixed(2)} title=${p.titleScore.toFixed(2)} body=${p.bodyScore.toFixed(2)}\n`);
+  }
+  process.exit(pairs.length > 0 ? 1 : 0);
+}
+
 if (arg === '--suggest') {
   const trendsPath = join(ROOT, 'feedback/trends.md');
   if (!existsSync(trendsPath)) {
@@ -106,108 +175,58 @@ if (arg === '--suggest') {
     process.exit(1);
   }
   const trendsContent = readFileSync(trendsPath, 'utf8');
-
-  // テーブル行からテーマ列を抽出（| テーマ | 優先度 | ... のパターン）
   const themeRows = [];
   for (const line of trendsContent.split('\n')) {
     const m = line.match(/^\|\s*(.+?)\s*\|\s*(高|中|低)\s*\|/);
-    if (m && !m[1].startsWith('テーマ') && !m[1].startsWith('--')) {
-      themeRows.push({ theme: m[1].trim(), priority: m[2] });
-    }
+    if (m && !m[1].startsWith('テーマ') && !m[1].startsWith('--')) themeRows.push({ theme: m[1].trim(), priority: m[2] });
   }
-
-  const available = [];
-  const covered = [];
-
+  const available = [], covered = [];
   for (const row of themeRows) {
-    const kw = extractKeywords(row.theme);
-    let isDuplicate = false;
-    let matchedArticle = null;
-
-    for (const a of articles) {
-      const score = overlapScore(kw, a.keywords);
-      if (score >= 0.5 || a.title === row.theme) {
-        isDuplicate = true;
-        matchedArticle = a;
-        break;
-      }
-    }
-
-    if (isDuplicate) {
-      covered.push({ ...row, matchedArticle });
-    } else {
-      available.push(row);
-    }
+    const duplicates = findDuplicatesForProposal(row.theme, articles);
+    if (duplicates.length) covered.push({ ...row, matchedArticle: duplicates[0] });
+    else available.push(row);
   }
-
   console.log(`\n📊 テーマ候補フィルタ結果（trends.md → ${themeRows.length}件）\n`);
-
-  if (available.length > 0) {
+  if (available.length) {
     console.log(`✅ 執筆可能（${available.length}件）:\n`);
-    for (const t of available) {
-      console.log(`  [${t.priority}] ${t.theme}`);
-    }
+    for (const t of available) console.log(`  [${t.priority}] ${t.theme}`);
   }
-
-  if (covered.length > 0) {
+  if (covered.length) {
     console.log(`\n❌ カバー済み（${covered.length}件 — これらは選ばない）:\n`);
     for (const t of covered) {
       console.log(`  [${t.priority}] ${t.theme}`);
       console.log(`    → 既存: ${t.matchedArticle.file}`);
     }
   }
-
-  console.log(`\n結果: ${available.length}件が執筆可能 / ${covered.length}件はカバー済み`);
   process.exit(0);
 }
 
-const proposedTitle = arg;
-
-if (!proposedTitle) {
-  // 引数なし → 既存記事一覧を出力
+if (!arg) {
   console.log(`\n📋 既存記事一覧（${articles.length}本）\n`);
   console.log('Status | Slug | Title');
   console.log('-------|------|------');
   for (const a of articles.sort((x, y) => x.file.localeCompare(y.file))) {
     const status = a.isDraft ? 'DRAFT' : 'PUBLIC';
-    console.log(`${status.padEnd(6)} | ${a.file.replace('.md', '').padEnd(45)} | ${a.title}`);
+    console.log(`${status.padEnd(6)} | ${a.slug.padEnd(45)} | ${a.title}`);
   }
   console.log(`\n合計: ${articles.length}本（公開: ${articles.filter(a => !a.isDraft).length}, draft: ${articles.filter(a => a.isDraft).length}）`);
+  console.log('重複監査: node scripts/check-duplicate.js --audit --public');
   process.exit(0);
 }
 
-// 引数あり → 重複チェック
-console.log(`\n🔍 重複チェック: "${proposedTitle}"\n`);
-
-const proposedKeywords = extractKeywords(proposedTitle);
-const duplicates = [];
-
-for (const a of articles) {
-  const score = overlapScore(proposedKeywords, a.keywords);
-
-  // タイトル完全一致
-  if (a.title === proposedTitle) {
-    duplicates.push({ ...a, reason: '完全一致', score: 1.0 });
-    continue;
-  }
-
-  // キーワード高重複
-  if (score >= 0.5) {
-    duplicates.push({ ...a, reason: `キーワード重複 ${Math.round(score * 100)}%`, score });
-  }
-}
-
-if (duplicates.length > 0) {
+console.log(`\n🔍 重複チェック: "${arg}"\n`);
+const duplicates = findDuplicatesForProposal(arg, articles);
+if (duplicates.length) {
   console.log('❌ 重複の可能性あり:\n');
-  for (const d of duplicates.sort((a, b) => b.score - a.score)) {
+  for (const d of duplicates) {
     console.log(`  [${d.reason}] ${d.file}`);
     console.log(`    既存: ${d.title}`);
-    console.log(`    提案: ${proposedTitle}\n`);
+    console.log(`    提案: ${arg}\n`);
   }
-  console.log('→ 新規記事を生成せず、既存記事の改善を検討してください。');
+  console.log('→ 新規記事を生成せず、既存記事の改善・リライトを検討してください。');
   process.exit(1);
-} else {
-  console.log('✅ 重複なし — 記事を生成できます。');
-  console.log(`  キーワード: [${[...proposedKeywords].join(', ')}]`);
-  process.exit(0);
 }
+console.log('✅ 重複なし — 記事を生成できます。');
+process.exit(0);
+
+

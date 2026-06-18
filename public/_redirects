@@ -7,3 +7,22 @@
 
 # 旧サイトのトップ
 /articles/ / 301
+
+# 重複記事削除 → canonical記事
+/articles/20260528-alternate-day-work/ /articles/taxi-shift-comparison/ 301
+/articles/20260529-tokyo-salary-reality/ /articles/20260613-tokyo-taxi-year-income-502/ 301
+/articles/20260530-800-income-guide/ /articles/20260614-800-income-secret-2026/ 301
+/articles/20260602-taxi-license-complete-guide/ /articles/taxi-type2-license-guide/ 301
+/articles/20260604-600/ /articles/taxi-income-commission-guide/ 301
+/articles/20260604-goup/ /articles/go-app-guide/ 301
+/articles/20260607-fare-raise-income-simulation/ /articles/20260613-tokyo-taxi-year-income-502/ 301
+/articles/20260607-job-surplus-negotiation-strategy/ /articles/20260616-taxi-job-market-1100-guide/ 301
+/articles/20260608-40s-50s-taxi-career-guide/ /articles/taxi-career-change-40s/ 301
+/articles/20260608-night-shift-vs-alternate-day/ /articles/taxi-shift-comparison/ 301
+/articles/20260608-tokyo-taxi-company-comparison/ /articles/taxi-company-selection-guide/ 301
+/articles/20260609-license-guide-2026/ /articles/taxi-type2-license-guide/ 301
+/articles/20260609-salary-simulation-2026/ /articles/20260616-salary-simulation-2026-complete/ 301
+/articles/20260613-go-crew-new-work-style/ /articles/20260617-go-crew-parttime-guide/ 301
+/articles/20260613-signing-bonus-refund-guide/ /articles/20260616-signing-bonus-refund-trap/ 301
+/articles/20260617-taxi-signing-bonus-tax-guide/ /articles/20260616-signing-bonus-refund-trap/ 301
+/articles/20260617-tokyo-taxi-2026-salary-guide/ /articles/20260616-salary-simulation-2026-complete/ 301

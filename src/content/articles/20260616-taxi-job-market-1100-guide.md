@@ -315,8 +315,9 @@ draft: false
 
 ## 関連記事
 
-- [東京タクシー会社徹底比較2026](/articles/20260608-tokyo-taxi-company-comparison/)
+- [東京タクシー会社徹底比較2026](/articles/taxi-company-selection-guide/)
 - [タクシー会社の生き残り企業を見分ける方法](/articles/20260615-taxi-company-survival-guide/)
 - [タクシー転職の年収シミュレーション完全版2026](/articles/20260616-salary-simulation-2026-complete/)
 
 ---
+

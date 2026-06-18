@@ -9,8 +9,9 @@
  *
  * ステップ:
  *   1. 今日の生成済みコンテンツを確認
- *   2. publish.js 実行（記事・生成物のgit pushのみ）
- *   3. log.md に記録
+ *   2. 公開記事の重複監査
+ *   3. publish.js 実行（記事・生成物のgit pushのみ）
+ *   4. log.md に記録
  */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
@@ -66,7 +67,19 @@ async function main() {
   articles.forEach(f => logs.push(`- 記事: ${f}`));
   if (snsDraft) logs.push(`- SNSドラフト: sns-drafts/${dateStr}.md`);
 
-  // Step 2: publish.js（SNSは専用レビュー経由のため対象外）
+  // Step 2: 公開前の重複監査
+  console.log('\n🔎 公開記事の重複監査中...');
+  try {
+    execSync('node scripts/check-duplicate.js --audit --public', { cwd: ROOT, stdio: 'inherit' });
+    logs.push('- duplicate audit: ✅');
+  } catch (e) {
+    console.error('❌ duplicate audit:', e.message);
+    logs.push('- duplicate audit: ❌');
+    console.error('→ 類似・重複記事があるため公開を停止します。既存記事の統合または削除を先に行ってください。');
+    process.exit(1);
+  }
+
+  // Step 3: publish.js（SNSは専用レビュー経由のため対象外）
   console.log('\n📤 publish.js 実行中...');
   try {
     execSync('node scripts/publish.js --articles-only', { cwd: ROOT, stdio: 'inherit' });
