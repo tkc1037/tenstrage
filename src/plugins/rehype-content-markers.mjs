@@ -62,19 +62,7 @@ export default function rehypeContentMarkers() {
             'content-marker',
             `marker-${markerType}`,
           ];
-
-          // Append label as a trailing tag. Do not put labels at the start of
-          // the sentence/block; article rules require marker labels to be
-          // shown at the end or as supporting metadata.
-          blockquote.children.push({
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: ['marker-label'],
-              'aria-label': `情報種別：${MARKER_LABELS[markerType]}`,
-            },
-            children: [{ type: 'text', value: `［${MARKER_LABELS[markerType]}］` }],
-          });
+          blockquote.properties['aria-label'] = `情報種別：${MARKER_LABELS[markerType]}`;
 
           // Mark comment node for removal
           toRemove.push(i);
