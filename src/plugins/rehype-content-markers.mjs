@@ -1,6 +1,7 @@
 /**
- * rehype plugin: transforms <!-- marker: TYPE --> + <blockquote> pairs
- * into styled marker blockquotes with data-marker attribute.
+ * rehype plugin:
+ * - transforms <!-- marker: TYPE --> + <blockquote> pairs into styled marker blocks
+ * - wraps tables so all article tables get the shared responsive table styling
  *
  * Supported types: experience, verified, varies, opinion
  */
@@ -17,6 +18,8 @@ const MARKER_LABELS = {
 /** @type {import('unified').Plugin} */
 export default function rehypeContentMarkers() {
   return (tree) => {
+    wrapTables(tree);
+
     const { children } = tree;
     const toRemove = [];
 
@@ -60,15 +63,17 @@ export default function rehypeContentMarkers() {
             `marker-${markerType}`,
           ];
 
-          // Prepend a label span as first child
-          blockquote.children.unshift({
+          // Append label as a trailing tag. Do not put labels at the start of
+          // the sentence/block; article rules require marker labels to be
+          // shown at the end or as supporting metadata.
+          blockquote.children.push({
             type: 'element',
             tagName: 'span',
             properties: {
               className: ['marker-label'],
-              'aria-label': `${MARKER_LABELS[markerType]}：`,
+              'aria-label': `情報種別：${MARKER_LABELS[markerType]}`,
             },
-            children: [{ type: 'text', value: MARKER_LABELS[markerType] }],
+            children: [{ type: 'text', value: `［${MARKER_LABELS[markerType]}］` }],
           });
 
           // Mark comment node for removal
@@ -82,4 +87,30 @@ export default function rehypeContentMarkers() {
       children.splice(toRemove[idx], 1);
     }
   };
+}
+
+function wrapTables(node) {
+  if (!node || !Array.isArray(node.children)) return;
+
+  for (let i = 0; i < node.children.length; i++) {
+    const child = node.children[i];
+
+    if (child?.tagName === 'table') {
+      node.children[i] = {
+        type: 'element',
+        tagName: 'div',
+        properties: { className: ['table-wrapper'] },
+        children: [child],
+      };
+      continue;
+    }
+
+    // Do not double-wrap tables already inside the shared wrapper.
+    const className = child?.properties?.className || [];
+    if (Array.isArray(className) && className.includes('table-wrapper')) {
+      continue;
+    }
+
+    wrapTables(child);
+  }
 }
