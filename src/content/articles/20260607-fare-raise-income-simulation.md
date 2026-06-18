@@ -440,3 +440,10 @@ Eさんのコメント：
 東京タクシー業界は、このような大きな転機を迎えています。今こそが、東京タクシードライバーへの転職の最高のタイミングなのです。
 
 運賃改定による年収増加を最大限に享受したいなら、https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH から、運賃改定対応企業の求人情報をチェックし、短距離営業エリアでの転職を検討してみてください。
+---
+
+## 関連記事
+
+- [タクシードライバー転職ロードマップ](/articles/taxi-career-roadmap/)
+- [失敗しないタクシー会社の選び方](/articles/taxi-company-selection-guide/)
+- [タクシードライバーの年収と歩合の仕組み](/articles/taxi-income-commission-guide/)

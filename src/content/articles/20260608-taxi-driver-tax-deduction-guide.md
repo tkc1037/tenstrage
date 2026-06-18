@@ -337,4 +337,11 @@ draft: true
 
 詳しい企業選択や給与体系については、以下のリンクで最新情報を確認できます。
 
-https://px.a8.net/svt/ejp?a8mat=TENSTRAGE
+求人条件は時期により変わるため、応募前に各社の公式採用ページと求人票で最新条件を確認してください。
+---
+
+## 関連記事
+
+- [タクシードライバー転職ロードマップ](/articles/taxi-career-roadmap/)
+- [失敗しないタクシー会社の選び方](/articles/taxi-company-selection-guide/)
+- [タクシードライバーの年収と歩合の仕組み](/articles/taxi-income-commission-guide/)
