@@ -303,7 +303,6 @@ draft: false
 
 - [東京都内のタクシー転職サイトおすすめ比較](/articles/20260529-job-platform-comparison/)
 - [タクシー会社の生き残り企業を見分ける方法](/articles/20260615-taxi-company-survival-guide/)
-- [タクシー求人市場最新情報と企業選別術2026](/articles/20260616-taxi-job-market-1100-guide/)
+- [失敗しないタクシー会社の選び方](/articles/taxi-company-selection-guide/)
 
 ---
-
