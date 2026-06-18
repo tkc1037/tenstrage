@@ -18,7 +18,7 @@ draft: false
 
 東京都内でタクシードライバーに転職するなら、求人サイトをいきなり1つに決めるより、まず自分がどちらのタイプかを分けたほうが失敗しにくいです。
 
-<div class="box-important">
+<div class="article-callout article-callout-important">
 <strong>最初の1問</strong><br>
 自分で求人を検索して比較したいですか？<br><br>
 YES：求人検索型サイトから探す<br>
@@ -35,7 +35,7 @@ NO：転職支援型サイトで相談しながら探す
 
 求人票を自分で見比べたい人、入りたい無線グループや会社がある程度決まっている人、まずネット上で気軽に求人を眺めたい人は、求人検索型から入るのが合っています。
 
-<div class="box-tip">
+<div class="article-callout article-callout-tip">
 <strong>検索型のおすすめ順</strong><br>
 1. 転職道.com<br>
 2. ドライバーズワーク<br>
@@ -50,7 +50,7 @@ NO：転職支援型サイトで相談しながら探す
 
 未経験で求人票の読み方が不安な人、40代・50代からの転職で条件を確認したい人、寮・社宅や二種免許費用の返済条件まで相談したい人は、転職支援型から入るほうが安全です。
 
-<div class="box-tip">
+<div class="article-callout article-callout-tip">
 <strong>支援型のおすすめ順</strong><br>
 1. P-CHAN TAXI<br>
 2. ドライバーズワーク<br>
@@ -70,7 +70,7 @@ NO：転職支援型サイトで相談しながら探す
 
 私自身も、東京のタクシー会社を調べるときに転職道の一覧性は使いやすいと感じました。特に「日本交通系がいいのか」「東京無線やチェッカーキャブも見るのか」のように、会社や無線グループを見比べたい人には向いています。［体験談］
 
-<div class="box-important">
+<div class="article-callout article-callout-important">
 <strong>転職道が向いている人</strong><br>
 ・自分で求人票を比較したい<br>
 ・東京23区、武三、無線グループで探したい<br>
@@ -116,7 +116,7 @@ P-CHAN TAXIは、相談しながらタクシー会社を探したい人にすす
 
 P-CHAN TAXIが向いているのは、求人票だけでは判断しづらい人です。未経験、40代・50代、シニア、女性、地方から上京、寮付き求人、二種免許取得支援など、条件が複雑な人ほど相談型の価値があります。
 
-<div class="box-important">
+<div class="article-callout article-callout-important">
 <strong>P-CHAN TAXIが向いている人</strong><br>
 ・未経験で会社選びに不安がある<br>
 ・給与保証や二種免許費用の条件を相談したい<br>
@@ -187,7 +187,7 @@ P-CHAN TAXIかドライバーズワークで相談型を使ってください。
 
 入社祝い金や給与保証は、タクシー転職でよく見かける強い訴求です。ただし、ここを雑に見ると後悔します。
 
-<div class="box-important">
+<div class="article-callout article-callout-important">
 <strong>祝い金・保証の確認リスト</strong><br>
 ・支給元は求人会社か、紹介会社か、媒体か<br>
 ・支給時期は入社時か、乗務開始後か、数か月後か<br>
