@@ -317,7 +317,7 @@ GO、ウーバータクシー両方に対応している企業が最高です。
 
 これらを全て実行すれば、年収800万円は十分達成可能なのです。
 
-→ [タクシー企業を比較して最高条件で入社する](https://tenstrage.example.com/best-company-2026)[AFFILIATE_LINK]
+→ [タクシー企業を比較して最高条件で入社する](https://px.a8.net/svt/ejp?a8mat=TENSTRAGE)
 
 参考情報：
 - 東京平均年収: 502万円（2026年）
