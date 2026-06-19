@@ -4,7 +4,7 @@
  *
  * 実行: node scripts/pipeline.js
  *
- * 記事・SNSの生成は Claude Code / Codex で対話的に行う。
+ * 記事・SNS・動画の生成/編集はCodex主担当で対話的に行う。Claudeは必要時のレビューに限定する。
  * このスクリプトは生成済みコンテンツの確認と公開のみ担当。
  *
  * ステップ:
@@ -59,8 +59,10 @@ async function main() {
 
   if (articles.length === 0 && !snsDraft) {
     console.log('\n⚠️  公開するコンテンツがありません。');
-    console.log('  記事生成: Claude Code で /article-agent を実行');
-    console.log('  SNS生成:  Claude Code で /sns-agent を実行');
+    console.log('  記事生成: Codexで重複確認 → 下書き/編集 → 検証');
+    console.log('  SNS生成:  Codexで reviews/x/ の下書きと承認フラグを管理');
+    console.log('  動画生成: Codexで video-scripts/ → reviews/video/ → 承認後にGemini TTS/Remotion');
+    console.log('  Claude:   勝負コンテンツ・表現リスク・フック改善が必要な時だけレビュー');
     return;
   }
 
@@ -96,3 +98,4 @@ async function main() {
 }
 
 main().catch(e => { console.error('❌', e); process.exit(1); });
+
