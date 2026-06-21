@@ -1,12 +1,12 @@
 # Conversion & Revenue Tracking
 
-## Weekly Report: 2026-06-14
+## Weekly Report: 2026-06-21
 
 ### Article Metrics
-- **Weekly Article Count**: 15 articles (June 8-14)
-- **Total Articles**: 63 articles
-- **Git Commits**: 44 commits this week
-- **Publishing Frequency**: ~2 articles per day
+- **Weekly Article Count**: 19 articles (June 14-21)
+- **Total Articles**: 31 articles
+- **Git Commits**: 50 commits this week
+- **Publishing Frequency**: ~2.7 articles per day
 
 ### Revenue Tracking
 - Site URL: https://tenstrage.pages.dev
@@ -14,24 +14,26 @@
 - Affiliate Programs: Active links for GO Crew, taxi company partnerships
 
 ### Notes & Observations
-- Consistent content velocity: 15 new articles published this week maintains momentum
-- Notable pattern shift: Lower volume (15 vs 24) but more strategic focus
-- Recent focus areas:
-  - Tax deduction guides for taxi drivers
-  - Career path guides for 40s-50s workers
-  - Entry bonus risk/refund analysis (strategic guidance)
-  - Company selection and comparison frameworks
-  - GO Crew flexible work arrangements
-  - 800 yen income strategies
-  - Signing bonus risk assessment
-- Articles increasingly emphasize risk mitigation and informed decision-making
-- Strong emphasis on mid-career professionals and financial literacy
-- Git activity shows continued site rebuilds and link replacements (SEO optimization)
-- Mix of guide-style and data-driven content for different audience segments
+- High velocity week: 50 commits and 19 new articles published
+- Major focus on SEO optimization with 3-article batches published multiple times (June 16, 17, 21)
+- Featured content themes:
+  - Tokyo taxi salary 2026 fare increase analysis
+  - 800 yen income strategies and GO Crew side business opportunities
+  - Signing bonus truth guides and refund risk analysis
+  - Salary simulations and take-home calculations
+  - Career guides for 40s-50s professionals
+  - Job market demand and negotiation strategies
+  - Taxi app comparisons and platform guides
+- Aggressive link optimization: Multiple "Replace affiliate links" commits across platform
+- Content quality improvements: Duplicate article cleanup and YAML formatting fixes
+- Strong emphasis on financial reality checking and income verification
+- Articles increasingly data-driven with salary simulations and income calculators
+- Mix of beginner guides and advanced income optimization strategies
 
 ### Next Week Priorities
-1. Expand mid-career taxi driver content (40s-50s demographic)
-2. Develop comprehensive comparison articles (company vs company, shift types)
-3. Create financial literacy content (tax, bonuses, negotiation)
-4. Strengthen GO Crew positioning as alternative work arrangement
-5. Monitor conversion performance on risk-mitigation content
+1. Monitor conversion performance on newly published articles (fare increase, 800 yen strategies)
+2. Continue aggressive SEO optimization with targeted 3-article batches
+3. Develop more comparison content (taxi apps, company survival guides)
+4. Expand financial literacy tools (tax guides, bonus negotiation)
+5. Create advanced income strategies for high-earners (1000+ yen articles)
+6. Track GO Crew content performance vs traditional taxi company content
