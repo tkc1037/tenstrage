@@ -1,24 +1,22 @@
-# Workflow Status — Tenstrage Automation System
+# Workflow Status — Tenstrage Publishing System
 
 **Update Date**: 2026-06-04 JST
-**System Status**: ✅ Production Ready
+**Current Status**: Retired legacy automation note. See `C:/Users/wtknt/Documents/TenstrageVault/_shared-ai/PROJECT.md` for the active workflow.
+
+> 2026-06-21 update: The old unattended daily generation flow is no longer the active workflow.
+> Article generation must be done interactively with duplicate checks, consistency audit, build verification, commit/push, and public URL confirmation.
+> SNS and video publishing require review files and approval flags.
 
 ---
 
 ## System Architecture
 
 ```
-毎朝 6:30 タスクスケジューラー
-  └─ run-pipeline.bat
-       └─ pipeline.js
-            ├─ 1. NotebookLM クエリ（5ノート → ルール・トレンド取得）
-            │     └─ フォールバック: knowledge/ フォルダ直読み
-            ├─ 2. Gemini 2.5 Flash で記事3本生成 → src/content/articles/
-            ├─ 3. Gemini 2.5 Flash でSNSドラフト生成 → sns-drafts/YYYYMMDD.md
-            └─ 4. publish.js 実行
-                  ├─ Git push → Cloudflare Pages 自動デプロイ
-                  ├─ Buffer API → X投稿3本（30分後スケジュール）
-                  └─ 動画あれば → YouTube/TikTok投稿
+Active flow
+  ├─ Article: duplicate check → draft/edit → fact/consistency audit → build → commit/push → URL check
+  ├─ Site deploy: GitHub main push triggers Cloudflare Pages
+  ├─ X: reviews/x/ approval flags → dedicated publishing script only
+  └─ Video: video-scripts/ → reviews/video/ approval flags → TTS/render/QA → dedicated publishing script only
 ```
 
 ---
@@ -28,8 +26,8 @@
 ```
 C:/Users/wtknt/Documents/tenstrage/
 ├── scripts/
-│   ├── pipeline.js              — 日次自動パイプライン（メイン）
-│   ├── publish.js               — Git push + Buffer SNS投稿
+│   ├── pipeline.js              — 公開前確認 + 記事/生成物のpush
+│   ├── publish.js               — articles-only のGit push（SNS投稿なし）
 │   ├── notebooklm-client.js     — NotebookLM MCP クライアント
 │   ├── notebooklm-research.js   — 5ノート一括クエリ → knowledge/ 更新
 │   ├── notebooklm-add-sources.js— NotebookLM ソース追加

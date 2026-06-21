@@ -2,10 +2,11 @@
 /**
  * batch-runner.js — Anthropic Batch API でトークン50%削減
  *
+ * 現在は一括生成入口として使わない。
+ * article / sns は、重複チェック・レビュー・承認ゲートを迂回するため無効化済み。
+ *
  * 使用方法:
- *   node scripts/batch-runner.js article   ← 記事3本をバッチ投入
- *   node scripts/batch-runner.js sns       ← SNS投稿5本をバッチ投入
- *   node scripts/batch-runner.js check <batchId>  ← 結果確認
+ *   node scripts/batch-runner.js check <batchId>  ← 過去バッチの結果確認のみ
  */
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -150,7 +151,7 @@ async function main() {
   const [command, param] = process.argv.slice(2);
 
   if (!command) {
-    console.log('使用方法: node scripts/batch-runner.js <article|sns|check> [batchId]');
+    console.log('使用方法: node scripts/batch-runner.js check <batchId>');
     process.exit(0);
   }
 
@@ -158,6 +159,13 @@ async function main() {
     if (!param) { console.error('❌ バッチIDを指定してください'); process.exit(1); }
     await checkBatch(param, client);
     return;
+  }
+
+  if (command === 'article' || command === 'sns') {
+    console.error('❌ batch-runner.js の article / sns 一括生成は無効化されています。');
+    console.error('   記事はタイトルごとの重複確認 → 下書き/編集 → 監査 → build → 公開確認で進めてください。');
+    console.error('   SNSは reviews/x/ の承認フラグを通した専用公開フローだけを使ってください。');
+    process.exit(1);
   }
 
   const ctx = loadContext();

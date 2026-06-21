@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 /**
  * post-income-now.js — 年収ビフォーアフター即時投稿
+ *
+ * Legacy direct-post script. Do not use.
+ * SNS publishing must go through review files and approval flags.
  */
 import { OBSIDIAN, loadEnv } from './paths.js';
+
+throw new Error('post-income-now.js は無効化済みです。SNS投稿は reviews/x/ または reviews/video/ の承認フローを使ってください。');
 
 const env = loadEnv();
 const apiKey = env.BUFFER_API_KEY;

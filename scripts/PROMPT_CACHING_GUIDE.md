@@ -56,7 +56,7 @@ const response = await client.messages.create({
         },
         {
           type: "text",
-          text: "実際のタスク：記事を3本生成してください",
+          text: "実際のタスク：重複確認済みの1テーマで記事下書きを作成してください",
         },
       ],
     },
@@ -90,13 +90,13 @@ const response = await client.messages.create({
 
 ## トークン削減計算
 
-**例）Writer Agent で記事3本生成時：**
+**例）Writer Agent で1記事を作成する時：**
 
 キャッシュなし：
-- CLAUDE.md：500トークン × 3回 = 1,500トークン
-- article-guidelines.md：2,000トークン × 3回 = 6,000トークン
-- seo-guidelines.md：2,000トークン × 3回 = 6,000トークン
-- 合計入力削減対象：13,500トークン
+- CLAUDE.md：500トークン
+- article-guidelines.md：2,000トークン
+- seo-guidelines.md：2,000トークン
+- 合計入力削減対象：4,500トークン
 
 キャッシュあり（ephemeral）：
 - 初回：フル入力
