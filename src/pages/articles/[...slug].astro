@@ -24,6 +24,9 @@ const breadcrumbItems = [
 ];
 
 const articleUrl = new URL(`/articles/${article.id}/`, Astro.site || 'https://takuzo-taxi.pages.dev');
+const heroImageUrl = article.data.heroImage
+  ? new URL(article.data.heroImage, Astro.site || Astro.url).href
+  : undefined;
 
 const blogPostingLd = {
   '@context': 'https://schema.org',
@@ -41,7 +44,7 @@ const blogPostingLd = {
     name: 'TAKUZO TAXI',
   },
   url: articleUrl.href,
-  ...(article.data.heroImage && { image: article.data.heroImage }),
+  ...(heroImageUrl && { image: heroImageUrl }),
 };
 ---
 
@@ -50,7 +53,7 @@ const blogPostingLd = {
   description={article.data.description}
   canonicalUrl={article.data.canonical}
   noindex={article.data.noindex}
-  ogImage={article.data.heroImage}
+  ogImage={heroImageUrl}
   jsonLd={blogPostingLd}
 >
   <article class="article-page">
@@ -75,6 +78,19 @@ const blogPostingLd = {
         <span class="meta-author">/ {article.data.author}</span>
       </div>
     </header>
+
+    {article.data.heroImage && (
+      <figure class="article-hero">
+        <img
+          src={article.data.heroImage}
+          alt=""
+          width="1536"
+          height="1024"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
 
     <TableOfContents headings={headings} />
 
@@ -133,6 +149,21 @@ const blogPostingLd = {
 
   .meta-author {
     color: var(--color-text-muted);
+  }
+
+  .article-hero {
+    margin: 0 0 2rem;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .article-hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
   }
 
   .article-body {
