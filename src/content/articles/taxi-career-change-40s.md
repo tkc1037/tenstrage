@@ -6,6 +6,7 @@ updatedDate: 2026-06-15
 category: "beginner"
 tags: ["40代転職", "タクシー転職", "未経験", "年齢", "キャリアチェンジ"]
 author: "Takuzo"
+heroImage: "/images/heroes/hero-taxi-career-change-40s.png"
 reviewStatus: "published"
 factChecked: true
 sources:

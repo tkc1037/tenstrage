@@ -6,6 +6,7 @@ updatedDate: 2026-06-14
 category: "pre-career"
 tags: ["タクシー勤務形態", "隔日勤務", "夜日勤", "タクシー転職", "ワークライフバランス"]
 author: "Takuzo"
+heroImage: "/images/heroes/hero-taxi-shift-comparison.png"
 reviewStatus: "published"
 factChecked: true
 sources:
