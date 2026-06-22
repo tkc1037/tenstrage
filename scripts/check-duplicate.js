@@ -126,8 +126,8 @@ function findDuplicatesForProposal(proposedTitle, articles) {
     const keywordScore = overlapScore(proposedKeywords, a.keywords);
     const titleScore = jaccard(proposedTitleShingles, a.titleShingles);
     if (a.title === proposedTitle) duplicates.push({ ...a, reason: '完全一致', score: 1 });
-    else if (keywordScore >= 0.5) duplicates.push({ ...a, reason: `キーワード重複 ${Math.round(keywordScore * 100)}%`, score: keywordScore });
-    else if (titleScore >= 0.35) duplicates.push({ ...a, reason: `タイトル類似 ${Math.round(titleScore * 100)}%`, score: titleScore });
+    else if (keywordScore >= 0.4) duplicates.push({ ...a, reason: `キーワード重複 ${Math.round(keywordScore * 100)}%`, score: keywordScore });
+    else if (titleScore >= 0.25) duplicates.push({ ...a, reason: `タイトル類似 ${Math.round(titleScore * 100)}%`, score: titleScore });
   }
   return duplicates.sort((a, b) => b.score - a.score);
 }
@@ -142,8 +142,8 @@ function audit(articles, publicOnly = false) {
       const titleScore = jaccard(a.titleShingles, b.titleShingles);
       const bodyScore = jaccard(a.bodyShingles, b.bodyShingles);
       const score = Math.max(keywordScore, titleScore, bodyScore);
-      const strongKeywordWithSimilarity = keywordScore >= 0.75 && (titleScore >= 0.12 || bodyScore >= 0.12);
-      if (titleScore >= 0.35 || bodyScore >= 0.42 || strongKeywordWithSimilarity) {
+      const strongKeywordWithSimilarity = keywordScore >= 0.6 && (titleScore >= 0.12 || bodyScore >= 0.12);
+      if (titleScore >= 0.25 || bodyScore >= 0.30 || strongKeywordWithSimilarity) {
         pairs.push({ a, b, score, keywordScore, titleScore, bodyScore });
       }
     }
