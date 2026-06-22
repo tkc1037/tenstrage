@@ -14,6 +14,7 @@
     "qa:video": "node scripts/check-video.js",
     "test:video": "node scripts/test-video-timing.js && npm run validate:video",
     "review:video": "node scripts/video-review.js",
+    "review:article": "node scripts/article-review.js",
     "review:x": "node scripts/x-review.js",
     "validate:x": "node scripts/validate-x-review.js",
     "remember:review": "node scripts/remember-review.js",
