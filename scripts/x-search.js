@@ -11,7 +11,7 @@
  * - 実行前にユーザー承認を取ること。
  */
 
-import { writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { OBSIDIAN, loadEnv } from './paths.js';
 
@@ -25,8 +25,11 @@ const DEFAULT_KEYWORDS = [
   'タクシー 歩合',
 ];
 
-const DEFAULT_MAX_RESULTS = 10;
+const DEFAULT_MAX_RESULTS = 5;
 const DEFAULT_INTERVAL_DAYS = 14;
+const DEFAULT_MIN_FAVES = 30;
+const DEFAULT_INVENTORY_THRESHOLD = 3;
+const DEFAULT_KEYWORDS_PER_RUN = 3;
 const SEARCH_ENDPOINT = 'https://api.twitter.com/2/tweets/search/recent';
 
 function todayStamp() {
@@ -76,14 +79,114 @@ function parseKeywords(env) {
 
 function parseMaxResults(env) {
   const n = Number(env.X_SEARCH_MAX_RESULTS ?? DEFAULT_MAX_RESULTS);
-  // X recent search は通常10〜100件。コスト暴発を避けるため上限100。
+  // Xは引用確定取得に温存するため、当たり付けは少数だけ取得する。
   if (!Number.isFinite(n)) return DEFAULT_MAX_RESULTS;
-  return Math.min(Math.max(Math.floor(n), 10), 100);
+  return Math.min(Math.max(Math.floor(n), 3), 5);
 }
 
-function buildQuery(keyword) {
-  // 日本語投稿中心。リポストは除外し、直近7日内のrecent searchに任せる。
-  return `${keyword} lang:ja -is:retweet`;
+function parsePositiveInt(value, fallback) {
+  const n = Number(value ?? fallback);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(Math.floor(n), 1);
+}
+
+function parseKeywordsPerRun(env, keywordCount) {
+  const n = parsePositiveInt(env.X_SEARCH_KEYWORDS_PER_RUN, DEFAULT_KEYWORDS_PER_RUN);
+  return Math.min(Math.max(n, 2), Math.min(3, keywordCount));
+}
+
+function articleIdeasPath() {
+  return join(OBSIDIAN, 'reports', 'article-ideas.md');
+}
+
+function countOpenTier12Ideas() {
+  const path = articleIdeasPath();
+  if (!existsSync(path)) return 0;
+  const content = readFileSync(path, 'utf8');
+  return content
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('|'))
+    .filter((line) => !line.includes('---'))
+    .filter((line) => /\|\s*Tier[12]\s*\|/.test(line))
+    .filter((line) => /\|\s*未着手\s*\|?\s*$/.test(line))
+    .length;
+}
+
+function inventorySkipStatus(threshold) {
+  const openTier12 = countOpenTier12Ideas();
+  return { openTier12, shouldSkip: openTier12 >= threshold };
+}
+
+function yieldLedgerPath(outDir) {
+  return join(outDir, 'keyword-yield.md');
+}
+
+function readKeywordYield(outDir) {
+  const path = yieldLedgerPath(outDir);
+  if (!existsSync(path)) return new Map();
+  const rows = new Map();
+  for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
+    if (!line.startsWith('| `')) continue;
+    const cols = line.split('|').map((col) => col.trim());
+    const keyword = cols[1]?.replace(/^`|`$/g, '');
+    if (!keyword) continue;
+    rows.set(keyword, {
+      runs: Number(cols[2]) || 0,
+      fetched: Number(cols[3]) || 0,
+      used: Number(cols[4]) || 0,
+      lastRun: cols[6] || '',
+    });
+  }
+  return rows;
+}
+
+function selectRotatingKeywords(keywords, outDir, perRun) {
+  const stats = readKeywordYield(outDir);
+  return [...keywords]
+    .sort((a, b) => {
+      const aStats = stats.get(a) ?? { runs: 0, used: 0, fetched: 0, lastRun: '' };
+      const bStats = stats.get(b) ?? { runs: 0, used: 0, fetched: 0, lastRun: '' };
+      const aRate = aStats.fetched > 0 ? aStats.used / aStats.fetched : 0;
+      const bRate = bStats.fetched > 0 ? bStats.used / bStats.fetched : 0;
+      return (
+        aStats.runs - bStats.runs ||
+        aStats.lastRun.localeCompare(bStats.lastRun) ||
+        aRate - bRate ||
+        a.localeCompare(b, 'ja')
+      );
+    })
+    .slice(0, perRun);
+}
+
+function writeKeywordYield({ outDir, keywords, resultsByKeyword, date }) {
+  const stats = readKeywordYield(outDir);
+  for (const keyword of keywords) {
+    const current = stats.get(keyword) ?? { runs: 0, fetched: 0, used: 0, lastRun: '' };
+    current.runs += 1;
+    current.fetched += resultsByKeyword[keyword]?.length ?? 0;
+    current.lastRun = date;
+    stats.set(keyword, current);
+  }
+
+  const lines = [
+    '# X検索キーワード歩留まり',
+    '',
+    'X検索で取得したキーワード別の軽量台帳。`used` はIngest後に手動更新し、採用率を見る。',
+    '',
+    '| キーワード | runs | fetched | used | adoptionRate | lastRun |',
+    '|---|---:|---:|---:|---:|---|',
+  ];
+
+  for (const [keyword, row] of [...stats.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ja'))) {
+    const rate = row.fetched > 0 ? row.used / row.fetched : 0;
+    lines.push(`| \`${keyword}\` | ${row.runs} | ${row.fetched} | ${row.used} | ${rate.toFixed(2)} | ${row.lastRun} |`);
+  }
+
+  writeFileSync(yieldLedgerPath(outDir), `${lines.join('\n')}\n`, 'utf8');
+}
+
+function buildQuery(keyword, minFaves) {
+  return `${keyword} min_faves:${minFaves} -is:retweet lang:ja`;
 }
 
 function formatMetric(tweet) {
@@ -95,9 +198,9 @@ function tweetUrl(tweet) {
   return `https://x.com/i/web/status/${tweet.id}`;
 }
 
-async function searchKeyword({ bearerToken, keyword, maxResults }) {
+async function searchKeyword({ bearerToken, keyword, maxResults, minFaves }) {
   const url = new URL(SEARCH_ENDPOINT);
-  url.searchParams.set('query', buildQuery(keyword));
+  url.searchParams.set('query', buildQuery(keyword, minFaves));
   url.searchParams.set('max_results', String(maxResults));
   url.searchParams.set('sort_order', 'recency');
   url.searchParams.set('tweet.fields', 'created_at,public_metrics,lang,author_id');
@@ -170,8 +273,13 @@ async function main() {
     throw new Error('X_BEARER_TOKEN が .env に未設定です');
   }
 
-  const keywords = parseKeywords(env);
+  const allKeywords = parseKeywords(env);
   const maxResults = parseMaxResults(env);
+  const minFaves = parsePositiveInt(env.X_SEARCH_MIN_FAVES, DEFAULT_MIN_FAVES);
+  const inventoryThreshold = parsePositiveInt(
+    env.X_SEARCH_IDEA_THRESHOLD,
+    DEFAULT_INVENTORY_THRESHOLD,
+  );
   const intervalDays = Math.max(
     Number(env.X_SEARCH_INTERVAL_DAYS ?? DEFAULT_INTERVAL_DAYS) || DEFAULT_INTERVAL_DAYS,
     1,
@@ -181,18 +289,34 @@ async function main() {
   const date = todayStamp();
   const outDir = join(OBSIDIAN, 'raw', 'x-search');
   const outFile = join(outDir, `${date}.md`);
+  const keywordsPerRun = parseKeywordsPerRun(env, allKeywords.length);
+  const keywords = selectRotatingKeywords(allKeywords, outDir, keywordsPerRun);
+  const inventory = inventorySkipStatus(inventoryThreshold);
 
   const skip = shouldSkipSearch(outDir, intervalDays, force);
   if (checkOnly) {
     console.log('✅ X検索設定チェック');
     console.log(`  Bearer token: ${bearerToken ? '設定済み' : '未設定'}`);
-    console.log(`  キーワード: ${keywords.length}件`);
+    console.log(`  キーワード: ${keywords.length}/${allKeywords.length}件`);
     console.log(`  取得上限: ${maxResults}件/キーワード`);
+    console.log(`  min_faves: ${minFaves}`);
+    console.log(`  Tier1/2未着手在庫: ${inventory.openTier12}件（閾値${inventoryThreshold}件）`);
     console.log(`  収集間隔: ${intervalDays}日`);
     console.log(`  出力先: ${outDir}`);
-    console.log(skip
+    console.log(inventory.shouldSkip
+      ? '  実行判定: スキップ（Tier1/2未着手在庫が十分）'
+      : skip
       ? `  実行判定: スキップ（次回まで約${skip.remainingDays}日）`
       : '  実行判定: 実行可能（API呼び出しはしていません）');
+    return;
+  }
+
+  if (inventory.shouldSkip) {
+    console.log(
+      `⏭️ X検索をスキップ: Tier1/2未着手在庫=${inventory.openTier12}件, ` +
+      `閾値=${inventoryThreshold}件`,
+    );
+    console.log('   有料Xは引用確定取得に温存し、当たり付けは求人/競合の無料リサーチを優先してください。');
     return;
   }
 
@@ -205,18 +329,19 @@ async function main() {
     return;
   }
 
-  console.log(`🔎 X検索: ${keywords.length} keywords × max ${maxResults}`);
+  console.log(`🔎 X検索: ${keywords.length}/${allKeywords.length} keywords × max ${maxResults} / min_faves:${minFaves}`);
 
   const resultsByKeyword = {};
   for (const keyword of keywords) {
     console.log(`  - ${keyword}`);
-    resultsByKeyword[keyword] = await searchKeyword({ bearerToken, keyword, maxResults });
+    resultsByKeyword[keyword] = await searchKeyword({ bearerToken, keyword, maxResults, minFaves });
     // 軽いレート制限対策
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   mkdirSync(outDir, { recursive: true });
   writeFileSync(outFile, renderMarkdown({ date, keywords, maxResults, resultsByKeyword }), 'utf8');
+  writeKeywordYield({ outDir, keywords, resultsByKeyword, date });
 
   console.log(`✅ 保存: ${outFile}`);
 }
