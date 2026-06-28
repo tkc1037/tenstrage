@@ -3,6 +3,7 @@ title: "東京タクシー求人サイトおすすめ比較｜自分で検索派
 description: "東京都内でタクシードライバーに転職したい人向けに、求人検索型と転職支援型の2タイプでおすすめサイトを比較。転職道、ドライバーズワーク、P-CHAN TAXI、タクQなど主要サービスの使い分けを現役ドライバー目線で解説します。"
 pubDate: 2026-05-29
 updatedDate: 2026-06-18
+heroImage: "/images/heroes/hero-job-platform-comparison.png"
 tags: ["タクシー転職", "東京", "求人サイト", "転職", "比較"]
 author: "Takuzo"
 reviewStatus: "published"

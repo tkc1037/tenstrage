@@ -4,6 +4,7 @@ description: "2026年4月20日に実施された東京23区・武蔵野市・三
 pubDate: 2026-06-13
 updatedDate: 2026-06-15
 category: "income"
+heroImage: "/images/heroes/hero-tokyo-taxi-year-income-502.png"
 tags: ["タクシー転職", "東京", "運賃改定", "売上", "2026年"]
 author: "Takuzo"
 reviewStatus: "published"
