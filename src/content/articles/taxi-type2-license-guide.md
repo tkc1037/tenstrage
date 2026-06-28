@@ -4,6 +4,7 @@ description: "タクシーに必要な普通第二種運転免許の取得方法
 pubDate: 2026-06-15
 updatedDate: 2026-06-15
 category: "pre-career"
+heroImage: "/images/heroes/hero-taxi-type2-license-guide.png"
 tags: ["二種免許", "タクシー転職", "免許取得", "費用", "研修"]
 author: "Takuzo"
 reviewStatus: "published"
