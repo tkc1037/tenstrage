@@ -6,6 +6,7 @@ updatedDate: 2026-06-14
 category: "real-field"
 tags: ["GOアプリ", "連続配車", "サンキューチケット", "タクシー営業", "配車アプリ"]
 author: "Takuzo"
+heroImage: "/images/heroes/hero-go-app-guide.png"
 reviewStatus: "published"
 factChecked: true
 sources:
