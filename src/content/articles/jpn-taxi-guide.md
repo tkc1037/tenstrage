@@ -6,6 +6,7 @@ updatedDate: 2026-06-15
 category: "vehicle"
 tags: ["JPN TAXI", "車両", "タクシー転職", "売上", "トヨタ"]
 author: "Takuzo"
+heroImage: "/images/heroes/hero-jpn-taxi-guide.png"
 reviewStatus: "published"
 factChecked: true
 sources:
