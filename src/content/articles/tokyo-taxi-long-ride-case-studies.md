@@ -2,6 +2,7 @@
 title: 東京タクシー ロング営業の実例集｜1万円超が出た時間帯と乗車エリアの傾向
 description: 東京タクシーのロング営業を、匿名化した自分の営業記録で整理。1万円超が出た時間帯・乗車地・降車地・概算金額をまとめ、出やすい傾向は自分のデータで掴むという前提で、稼ぎ方の保証ではなく記録の見方として解説します。
 pubDate: 2026-06-23
+heroImage: "/images/heroes/hero-tokyo-taxi-long-ride-case-studies.png"
 category: real-field
 tags:
   - タクシー営業

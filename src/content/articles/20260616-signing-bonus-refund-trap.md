@@ -2,6 +2,7 @@
 title: "入社祝い金の返金条件チェックガイド2026：契約書チェックリストと注意点"
 description: "タクシー入社祝い金の相場・支給条件・返金条件を確認するためのチェックガイド。求人企業の祝い金と求人サイト等の金銭提供禁止ルールの違いも解説。"
 pubDate: 2026-06-16
+heroImage: "/images/heroes/hero-signing-bonus-refund-trap.png"
 tags: ["タクシー転職", "入社祝い金", "契約", "東京", "返金トラブル"]
 author: "Takuzo"
 reviewStatus: "published"

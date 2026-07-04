@@ -2,6 +2,7 @@
 title: "タクシー業廃業が1.6倍に急増2026：転職前に知るべき「生き残る企業」と「消える会社」の完全見分け方"
 description: "2026年タクシー業廃業66件・倒産36件の危機の中で、転職先を見分ける方法。大手vs中小、黒字vs赤字企業の見分け方、企業選択チェックリスト。"
 pubDate: 2026-06-15
+heroImage: "/images/heroes/hero-taxi-company-survival-guide.png"
 tags: ["タクシー転職", "企業選び", "大手", "廃業", "東京"]
 author: "Takuzo"
 reviewStatus: "published"

@@ -2,6 +2,7 @@
 title: "タクシードライバー手取り計算完全ガイド2026：月営収×歩合率で実手取りを読む"
 description: "タクシードライバーの手取りを、月営収×歩合率から計算。歩合制・AB型賃金・税金・社会保険・会社ごとの控除を分けて確認します。"
 pubDate: 2026-06-15
+heroImage: "/images/heroes/hero-taxi-takehome-calculation-2026.png"
 tags: ["タクシー転職", "年収", "税金", "手取り", "東京"]
 author: "Takuzo"
 reviewStatus: "published"
