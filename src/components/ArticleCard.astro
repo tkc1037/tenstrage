@@ -26,11 +26,11 @@ const displayDate = updatedDate || pubDate;
       <div class="card-image">
         <img src={heroImage} alt="" loading="lazy" width="640" height="360" />
       </div>
-    ) : (
+    ) : category !== 'note' ? (
       <div class="card-image card-image-placeholder" aria-hidden="true">
         <span class="placeholder-icon">T</span>
       </div>
-    )}
+    ) : null}
     <div class="card-content">
       {category && (
         <span class="card-category">{categoryLabels[category] || category}</span>
