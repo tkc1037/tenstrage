@@ -92,7 +92,7 @@ const blogPostingLd = {
       </figure>
     )}
 
-    <TableOfContents headings={headings} />
+    {category !== 'note' && <TableOfContents headings={headings} />}
 
     <div class="article-body">
       <Content />
