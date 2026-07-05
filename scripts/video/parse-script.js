@@ -1,6 +1,6 @@
 import { basename } from 'path';
 import { readFileSync } from 'fs';
-import { BG_STYLES } from './config.js';
+import { BG_STYLES, BGM_TRACKS } from './config.js';
 
 const stripMarks = (value = '') => value
   .replace(/\[強調\](.*?)\[\/強調\]/g, '$1')
@@ -47,6 +47,7 @@ export function parseVideoScript(filePath) {
       ?? headingTitle,
     cta: (frontmatterValue(raw, 'cta') ?? ctaFromSection ?? 'プロフのリンクをチェック👆').slice(0, 30),
     bgStyle: frontmatterValue(raw, 'bgStyle') ?? 'bokeh',
+    bgm: frontmatterValue(raw, 'bgm') ?? 'main',
     accentColor: frontmatterValue(raw, 'accentColor'),
     hookLabel: frontmatterValue(raw, 'hookLabel'),
     lines: emphasisLines.length >= 2 ? emphasisLines : fallbackLines,
@@ -73,6 +74,9 @@ export function validateVideoScript(filePath) {
   }
   if (!BG_STYLES.includes(parsed.bgStyle)) {
     errors.push(`bgStyleが不正です: ${parsed.bgStyle}`);
+  }
+  if (!Object.hasOwn(BGM_TRACKS, parsed.bgm)) {
+    errors.push(`bgmが不正です: ${parsed.bgm}`);
   }
   if (parsed.accentColor && !/^#[0-9a-f]{6}$/i.test(parsed.accentColor)) {
     errors.push(`accentColorは6桁HEXで指定してください: ${parsed.accentColor}`);

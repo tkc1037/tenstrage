@@ -55,6 +55,7 @@ ${stringify({
   hook: parsed.hook,
   lines: parsed.lines,
   cta: parsed.cta,
+  bgm: parsed.bgm,
   bgStyle: parsed.bgStyle,
   accentColor: parsed.accentColor,
   hookLabel: parsed.hookLabel,

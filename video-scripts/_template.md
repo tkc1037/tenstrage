@@ -2,6 +2,7 @@
 title: 動画タイトル
 hook: 冒頭3秒で伝える短いフック
 cta: フォローして次の投稿へ
+bgm: main
 bgStyle: aurora
 accentColor: "#fbbf24"
 hookLabel: 要確認

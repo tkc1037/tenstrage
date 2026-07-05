@@ -14,6 +14,7 @@
     "qa:video": "node scripts/check-video.js",
     "test:video": "node scripts/test-video-timing.js && npm run validate:video",
     "review:video": "node scripts/video-review.js",
+    "footage:video": "node scripts/video-footage.js",
     "review:article": "node scripts/article-review.js",
     "review:x": "node scripts/x-review.js",
     "validate:x": "node scripts/validate-x-review.js",
@@ -23,7 +24,8 @@
     "health:knowledge": "node scripts/knowledge-health.js",
     "check:duplicate": "node scripts/check-duplicate.js",
     "audit:consistency": "node scripts/check-content-consistency.js",
-    "audit:duplicates": "node scripts/check-duplicate.js --audit --public"
+    "audit:duplicates": "node scripts/check-duplicate.js --audit --public",
+    "preflight": "node scripts/preflight.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",

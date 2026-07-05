@@ -16,7 +16,9 @@ import {
   IMAGE_DIR,
   VIDEO_DIR,
   VIDEO_SCRIPTS_DIR,
+  BGM_TRACKS,
 } from './video/config.js';
+import { resolveApprovedFootage } from './video/footage.js';
 import { validateVideoScript } from './video/parse-script.js';
 import { generateAudio, generateBackground } from './video/gemini.js';
 import { calculateTiming } from './video/timing.js';
@@ -111,13 +113,23 @@ async function processScript(scriptFile, env, options) {
 
   const wav = inspectWav(audioPath);
   const timing = calculateTiming(wav.durationSeconds, display.hook, display.lines, display.cta, settings);
+  const sceneImages = await resolveApprovedFootage({
+    slug,
+    review,
+    env,
+  });
+  const bgmKey = display.bgm || parsed.bgm || 'main';
+  const bgmFile = BGM_TRACKS[bgmKey];
+  if (!bgmFile) throw new Error(`BGM設定が不正です: ${bgmKey}`);
   const inputProps = {
     title: display.title,
     hook: display.hook,
     lines: display.lines,
     cta: display.cta,
     audioSrc: `audio/${basename(audioPath)}`,
+    bgmFile,
     bgImageSrc: hasBackground ? `images/${basename(backgroundPath)}` : undefined,
+    sceneImages,
     bgStyle: display.bgStyle,
     accentColor: display.accentColor,
     hookLabel: display.hookLabel,

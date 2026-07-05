@@ -34,17 +34,14 @@ if (!OBSIDIAN) {
 }
 
 /**
- * .env 読み込み（tenstrage/.env 優先 → Obsidian フォールバック）
+ * .env 読み込み（tenstrage/.env に一本化）
  */
 export function loadEnv() {
   const candidates = [
     join(ROOT, '.env'),
-    `${OBSIDIAN}/.env`,
-    `${OBSIDIAN}/.env 2`,
   ];
   const existing = candidates.filter(existsSync);
   if (existing.length === 0) throw new Error('.env が見つかりません');
 
-  // 優先順位が高いファイルを後から重ねる（project .env > vault .env > vault .env 2）
-  return Object.assign({}, ...existing.reverse().map(readEnvFile));
+  return Object.assign({}, ...existing.map(readEnvFile));
 }

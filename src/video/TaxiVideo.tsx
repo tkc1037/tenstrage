@@ -15,7 +15,6 @@ import {
   AbsoluteFill,
   Audio,
   Img,
-  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -43,7 +42,9 @@ const BgLayer: React.FC<{
   bgImageSrc?: string;
   imageOpacity: number;
   gradientOpacity: number;
-}> = ({ bgStyle, bgImageSrc, imageOpacity, gradientOpacity }) => {
+  kenBurns?: boolean;
+}> = ({ bgStyle, bgImageSrc, imageOpacity, gradientOpacity, kenBurns = false }) => {
+  const frame = useCurrentFrame();
   const BgMap: Record<BgStyle, React.FC<{ startDelay?: number }>> = {
     bokeh:     BackgroundBokeh,
     aurora:    BackgroundAurora,
@@ -64,7 +65,13 @@ const BgLayer: React.FC<{
         <AbsoluteFill>
           <Img
             src={staticFile(bgImageSrc)}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: imageOpacity }}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: imageOpacity,
+              transform: kenBurns ? `scale(${lerp(frame, [0, 240], [1.02, 1.1])})` : undefined,
+            }}
           />
         </AbsoluteFill>
       )}
@@ -75,6 +82,24 @@ const BgLayer: React.FC<{
       }} />
     </AbsoluteFill>
   );
+};
+
+const BgmTrack: React.FC<{
+  src: string;
+  volume: number;
+  totalFrames: number;
+  fadeFrames: number;
+}> = ({ src, volume, totalFrames, fadeFrames }) => {
+  const frame = useCurrentFrame();
+  const fadeIn = interpolate(frame, [0, fadeFrames], [0, volume], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const fadeOut = interpolate(frame, [Math.max(0, totalFrames - fadeFrames), totalFrames], [volume, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  return <Audio src={staticFile(src)} volume={Math.min(fadeIn, fadeOut)} />;
 };
 
 // ── キネティックテキスト ─────────────────────────────────────────
@@ -139,13 +164,13 @@ const KineticText: React.FC<{
 // ── シーン1: フック ──────────────────────────────────────────────
 const HookScene: React.FC<{
   hook: string;
-  accentColor: string;
   label?: string;
   settings: TaxiVideoSettings;
 }> = ({
-  hook, accentColor, settings, label = '知ってた？',
+  hook, settings, label = '知ってた？',
 }) => {
   const frame = useCurrentFrame();
+  const enter = lerp(frame, [0, 18], [0, 1], EASE.out);
 
   return (
     <AbsoluteFill style={{
@@ -156,28 +181,30 @@ const HookScene: React.FC<{
       gap: 28,
     }}>
       <div style={{
-        opacity: lerp(frame, [0, 18], [0, 1]),
-        transform: `scale(${lerp(frame, [0, 18], [0.7, 1], EASE.out)})`,
-        backgroundColor: accentColor,
-        paddingInline: 22,
-        paddingBlock: 9,
-        borderRadius: 6,
-        boxShadow: `0 0 20px ${accentColor}80`,
+        opacity: enter,
+        transform: `scale(${lerp(frame, [0, 18], [0.88, 1], EASE.out)})`,
+        width: '92%',
+        backgroundColor: settings.hookBandColor,
+        paddingInline: 28,
+        paddingBlock: 26,
+        borderRadius: 4,
+        boxShadow: '0 22px 50px rgba(0,0,0,0.42)',
       }}>
-        <span style={{ fontFamily: font, color: C.black, fontSize: settings.hookLabelFontSize, fontWeight: 800, letterSpacing: 3 }}>
+        <div style={{ fontFamily: font, color: C.white, fontSize: settings.hookLabelFontSize, fontWeight: 800, letterSpacing: 0, marginBottom: 12, textAlign: 'center' }}>
           {label}
-        </span>
-      </div>
-
-      <div style={{ textAlign: 'center', maxWidth: 900 }}>
-        <KineticText
-          text={hook}
-          startFrame={12}
-          fontSize={settings.hookFontSize}
-          color={C.white}
-          accentColor={accentColor}
-          showUnderline
-        />
+        </div>
+        <div style={{
+          fontFamily: font,
+          color: C.white,
+          fontSize: settings.hookFontSize,
+          fontWeight: 900,
+          lineHeight: 1.25,
+          letterSpacing: 0,
+          textAlign: 'center',
+          textShadow: '0 4px 14px rgba(0,0,0,0.45)',
+        }}>
+          {hook}
+        </div>
       </div>
     </AbsoluteFill>
   );
@@ -252,59 +279,84 @@ const InfoScene: React.FC<{
 };
 
 // ── シーン3: CTA ─────────────────────────────────────────────
-const CtaScene: React.FC<{
-  cta: string;
-  title: string;
+const CtaCard: React.FC<{
   accentColor: string;
+  ctaCard: CtaCardProps;
   settings: TaxiVideoSettings;
-}> = ({ cta, title, accentColor, settings }) => {
+}> = ({ accentColor, ctaCard, settings }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const bounce = spring({ frame, fps, config: { damping: 10, stiffness: 160 } });
-  const arrowY = Math.sin((frame / fps) * Math.PI * 3) * 7;
+  const panel = lerp(frame, [5, 28], [0, 1], EASE.out);
+  const numbers = lerp(frame, [18, 44], [0, 1], EASE.out);
+  const bullets = lerp(frame, [36, 60], [0, 1], EASE.out);
+  const button = lerp(frame, [54, 78], [0, 1], EASE.out);
 
   return (
-    <AbsoluteFill style={{
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column',
-      padding: `80px ${settings.horizontalPadding}px`,
-      gap: 32,
-    }}>
-      <div style={{ opacity: lerp(frame, [0, 20], [0, 1]), textAlign: 'center' }}>
-        <span style={{
-          fontFamily: '"Noto Sans JP", sans-serif',
-          fontSize: settings.ctaTitleFontSize,
-          color: C.gray[300],
-          lineHeight: 1.6,
-        }}>
-          {title}
-        </span>
-      </div>
-
+    <AbsoluteFill>
+      <Img
+        src={staticFile('images/video/takuzo-cta-card-bg.png')}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
       <div style={{
-        width: lerp(frame, [12, 40], [0, 280], EASE.out),
-        height: 2,
-        background: `linear-gradient(to right, transparent, ${accentColor}, transparent)`,
-      }} />
-
-      <div style={{
-        transform: `scale(${interpolate(bounce, [0, 1], [0.65, 1])})`,
-        background: `linear-gradient(135deg, ${accentColor} 0%, ${C.orange} 100%)`,
-        paddingInline: 44,
-        paddingBlock: 22,
-        borderRadius: 14,
-        textAlign: 'center',
-        boxShadow: `0 0 40px ${accentColor}60, 0 8px 24px rgba(0,0,0,0.4)`,
+        position: 'absolute',
+        left: settings.horizontalPadding,
+        right: settings.horizontalPadding,
+        bottom: 86,
+        transform: `translateY(${lerp(frame, [5, 28], [40, 0], EASE.out)}px)`,
+        opacity: panel,
+        fontFamily: font,
+        color: C.white,
       }}>
-        <span style={{ fontFamily: font, color: C.black, fontSize: settings.ctaFontSize, fontWeight: 900, letterSpacing: 1 }}>
-          {cta}
-        </span>
-      </div>
+        <div style={{ fontSize: 34, fontWeight: 800, marginBottom: 24 }}>
+          {ctaCard.name}
+        </div>
 
-      <div style={{ transform: `translateY(${arrowY}px)`, opacity: lerp(frame, [22, 38], [0, 1]), fontSize: 44 }}>
-        👆
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'end',
+          gap: 20,
+          opacity: numbers,
+          marginBottom: 30,
+        }}>
+          <div>
+            <div style={{ color: C.gray[300], fontSize: 24, fontWeight: 700 }}>{ctaCard.beforeLabel}</div>
+            <div style={{ color: accentColor, fontSize: 74, fontWeight: 900, lineHeight: 1.1 }}>{ctaCard.beforeValue}</div>
+          </div>
+          <div style={{ color: accentColor, fontSize: 54, fontWeight: 900, paddingBottom: 8 }}>→</div>
+          <div>
+            <div style={{ color: C.gray[300], fontSize: 24, fontWeight: 700 }}>{ctaCard.afterLabel}</div>
+            <div style={{ color: accentColor, fontSize: 74, fontWeight: 900, lineHeight: 1.1 }}>{ctaCard.afterValue}</div>
+          </div>
+        </div>
+
+        <div style={{
+          opacity: bullets,
+          display: 'grid',
+          gap: 12,
+          fontSize: 36,
+          fontWeight: 800,
+          lineHeight: 1.35,
+          marginBottom: 36,
+        }}>
+          {ctaCard.bullets.map((bullet) => (
+            <div key={bullet}>・{bullet}</div>
+          ))}
+        </div>
+
+        <div style={{
+          opacity: button,
+          transform: `translateY(${lerp(frame, [54, 78], [24, 0], EASE.out)}px)`,
+          display: 'inline-flex',
+          backgroundColor: accentColor,
+          color: '#071226',
+          borderRadius: 8,
+          padding: '20px 34px',
+          fontSize: settings.ctaFontSize,
+          fontWeight: 900,
+          boxShadow: `0 16px 34px ${accentColor}45`,
+        }}>
+          {ctaCard.ctaText}
+        </div>
       </div>
 
       <div style={{
@@ -312,13 +364,13 @@ const CtaScene: React.FC<{
         bottom: 40,
         right: 44,
         fontFamily: font,
-        color: C.gray[600],
+        color: C.gray[400],
         fontSize: settings.watermarkFontSize,
         letterSpacing: 1,
         textAlign: 'right',
         lineHeight: 1.6,
       }}>
-        takuzo-taxi.com{'\n'}#タクシー転職
+        TAKUZO TAXI
       </div>
     </AbsoluteFill>
   );
@@ -340,9 +392,12 @@ export interface TaxiVideoSettings {
   codec: 'h264';
   transitionFrames: number;
   audioVolume: number;
+  bgmVolume: number;
   backgroundImageOpacity: number;
+  sceneImageOpacity: number;
   bottomGradientOpacity: number;
   horizontalPadding: number;
+  hookBandColor: string;
   hookFontSize: number;
   hookLabelFontSize: number;
   infoFontSize: number;
@@ -352,16 +407,32 @@ export interface TaxiVideoSettings {
   watermarkFontSize: number;
 }
 
+export interface CtaCardProps {
+  name: string;
+  beforeLabel: string;
+  beforeValue: string;
+  afterLabel: string;
+  afterValue: string;
+  bullets: string[];
+  ctaText: string;
+}
+
 export interface TaxiVideoProps {
   title: string;
   hook: string;
   lines: string[];
   cta: string;
   audioSrc?: string;
+  bgmFile?: string;
   bgImageSrc?: string;
+  sceneImages?: {
+    hook?: string;
+    info?: string;
+  };
   bgStyle?: BgStyle;
   accentColor?: string;
   hookLabel?: string;
+  ctaCard?: Partial<CtaCardProps>;
   timing?: TaxiVideoTiming;
   settings?: TaxiVideoSettings;
 }
@@ -373,13 +444,26 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   lines,
   cta,
   audioSrc,
+  bgmFile,
   bgImageSrc,
+  sceneImages,
   bgStyle = 'bokeh',
   accentColor = C.gold,
   hookLabel,
+  ctaCard: inputCtaCard,
   timing,
   settings: inputSettings,
 }) => {
+  const ctaCard: CtaCardProps = {
+    name: 'Takuzo（タクゾー）',
+    beforeLabel: '営業職',
+    beforeValue: '454万',
+    afterLabel: 'タクシー1年目',
+    afterValue: '814万',
+    bullets: ['会社の選び方', '歩合率の見方', '未経験からの働き方'],
+    ctaText: '続きはプロフィールから',
+    ...inputCtaCard,
+  };
   const settings: TaxiVideoSettings = {
     width: 1080,
     height: 1920,
@@ -387,9 +471,12 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
     codec: 'h264',
     transitionFrames: 15,
     audioVolume: 1,
+    bgmVolume: 0.32,
     backgroundImageOpacity: 0.2,
+    sceneImageOpacity: 0.72,
     bottomGradientOpacity: 0.88,
     horizontalPadding: 64,
+    hookBandColor: '#E11D2A',
     hookFontSize: 56,
     hookLabelFontSize: 20,
     infoFontSize: 32,
@@ -408,21 +495,28 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
       {audioSrc && <Audio src={staticFile(audioSrc)} volume={settings.audioVolume} />}
-
-      {/* 背景（ライブラリ + 画像オーバーレイ） */}
-      <Sequence from={0} durationInFrames={total}>
-        <BgLayer
-          bgStyle={bgStyle}
-          bgImageSrc={bgImageSrc}
-          imageOpacity={settings.backgroundImageOpacity}
-          gradientOpacity={settings.bottomGradientOpacity}
+      {bgmFile && (
+        <BgmTrack
+          src={`audio/bgm/${bgmFile}`}
+          volume={settings.bgmVolume}
+          totalFrames={timing?.totalFrames ?? total}
+          fadeFrames={Math.round(settings.fps * 0.5)}
         />
-      </Sequence>
+      )}
 
       {/* シーン遷移 */}
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={HOOK_FRAMES}>
-          <HookScene hook={hook} accentColor={accentColor} label={hookLabel} settings={settings} />
+          <AbsoluteFill>
+            <BgLayer
+              bgStyle={bgStyle}
+              bgImageSrc={sceneImages?.hook ?? bgImageSrc}
+              imageOpacity={sceneImages?.hook ? settings.sceneImageOpacity : settings.backgroundImageOpacity}
+              gradientOpacity={settings.bottomGradientOpacity}
+              kenBurns={Boolean(sceneImages?.hook)}
+            />
+            <HookScene hook={hook} label={hookLabel} settings={settings} />
+          </AbsoluteFill>
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -431,7 +525,16 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
         />
 
         <TransitionSeries.Sequence durationInFrames={INFO_FRAMES}>
-          <InfoScene lines={lines} accentColor={accentColor} lineDelays={timing?.lineDelays} settings={settings} />
+          <AbsoluteFill>
+            <BgLayer
+              bgStyle={bgStyle}
+              bgImageSrc={sceneImages?.info ?? bgImageSrc}
+              imageOpacity={sceneImages?.info ? settings.sceneImageOpacity : settings.backgroundImageOpacity}
+              gradientOpacity={settings.bottomGradientOpacity}
+              kenBurns={Boolean(sceneImages?.info)}
+            />
+            <InfoScene lines={lines} accentColor={accentColor} lineDelays={timing?.lineDelays} settings={settings} />
+          </AbsoluteFill>
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -440,7 +543,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
         />
 
         <TransitionSeries.Sequence durationInFrames={CTA_FRAMES}>
-          <CtaScene cta={cta} title={title} accentColor={accentColor} settings={settings} />
+          <CtaCard accentColor={accentColor} ctaCard={ctaCard} settings={settings} />
         </TransitionSeries.Sequence>
       </TransitionSeries>
     </AbsoluteFill>

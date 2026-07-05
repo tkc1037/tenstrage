@@ -5,9 +5,12 @@ export const DEFAULT_REMOTION_SETTINGS = Object.freeze({
   codec: 'h264',
   transitionFrames: 15,
   audioVolume: 1,
+  bgmVolume: 0.32,
   backgroundImageOpacity: 0.2,
+  sceneImageOpacity: 0.72,
   bottomGradientOpacity: 0.88,
   horizontalPadding: 64,
+  hookBandColor: '#e11d2a',
   hookFontSize: 56,
   hookLabelFontSize: 20,
   infoFontSize: 32,
@@ -22,7 +25,9 @@ const ranges = {
   height: [1280, 3840],
   transitionFrames: [1, 45],
   audioVolume: [0, 2],
+  bgmVolume: [0, 1],
   backgroundImageOpacity: [0, 1],
+  sceneImageOpacity: [0, 1],
   bottomGradientOpacity: [0, 1],
   horizontalPadding: [24, 160],
   hookFontSize: [24, 120],
@@ -50,6 +55,9 @@ export function validateRemotionSettings(input = {}) {
   if (![24, 30, 60].includes(settings.fps)) errors.push('fpsは24、30、60のいずれかにしてください');
   if (settings.codec !== 'h264') errors.push('codecは現在h264のみ対応しています');
   if (settings.height <= settings.width) errors.push('縦型動画のためheightはwidthより大きくしてください');
+  if (!/^#[0-9a-f]{6}$/i.test(settings.hookBandColor)) {
+    errors.push(`hookBandColorは6桁HEXで指定してください: ${settings.hookBandColor}`);
+  }
   if (!Number.isInteger(settings.width) || !Number.isInteger(settings.height)) {
     errors.push('widthとheightは整数で指定してください');
   }

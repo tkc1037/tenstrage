@@ -6,6 +6,11 @@ export const WIDTH = 1080;
 export const HEIGHT = 1920;
 export const COMPOSITION_ID = 'TaxiVideo';
 export const BG_STYLES = ['bokeh', 'aurora', 'waves', 'grid', 'geometric', 'gradient'];
+export const BGM_TRACKS = {
+  main: 'bgm-main.mp3',
+  'sales-era': 'bgm-sales-era.mp3',
+  company: 'bgm-company.mp3',
+};
 
 export const VIDEO_SCRIPTS_DIR = join(ROOT, 'video-scripts');
 export const AUDIO_DIR = join(ROOT, 'public', 'audio');
