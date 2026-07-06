@@ -5,9 +5,12 @@ import { IMAGE_DIR, QA_DIR } from './config.js';
 import { getCodeBlock, getSection, writeReview } from '../review/markdown.js';
 
 const SCENES = ['hook', 'info'];
+// 素材ルール: 日本人・東京を検索語に含める。外国人/外国はNG。
+// タクシーは会社ロゴ・JPN TAXIロゴが映りやすいので、車外全体ではなく
+// メーター/車内/手元などロゴの出にくい被写体に寄せる。
 const FALLBACK_QUERIES = {
-  hook: 'japan taxi night portrait',
-  info: 'job interview japan portrait',
+  hook: 'tokyo taxi meter dashboard',
+  info: 'japanese businessman office tokyo',
 };
 
 function slugifyQuery(value) {
@@ -26,9 +29,9 @@ export function buildSceneQueries(parsed) {
   };
   return Object.fromEntries(SCENES.map((scene) => {
     const value = text[scene];
-    if (/面接|会社|求人|転職|歩合|給料|年収/.test(value)) return [scene, scene === 'hook' ? 'tokyo taxi driver portrait' : 'job interview japan office portrait'];
-    if (/営業|上司|ノルマ/.test(value)) return [scene, 'japanese business person stressed portrait'];
-    if (/タクシー|乗務|運転/.test(value)) return [scene, 'tokyo taxi street portrait'];
+    if (/面接|会社|求人|転職|歩合|給料|年収/.test(value)) return [scene, scene === 'hook' ? 'tokyo businessman night city street' : 'japanese businessman office tokyo'];
+    if (/営業|上司|ノルマ/.test(value)) return [scene, 'japanese businessman tired office tokyo'];
+    if (/タクシー|乗務|運転/.test(value)) return [scene, scene === 'hook' ? 'tokyo taxi meter dashboard' : 'japanese taxi driver hands steering wheel'];
     return [scene, FALLBACK_QUERIES[scene]];
   }));
 }

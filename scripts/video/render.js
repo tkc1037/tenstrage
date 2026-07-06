@@ -27,11 +27,19 @@ export async function renderQaStills(context, inputProps, slug) {
   const outputDir = join(QA_DIR, slug);
   mkdirSync(outputDir, { recursive: true });
   const lastFrame = context.composition.durationInFrames - 1;
-  const frames = {
-    hook: Math.round(lastFrame * 0.1),
-    info: Math.round(lastFrame * 0.5),
-    cta: Math.round(lastFrame * 0.9),
-  };
+  const ctaSegment = inputProps.segments?.find((segment) => segment.role === 'cta');
+  const bodySegment = inputProps.segments?.find((segment) => segment.role === 'body');
+  const frames = inputProps.segments?.length
+    ? {
+      hook: Math.min(lastFrame, Math.max(0, inputProps.segments[0].startFrame + 12)),
+      info: Math.min(lastFrame, Math.max(0, (bodySegment?.startFrame ?? Math.round(lastFrame * 0.5)) + 12)),
+      cta: Math.min(lastFrame, Math.max(0, (ctaSegment?.startFrame ?? Math.round(lastFrame * 0.9)) + 12)),
+    }
+    : {
+      hook: Math.round(lastFrame * 0.1),
+      info: Math.round(lastFrame * 0.5),
+      cta: Math.round(lastFrame * 0.9),
+    };
 
   for (const [name, frame] of Object.entries(frames)) {
     await renderStill({

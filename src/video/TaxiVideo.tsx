@@ -300,7 +300,7 @@ const CtaCard: React.FC<{
         position: 'absolute',
         left: settings.horizontalPadding,
         right: settings.horizontalPadding,
-        bottom: 86,
+        top: 1080,
         transform: `translateY(${lerp(frame, [5, 28], [40, 0], EASE.out)}px)`,
         opacity: panel,
         fontFamily: font,
@@ -376,6 +376,197 @@ const CtaCard: React.FC<{
   );
 };
 
+const cleanForDisplay = (s: string) => s.replace(/パーセント/g, '％').replace(/%/g, '％').replace(/[、。]/g, '');
+
+const splitSubtitle = (text: string) => {
+  const maxLen = 13;
+  const clauses = text.split(/(?<=[、。])/).map((c) => cleanForDisplay(c).trim()).filter(Boolean);
+  const lines: string[] = [];
+  for (const clause of clauses) {
+    const last = lines[lines.length - 1];
+    if (last !== undefined && last.length + clause.length <= maxLen) {
+      lines[lines.length - 1] = last + clause;
+    } else if (clause.length <= maxLen) {
+      lines.push(clause);
+    } else {
+      let rest = clause;
+      while (rest.length > maxLen) {
+        lines.push(rest.slice(0, maxLen));
+        rest = rest.slice(maxLen);
+      }
+      if (rest.length <= 4 && lines.length) lines[lines.length - 1] += rest;
+      else if (rest) lines.push(rest);
+    }
+  }
+  if (lines.length >= 2 && lines[lines.length - 1].length <= 4) {
+    const tail = lines.pop() as string;
+    lines[lines.length - 1] += tail;
+  }
+  return lines.slice(0, 3);
+};
+
+const HighlightedText: React.FC<{
+  text: string;
+  highlight?: string[];
+  accentColor: string;
+  fontSize: number;
+}> = ({ text, highlight = [], accentColor, fontSize }) => {
+  const matches = highlight.filter((word) => word && text.includes(word));
+  if (matches.length === 0) return <>{text}</>;
+  const pattern = new RegExp(`(${matches.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+  return (
+    <>
+      {text.split(pattern).map((part, index) => (
+        matches.includes(part)
+          ? <span key={`${part}-${index}`} style={{ color: accentColor }}>{part}</span>
+          : <React.Fragment key={`${part}-${index}`}>{part}</React.Fragment>
+      ))}
+    </>
+  );
+};
+
+const SegmentTimeline: React.FC<{
+  title: string;
+  hook: string;
+  hookLabel?: string;
+  segments: TaxiVideoSegment[];
+  accentColor: string;
+  bgStyle: BgStyle;
+  ctaCard: CtaCardProps;
+  settings: TaxiVideoSettings;
+}> = ({ hook, hookLabel, segments, accentColor, bgStyle, ctaCard, settings }) => {
+  const frame = useCurrentFrame();
+  const exactIndex = segments.findIndex((segment) => frame >= segment.startFrame && frame < segment.endFrame);
+  const activeIndex = exactIndex >= 0
+    ? exactIndex
+    : Math.max(0, segments.findIndex((segment) => frame < segment.startFrame) - 1);
+  const active = segments[activeIndex] ?? segments.at(-1);
+  const previous = segments.slice(0, activeIndex).reverse().find((segment) => segment.imageFile);
+  const activeImage = active?.imageFile;
+  const local = active ? frame - active.startFrame : 0;
+  const fade = Math.min(1, local / 6);
+  const imageScale = 1.04 + Math.min(0.08, Math.max(0, local) / 900);
+
+  if (active?.role === 'cta') {
+    return <CtaCard accentColor={accentColor} ctaCard={ctaCard} settings={settings} />;
+  }
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#0c1a30', fontFamily: font }}>
+      <div style={{
+        position: 'absolute',
+        inset: '0 0 73% 0',
+        backgroundColor: '#0c1a30',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        padding: `40px ${settings.horizontalPadding}px 22px`,
+      }}>
+        <div style={{ color: accentColor, fontSize: settings.hookLabelFontSize, fontWeight: 900, marginBottom: 16, letterSpacing: 1 }}>
+          {hookLabel ?? '求人票の裏側'}
+        </div>
+        <div style={{
+          width: '100%',
+          backgroundColor: settings.hookBandColor,
+          color: C.white,
+          fontSize: settings.hookFontSize,
+          fontWeight: 900,
+          lineHeight: 1.22,
+          textAlign: 'center',
+          padding: '24px 30px',
+          borderRadius: 4,
+          boxShadow: '0 20px 42px rgba(0,0,0,0.35)',
+        }}>
+          {cleanForDisplay(hook)}
+        </div>
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        inset: '27% 0 34% 0',
+        overflow: 'hidden',
+        backgroundColor: '#111827',
+      }}>
+        {!activeImage && (
+          <BgLayer
+            bgStyle={bgStyle}
+            imageOpacity={0}
+            gradientOpacity={0.25}
+          />
+        )}
+        {previous?.imageFile && activeImage && (
+          <Img
+            src={staticFile(previous.imageFile)}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: 1 - fade,
+              transform: 'scale(1.08)',
+            }}
+          />
+        )}
+        {activeImage && (
+          <Img
+            src={staticFile(activeImage)}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: fade,
+              transform: `scale(${imageScale})`,
+            }}
+          />
+        )}
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        inset: '66% 0 0 0',
+        backgroundColor: '#0c1a30',
+        color: C.white,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        padding: `26px ${settings.horizontalPadding}px 60px`,
+      }}>
+        <div style={{
+          fontSize: settings.infoFontSize + 13,
+          fontWeight: 900,
+          lineHeight: 1.42,
+          textAlign: 'center',
+          textShadow: '0 4px 14px rgba(0,0,0,0.35)',
+        }}>
+          {splitSubtitle(active?.text ?? '').map((line) => (
+            <div key={line}>
+              <HighlightedText
+                text={line}
+                highlight={active?.highlight?.map(cleanForDisplay)}
+                accentColor={accentColor}
+                fontSize={settings.infoFontSize + 13}
+              />
+            </div>
+          ))}
+        </div>
+        <div style={{
+          position: 'absolute',
+          right: 44,
+          bottom: 34,
+          color: C.gray[400],
+          fontSize: settings.watermarkFontSize,
+          fontWeight: 800,
+          letterSpacing: 1,
+        }}>
+          TAKUZO TAXI
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ── 型定義 ───────────────────────────────────────────────────
 export interface TaxiVideoTiming {
   hookFrames: number;
@@ -392,6 +583,7 @@ export interface TaxiVideoSettings {
   codec: 'h264';
   transitionFrames: number;
   audioVolume: number;
+  narrationSpeed: number;
   bgmVolume: number;
   backgroundImageOpacity: number;
   sceneImageOpacity: number;
@@ -417,6 +609,15 @@ export interface CtaCardProps {
   ctaText: string;
 }
 
+export interface TaxiVideoSegment {
+  role: 'hook' | 'body' | 'cta';
+  text: string;
+  highlight?: string[];
+  imageFile?: string;
+  startFrame: number;
+  endFrame: number;
+}
+
 export interface TaxiVideoProps {
   title: string;
   hook: string;
@@ -429,6 +630,7 @@ export interface TaxiVideoProps {
     hook?: string;
     info?: string;
   };
+  segments?: TaxiVideoSegment[];
   bgStyle?: BgStyle;
   accentColor?: string;
   hookLabel?: string;
@@ -447,6 +649,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
   bgmFile,
   bgImageSrc,
   sceneImages,
+  segments,
   bgStyle = 'bokeh',
   accentColor = C.gold,
   hookLabel,
@@ -471,6 +674,7 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
     codec: 'h264',
     transitionFrames: 15,
     audioVolume: 1,
+    narrationSpeed: 1.08,
     bgmVolume: 0.32,
     backgroundImageOpacity: 0.2,
     sceneImageOpacity: 0.72,
@@ -486,6 +690,38 @@ export const TaxiVideo: React.FC<TaxiVideoProps> = ({
     watermarkFontSize: 15,
     ...inputSettings,
   };
+  if (segments?.length) {
+    const totalFrames = timing?.totalFrames ?? segments.at(-1)?.endFrame ?? 900;
+    return (
+      <AbsoluteFill style={{ backgroundColor: C.black }}>
+        {audioSrc && (
+          <Audio
+            src={staticFile(audioSrc)}
+            volume={settings.audioVolume}
+            playbackRate={settings.narrationSpeed}
+          />
+        )}
+        {bgmFile && (
+          <BgmTrack
+            src={`audio/bgm/${bgmFile}`}
+            volume={settings.bgmVolume}
+            totalFrames={totalFrames}
+            fadeFrames={Math.round(settings.fps * 0.5)}
+          />
+        )}
+        <SegmentTimeline
+          title={title}
+          hook={hook}
+          hookLabel={hookLabel}
+          segments={segments}
+          accentColor={accentColor}
+          bgStyle={bgStyle}
+          ctaCard={ctaCard}
+          settings={settings}
+        />
+      </AbsoluteFill>
+    );
+  }
   const HOOK_FRAMES = timing?.hookFrames ?? 90;
   const INFO_FRAMES = timing?.infoFrames ?? 120;
   const CTA_FRAMES  = timing?.ctaFrames  ?? 90;

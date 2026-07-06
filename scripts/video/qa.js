@@ -32,6 +32,7 @@ export async function runVideoQa({
   videoPath,
   expected = { width: 1080, height: 1920, fps: 30, codec: 'h264' },
   secrets = [],
+  narrationSpeed = 1,
 }) {
   const wav = inspectWav(audioPath);
   const video = await inspectVideo(videoPath);
@@ -47,8 +48,9 @@ export async function runVideoQa({
   if (Math.abs(video.fps - expected.fps) > 0.1) errors.push(`FPS不一致: ${video.fps}`);
   const expectedCodec = expected.codec === 'h264' ? 'avc' : expected.codec;
   if (video.videoCodec !== expectedCodec) errors.push(`動画codec不一致: ${video.videoCodec}`);
-  if (Math.abs(video.durationSeconds - wav.durationSeconds) > 1) {
-    errors.push(`音声と動画の尺差が大きい: 音声${wav.durationSeconds.toFixed(2)}秒 / 動画${video.durationSeconds.toFixed(2)}秒`);
+  const expectedVideoDuration = wav.durationSeconds / narrationSpeed;
+  if (Math.abs(video.durationSeconds - expectedVideoDuration) > 1) {
+    errors.push(`音声と動画の尺差が大きい: 音声(等速換算)${expectedVideoDuration.toFixed(2)}秒 / 動画${video.durationSeconds.toFixed(2)}秒`);
   }
 
   const mediaBuffers = [readFileSync(audioPath), readFileSync(videoPath)];

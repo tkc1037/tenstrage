@@ -1,7 +1,7 @@
 import { dirname } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
-export async function generateBackground(prompt, apiKey, outputPath) {
+export async function generateBackground(prompt, apiKey, outputPath, aspectRatio = '9:16') {
   if (existsSync(outputPath)) return true;
 
   const response = await fetch(
@@ -11,12 +11,15 @@ export async function generateBackground(prompt, apiKey, outputPath) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         instances: [{ prompt }],
-        parameters: { sampleCount: 1, aspectRatio: '9:16' },
+        parameters: { sampleCount: 1, aspectRatio },
       }),
     },
   );
   const json = await response.json();
   if (json.error) {
+    if (/quota|rate|retry/i.test(json.error.message)) {
+      throw new Error(`Imagenエラー: ${json.error.message}`);
+    }
     console.warn(`⚠️ Imagenエラー（背景なし）: ${json.error.message}`);
     return false;
   }

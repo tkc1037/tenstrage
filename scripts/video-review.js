@@ -42,6 +42,7 @@ const { settings: remotionSettings, errors: remotionErrors } = validateRemotionS
 });
 if (remotionErrors.length > 0) throw new Error(`記憶済みRemotion設定が不正です:\n- ${remotionErrors.join('\n- ')}`);
 const scriptHash = createHash('sha256').update(parsed.raw).digest('hex');
+const hasSegments = parsed.segments.length > 0;
 
 const body = `# 動画公開前レビュー：${parsed.title}
 
@@ -62,7 +63,15 @@ ${stringify({
 }, { lineWidth: 0 }).trim()}
 \`\`\`
 
-## Remotion設定
+${hasSegments ? `## セグメント
+
+字幕・ハイライト・画像生成プロンプトを確認してください。hook/bodyは画像生成、ctaは固定CTAカードです。
+
+\`\`\`yaml
+${stringify({ segments: parsed.segments }, { lineWidth: 0 }).trim()}
+\`\`\`
+
+` : ''}## Remotion設定
 
 安全範囲内で数値を編集できます。縦型・H.264以外は現在停止します。
 
@@ -130,12 +139,12 @@ ${parsed.cta}
 ## 確認手順
 
 1. 表示設定・読み上げ原稿・各プロンプトを修正
-2. Remotion設定を確認し、TTS・背景プロンプトを確認
+2. Remotion設定を確認し、TTS・${hasSegments ? 'セグメント画像プロンプト' : '背景プロンプト'}を確認
 3. 恒久修正があれば「記憶する修正」へ記載
 4. 今回の設定とプロンプトを次回も使う場合は \`node scripts/remember-review.js <レビュー.md> --video-defaults\`
 5. 台本・読み上げ・TTSプロンプトを承認したら \`scriptApproved\`、\`speechApproved\`、\`ttsPromptApproved\` をtrue
 6. 音声試聴後に \`audioApproved\` をtrue
-7. 背景プロンプト・映像方針・Remotion設定を承認したら \`backgroundPromptApproved\`、\`visualApproved\`、\`remotionApproved\` をtrue
+7. ${hasSegments ? 'セグメント画像プロンプト' : '背景プロンプト'}・映像方針・Remotion設定を承認したら \`${hasSegments ? 'segmentPromptsApproved' : 'backgroundPromptApproved'}\`、\`visualApproved\`、\`remotionApproved\` をtrue
 8. 動画確認後に \`videoApproved\`、公開直前に \`publishApproved\` をtrue
 `;
 
@@ -150,6 +159,7 @@ writeReview(reviewPath, {
   ttsPromptApproved: false,
   audioApproved: false,
   backgroundPromptApproved: false,
+  segmentPromptsApproved: !hasSegments,
   visualApproved: false,
   remotionApproved: false,
   videoApproved: false,
