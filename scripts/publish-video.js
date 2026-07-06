@@ -18,12 +18,14 @@ const memoryCommands = parseMemoryCommands(getCodeBlock(getSection(review.body, 
 if (memoryCommands.length > 0 && review.data.memoryApplied !== true) {
   throw new Error('恒久修正が未登録です。先に remember-review.js を実行してください');
 }
+const segmentReview = parse(getCodeBlock(getSection(review.body, 'セグメント'))) ?? {};
+const hasSegments = Array.isArray(segmentReview.segments) && segmentReview.segments.length > 0;
 const required = [
   'scriptApproved',
   'speechApproved',
   'ttsPromptApproved',
   'audioApproved',
-  'backgroundPromptApproved',
+  hasSegments ? 'segmentPromptsApproved' : 'backgroundPromptApproved',
   'visualApproved',
   'remotionApproved',
   'factChecked',
@@ -43,7 +45,7 @@ if (!existsSync(videoPath)) throw new Error(`動画がありません: ${videoPa
 const remotionInput = parse(getCodeBlock(getSection(review.body, 'Remotion設定'))) ?? {};
 const { settings, errors: settingsErrors } = validateRemotionSettings(remotionInput);
 if (settingsErrors.length) throw new Error(`Remotion設定エラー:\n- ${settingsErrors.join('\n- ')}`);
-const qa = await runVideoQa({ audioPath, videoPath, expected: settings });
+const qa = await runVideoQa({ audioPath, videoPath, expected: settings, narrationSpeed: hasSegments ? settings.narrationSpeed : 1 });
 if (qa.errors.length) throw new Error(qa.errors.join('\n'));
 
 const youtubeTitle = getCodeBlock(getSection(review.body, 'YouTubeタイトル'));
@@ -52,7 +54,8 @@ const tiktokText = getCodeBlock(getSection(review.body, 'TikTok本文'));
 if (!youtubeTitle || !youtubeText || !tiktokText) throw new Error('SNS公開文が空です');
 
 const env = loadEnv();
-const videoUrl = `https://takuzo-taxi.com/video/${basename(videoPath)}`;
+const GITHUB_REPO = 'tkc1037/tenstrage';
+let videoUrl;
 
 function deployApprovedVideo() {
   const relativeVideoPath = `public/video/${basename(videoPath)}`;
@@ -70,19 +73,23 @@ function deployApprovedVideo() {
       ['commit', '--only', relativeVideoPath, '-m', `[video] ${slug} approved`],
       { cwd: ROOT, stdio: 'inherit' },
     );
-    execFileSync('git', ['push', 'origin', 'main'], { cwd: ROOT, stdio: 'inherit' });
   }
+  execFileSync('git', ['push', 'origin', 'main'], { cwd: ROOT, stdio: 'inherit' });
+  const commitSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT }).toString().trim();
+  videoUrl = `https://raw.githubusercontent.com/${GITHUB_REPO}/${commitSha}/${relativeVideoPath}`;
 }
 
 async function waitForDeployment() {
   const localMd5 = createHash('md5').update(readFileSync(videoPath)).digest('hex');
   for (let attempt = 1; attempt <= 30; attempt += 1) {
-    const response = await fetch(`${videoUrl}?review=${Date.now()}`, { method: 'HEAD' });
-    const etag = response.headers.get('etag')?.replaceAll('"', '');
-    if (response.ok && etag === localMd5) return;
+    const response = await fetch(`${videoUrl}?review=${Date.now()}`);
+    if (response.ok) {
+      const remoteMd5 = createHash('md5').update(Buffer.from(await response.arrayBuffer())).digest('hex');
+      if (remoteMd5 === localMd5) return;
+    }
     if (attempt < 30) await new Promise((resolveWait) => setTimeout(resolveWait, 10000));
   }
-  throw new Error('Cloudflareへの承認済み動画反映を確認できませんでした');
+  throw new Error('GitHub rawへの承認済み動画反映を確認できませんでした');
 }
 
 deployApprovedVideo();
@@ -101,8 +108,11 @@ async function post(input) {
   if (result?.message) throw new Error(result.message);
   return result.post;
 }
+const atArg = process.argv.find((arg) => arg.startsWith('--at='));
 const mode = process.argv.includes('--now') ? 'shareNow' : 'customScheduled';
-const schedule = mode === 'shareNow' ? {} : { dueAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() };
+const dueAt = atArg ? new Date(atArg.slice('--at='.length)) : new Date(Date.now() + 30 * 60 * 1000);
+if (atArg && Number.isNaN(dueAt.getTime())) throw new Error(`--atの日時が不正です: ${atArg}`);
+const schedule = mode === 'shareNow' ? {} : { dueAt: dueAt.toISOString() };
 const common = { mode, schedulingType: 'automatic', assets: { video: { url: videoUrl } }, ...schedule };
 if (!review.data.youtubePublished) {
   const youtube = await post({
