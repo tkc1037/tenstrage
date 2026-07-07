@@ -23,7 +23,7 @@ const breadcrumbItems = [
   { label: article.data.title },
 ];
 
-const articleUrl = new URL(`/articles/${article.id}/`, Astro.site || 'https://takuzo-taxi.pages.dev');
+const articleUrl = new URL(`/articles/${article.id}/`, Astro.site || 'https://takuzo-taxi.com');
 const heroImageUrl = article.data.heroImage
   ? new URL(article.data.heroImage, Astro.site || Astro.url).href
   : undefined;

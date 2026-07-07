@@ -95,13 +95,22 @@ function registryText() {
   return existsSync(TOPIC_REGISTRY) ? readFileSync(TOPIC_REGISTRY, 'utf8') : '';
 }
 
+function extractRegistryCanonicalSlugs(text) {
+  const section = text.match(/## 記事台帳（canonical）[\s\S]*?(?=\n---|\n## |$)/)?.[0] ?? '';
+  return new Set(
+    [...section.matchAll(/^\|\s*`([^`]+)`\s*\|/gm)]
+      .map((match) => match[1])
+      .filter((slug) => slug !== 'slug')
+  );
+}
+
 function loadArticles() {
   const files = readdirSync(ARTICLES_DIR).filter(f => f.endsWith('.md'));
   return files.map(file => {
     const content = readFileSync(join(ARTICLES_DIR, file), 'utf8');
     const title = extractTitle(content);
     const tags = extractTags(content);
-    const isDraft = /^draft:\s*true/m.test(content);
+    const isDraft = !/^draft:\s*false/m.test(content);
     const body = stripFrontmatter(content).replace(/## 関連記事[\s\S]*$/m, '');
     const description = extractDescription(content);
     const topicText = `${title ?? ''} ${description} ${tags.join(' ')}`;
@@ -151,6 +160,14 @@ function audit(articles, publicOnly = false) {
   return pairs.sort((x, y) => y.score - x.score);
 }
 
+function auditRegistryCoverage(articles) {
+  const canonicalSlugs = extractRegistryCanonicalSlugs(registryText());
+  const publicSlugs = new Set(articles.filter((article) => !article.isDraft).map((article) => article.slug));
+  const missingInRegistry = [...publicSlugs].filter((slug) => !canonicalSlugs.has(slug)).sort();
+  const missingInPublic = [...canonicalSlugs].filter((slug) => !publicSlugs.has(slug)).sort();
+  return { missingInRegistry, missingInPublic };
+}
+
 const articles = loadArticles();
 const args = process.argv.slice(2);
 const arg = args.find(a => !a.startsWith('--'));
@@ -158,6 +175,9 @@ const publicOnly = args.includes('--public');
 
 if (args.includes('--audit')) {
   const pairs = audit(articles, publicOnly);
+  const registryCoverage = publicOnly
+    ? auditRegistryCoverage(articles)
+    : { missingInRegistry: [], missingInPublic: [] };
   console.log(`\n🔎 重複監査: ${publicOnly ? '公開記事のみ' : '全記事'} / ${pairs.length}件\n`);
   for (const p of pairs) {
     console.log(`❌ ${p.a.file}  <->  ${p.b.file}`);
@@ -165,7 +185,20 @@ if (args.includes('--audit')) {
     console.log(`   ${p.b.title}`);
     console.log(`   score=${p.score.toFixed(2)} keyword=${p.keywordScore.toFixed(2)} title=${p.titleScore.toFixed(2)} body=${p.bodyScore.toFixed(2)}\n`);
   }
-  process.exit(pairs.length > 0 ? 1 : 0);
+  if (publicOnly) {
+    if (registryCoverage.missingInRegistry.length > 0) {
+      console.log('❌ canonical台帳に未記載の公開記事:');
+      for (const slug of registryCoverage.missingInRegistry) console.log(`   - ${slug}`);
+      console.log('');
+    }
+    if (registryCoverage.missingInPublic.length > 0) {
+      console.log('❌ canonical台帳にあるが公開記事ではないslug:');
+      for (const slug of registryCoverage.missingInPublic) console.log(`   - ${slug}`);
+      console.log('');
+    }
+  }
+  const registryErrorCount = registryCoverage.missingInRegistry.length + registryCoverage.missingInPublic.length;
+  process.exit(pairs.length > 0 || registryErrorCount > 0 ? 1 : 0);
 }
 
 if (arg === '--suggest') {

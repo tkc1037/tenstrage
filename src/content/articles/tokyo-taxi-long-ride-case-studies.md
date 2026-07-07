@@ -10,7 +10,7 @@ tags:
   - 東京タクシー
   - 現場実例
   - 営業記録
-author: Takuzo
+author: "Takuzo"
 reviewStatus: published
 factChecked: true
 sources:
