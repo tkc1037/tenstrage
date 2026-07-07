@@ -19,6 +19,13 @@ const GROUPS = [
     flags: ['duplicateChecked', 'factChecked', 'contentApproved', 'publishApproved'],
     headings: ['dup', 'fact', 'content', 'publish'],
   },
+  {
+    label: 'video',
+    dir: join(OBSIDIAN, 'reviews', 'video'),
+    idField: 'slug',
+    flags: ['scriptApproved', 'audioApproved', 'visualApproved', 'videoApproved', 'publishApproved'],
+    headings: ['script', 'audio', 'visual', 'video', 'publish'],
+  },
 ];
 
 function parseFrontmatter(text) {
@@ -102,7 +109,7 @@ for (const group of GROUPS) {
 
   console.log(`[${group.label}]`);
   console.log(
-    `${pad(group.label === 'articles' ? 'slug' : 'postId', idWidth)} ${group.headings
+    `${pad(group.idField, idWidth)} ${group.headings
       .map((heading, index) => pad(heading, widths[index]))
       .join(' ')} -> 状態`,
   );

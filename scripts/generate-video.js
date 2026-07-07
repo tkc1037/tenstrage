@@ -186,12 +186,8 @@ async function processScript(scriptFile, env, options) {
   if (review.data.scriptHash !== currentHash) {
     throw new Error('台本がレビュー作成後に変更されています。レビューを更新してください');
   }
-  if (
-    review.data.scriptApproved !== true
-    || review.data.speechApproved !== true
-    || review.data.ttsPromptApproved !== true
-  ) {
-    throw new Error('scriptApproved、speechApproved、ttsPromptApprovedの承認が必要です');
+  if (review.data.scriptApproved !== true) {
+    throw new Error('scriptApprovedの承認が必要です');
   }
 
   const speechText = getCodeBlock(getSection(review.body, '読み上げ原稿'));
@@ -212,8 +208,8 @@ async function processScript(scriptFile, env, options) {
 
   if (options.audioOnly) {
     if (!env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEYが未設定です');
-    if (hasSegments && review.data.segmentPromptsApproved !== true) {
-      throw new Error('segmentPromptsApprovedの承認が必要です');
+    if (hasSegments && review.data.visualApproved !== true) {
+      throw new Error('visualApprovedの承認が必要です');
     }
     if (hasSegments) {
       console.log(`🎤 セグメント別Gemini TTS音声生成: ${segments.length}件`);
@@ -277,11 +273,8 @@ async function processScript(scriptFile, env, options) {
   if (
     review.data.audioApproved !== true
     || review.data.visualApproved !== true
-    || (!hasSegments && review.data.backgroundPromptApproved !== true)
-    || (hasSegments && review.data.segmentPromptsApproved !== true)
-    || review.data.remotionApproved !== true
   ) {
-    throw new Error(`audioApproved、visualApproved、${hasSegments ? 'segmentPromptsApproved' : 'backgroundPromptApproved'}、remotionApprovedの承認が必要です`);
+    throw new Error('audioApproved、visualApprovedの承認が必要です');
   }
   if (!existsSync(audioPath)) throw new Error('音声がありません。先に --audio-only を実行してください');
   if (hasSegments && !Array.isArray(review.data.segmentTimeline)) {

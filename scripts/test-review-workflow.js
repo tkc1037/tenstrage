@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { readdirSync } from 'node:fs';
 import { join } from 'path';
 import { parse } from 'yaml';
 import { OBSIDIAN } from './paths.js';
@@ -17,12 +18,13 @@ assert.ok(Array.isArray(display.lines));
 assert.ok(getCodeBlock(getSection(videoReview.body, '読み上げ原稿')));
 const remotion = parse(getCodeBlock(getSection(videoReview.body, 'Remotion設定')));
 assert.equal(validateRemotionSettings(remotion).errors.length, 0);
-assert.equal(videoReview.data.remotionApproved, false);
-assert.equal(videoReview.data.ttsPromptApproved, false);
-assert.equal(videoReview.data.backgroundPromptApproved, false);
+assert.equal(videoReview.data.visualApproved, false);
 assert.equal(loadContentMemory().videoDefaults.remotion.width, 1080);
 
-const xReview = readReview(join(OBSIDIAN, 'reviews', 'x', 'x-20260608-001.md'));
+const xReviewFile = readdirSync(join(OBSIDIAN, 'reviews', 'x'))
+  .filter((name) => name.endsWith('.md'))
+  .sort()[0];
+const xReview = readReview(join(OBSIDIAN, 'reviews', 'x', xReviewFile));
 const xText = getCodeBlock(getSection(xReview.body, '投稿本文'));
 assert.equal(xReview.data.type, 'x-review');
 assert.ok(validateXText(xText).length > 0);

@@ -18,16 +18,10 @@ const memoryCommands = parseMemoryCommands(getCodeBlock(getSection(review.body, 
 if (memoryCommands.length > 0 && review.data.memoryApplied !== true) {
   throw new Error('恒久修正が未登録です。先に remember-review.js を実行してください');
 }
-const segmentReview = parse(getCodeBlock(getSection(review.body, 'セグメント'))) ?? {};
-const hasSegments = Array.isArray(segmentReview.segments) && segmentReview.segments.length > 0;
 const required = [
   'scriptApproved',
-  'speechApproved',
-  'ttsPromptApproved',
   'audioApproved',
-  hasSegments ? 'segmentPromptsApproved' : 'backgroundPromptApproved',
   'visualApproved',
-  'remotionApproved',
   'factChecked',
   'videoApproved',
   'publishApproved',
@@ -45,6 +39,7 @@ if (!existsSync(videoPath)) throw new Error(`動画がありません: ${videoPa
 const remotionInput = parse(getCodeBlock(getSection(review.body, 'Remotion設定'))) ?? {};
 const { settings, errors: settingsErrors } = validateRemotionSettings(remotionInput);
 if (settingsErrors.length) throw new Error(`Remotion設定エラー:\n- ${settingsErrors.join('\n- ')}`);
+const hasSegments = Array.isArray(review.data.segmentTimeline) && review.data.segmentTimeline.length > 0;
 const qa = await runVideoQa({ audioPath, videoPath, expected: settings, narrationSpeed: hasSegments ? settings.narrationSpeed : 1 });
 if (qa.errors.length) throw new Error(qa.errors.join('\n'));
 
