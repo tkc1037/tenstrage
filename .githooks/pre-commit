@@ -2,8 +2,14 @@
 set -eu
 
 staged_articles=$(git diff --cached --name-only -- 'src/content/articles/*.md')
+staged_videos=$(git diff --cached --name-only -- 'video-scripts/*.md')
 
 if [ -n "$staged_articles" ]; then
   echo "Running duplicate audit before committing article changes..."
   node scripts/check-duplicate.js --audit
+fi
+
+if [ -n "$staged_videos" ]; then
+  echo "Running video duplicate audit before committing video script changes..."
+  node scripts/check-video-duplicate.js --audit
 fi
