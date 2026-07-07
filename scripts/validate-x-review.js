@@ -12,5 +12,11 @@ const text = getCodeBlock(getSection(review.body, '投稿本文'));
 const result = validateXText(text);
 const avoided = findAvoidedTerms(text, 'x');
 if (avoided.length) result.errors.push(`禁止表現: ${avoided.join(', ')}`);
+const required = ['duplicateChecked', 'factChecked', 'contentApproved', 'publishApproved'];
+const missing = required.filter((key) => review.data[key] !== true);
 console.log(JSON.stringify({ ...result, approvals: review.data }, null, 2));
+if (missing.length) {
+  console.error(`未承認: ${missing.join(', ')}`);
+  process.exit(1);
+}
 if (result.errors.length) process.exit(1);

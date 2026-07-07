@@ -58,9 +58,10 @@ ${text}
 ## 確認手順
 
 1. 本文を修正
-2. 数値・日付・制度・固有名詞を確認して \`factChecked: true\`
-3. 内容確定後に \`contentApproved: true\`
-4. 公開直前に \`publishApproved: true\`
+2. \`scripts/check-x-duplicate.js\` で重複確認して \`duplicateChecked: true\`
+3. 数値・日付・制度・固有名詞を確認して \`factChecked: true\`
+4. 内容確定後に \`contentApproved: true\`
+5. 公開直前に \`publishApproved: true\`
 `;
 
   writeReview(reviewPath, {
@@ -69,6 +70,7 @@ ${text}
     postId,
     postIndex: post.index,
     status: 'draft',
+    duplicateChecked: false,
     factChecked: false,
     contentApproved: false,
     publishApproved: false,
