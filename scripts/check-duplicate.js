@@ -4,6 +4,7 @@ import { ROOT, OBSIDIAN } from './paths.js';
 
 const ARTICLES_DIR = join(ROOT, 'src/content/articles');
 const TOPIC_REGISTRY = join(OBSIDIAN, 'rules/topic-registry.md');
+const ARTICLE_IDEAS = join(OBSIDIAN, 'reports/article-ideas.md');
 
 function extractTitle(content) {
   const m = content.match(/^title:\s*"?(.+?)"?\s*$/m);
@@ -168,6 +169,80 @@ function auditRegistryCoverage(articles) {
   return { missingInRegistry, missingInPublic };
 }
 
+function parseMarkdownRow(line) {
+  if (!line.trim().startsWith('|')) return null;
+  return line
+    .trim()
+    .replace(/^\|/, '')
+    .replace(/\|$/, '')
+    .split('|')
+    .map((cell) => cell.trim());
+}
+
+function loadArticleIdeas() {
+  if (!existsSync(ARTICLE_IDEAS)) {
+    throw new Error(`reports/article-ideas.md が見つかりません: ${ARTICLE_IDEAS}`);
+  }
+  const rows = [];
+  let inCandidates = false;
+  for (const line of readFileSync(ARTICLE_IDEAS, 'utf8').split('\n')) {
+    if (/^##\s+候補/.test(line)) {
+      inCandidates = true;
+      continue;
+    }
+    if (inCandidates && /^##\s+/.test(line)) break;
+    if (!inCandidates) continue;
+
+    const cells = parseMarkdownRow(line);
+    if (!cells || cells.length < 10) continue;
+    if (cells[0] === '日付' || /^-+$/.test(cells[0])) continue;
+
+    rows.push({
+      date: cells[0],
+      tier: cells[1],
+      priority: cells[2],
+      theme: cells[3],
+      keywords: cells[4],
+      source: cells[5],
+      gap: cells[6],
+      experience: cells[7],
+      verification: cells[8],
+      status: cells[9],
+    });
+  }
+  return rows;
+}
+
+function rank(value, order) {
+  const index = order.indexOf(value);
+  return index === -1 ? 99 : index;
+}
+
+function sortArticleIdeas(a, b) {
+  return (
+    rank(a.tier, ['Tier1', 'Tier2', 'Tier3']) - rank(b.tier, ['Tier1', 'Tier2', 'Tier3']) ||
+    rank(a.experience, ['高', '中', '低']) - rank(b.experience, ['高', '中', '低']) ||
+    rank(a.priority, ['高', '中', '低']) - rank(b.priority, ['高', '中', '低']) ||
+    a.theme.localeCompare(b.theme, 'ja')
+  );
+}
+
+function filterArticleIdeas(articles) {
+  const ideas = loadArticleIdeas()
+    .filter((row) => row.status === '未着手')
+    .sort(sortArticleIdeas);
+  const available = [];
+  const covered = [];
+
+  for (const row of ideas) {
+    const duplicates = findDuplicatesForProposal(`${row.theme} ${row.keywords}`, articles);
+    if (duplicates.length) covered.push({ ...row, matchedArticle: duplicates[0] });
+    else available.push(row);
+  }
+
+  return { ideas, available, covered };
+}
+
 const articles = loadArticles();
 const args = process.argv.slice(2);
 const arg = args.find(a => !a.startsWith('--'));
@@ -199,6 +274,34 @@ if (args.includes('--audit')) {
   }
   const registryErrorCount = registryCoverage.missingInRegistry.length + registryCoverage.missingInPublic.length;
   process.exit(pairs.length > 0 || registryErrorCount > 0 ? 1 : 0);
+}
+
+if (args.includes('--ideas')) {
+  try {
+    const { ideas, available, covered } = filterArticleIdeas(articles);
+    console.log(`\n📊 article-ideasフィルタ結果（未着手 ${ideas.length}件）\n`);
+    if (available.length) {
+      console.log(`✅ 選定可能（${available.length}件）:\n`);
+      for (const row of available) {
+        console.log(`  [${row.tier} / 体験:${row.experience} / 優先:${row.priority}] ${row.theme}`);
+        console.log(`    KW: ${row.keywords}`);
+      }
+    } else {
+      console.log('✅ 選定可能: 0件');
+    }
+
+    if (covered.length) {
+      console.log(`\n❌ カバー済み・重複候補（${covered.length}件 — これらは選ばない）:\n`);
+      for (const row of covered) {
+        console.log(`  [${row.tier} / 体験:${row.experience} / 優先:${row.priority}] ${row.theme}`);
+        console.log(`    → 既存: ${row.matchedArticle.file}（${row.matchedArticle.reason}）`);
+      }
+    }
+    process.exit(0);
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
 }
 
 if (arg === '--suggest') {

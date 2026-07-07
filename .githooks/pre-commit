@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -eu
+
+staged_articles=$(git diff --cached --name-only -- 'src/content/articles/*.md')
+
+if [ -n "$staged_articles" ]; then
+  echo "Running duplicate audit before committing article changes..."
+  node scripts/check-duplicate.js --audit
+fi

@@ -25,7 +25,8 @@
     "check:duplicate": "node scripts/check-duplicate.js",
     "audit:consistency": "node scripts/check-content-consistency.js",
     "audit:duplicates": "node scripts/check-duplicate.js --audit --public",
-    "preflight": "node scripts/preflight.js"
+    "preflight": "node scripts/preflight.js",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
