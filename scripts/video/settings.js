@@ -5,7 +5,7 @@ export const DEFAULT_REMOTION_SETTINGS = Object.freeze({
   codec: 'h264',
   transitionFrames: 15,
   audioVolume: 1,
-  narrationSpeed: 1.08,
+  narrationSpeed: 1.25,
   bgmVolume: 0.32,
   backgroundImageOpacity: 0.2,
   sceneImageOpacity: 0.72,
