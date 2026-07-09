@@ -237,8 +237,21 @@ async function processScript(scriptFile, env, options) {
         for (const [index, segment] of timeline.segments.entries()) {
           if (segment.role === 'cta') continue;
           const imageFile = segmentImageFile(slug, index);
-          const ok = await generateBackgroundWithRetry(segment.imagePrompt, env.GEMINI_API_KEY, join(IMAGE_DIR, imageFile.replace(/^images\//, '')), '4:3');
+          const imagePath = join(IMAGE_DIR, imageFile.replace(/^images\//, ''));
+          if (existsSync(imagePath)) {
+            segment.imageFile = imageFile;
+            continue;
+          }
+          const ok = await generateBackgroundWithRetry(segment.imagePrompt, env.GEMINI_API_KEY, imagePath, '4:3');
           segment.imageFile = ok ? imageFile : undefined;
+        }
+      } else {
+        for (const [index, segment] of timeline.segments.entries()) {
+          if (segment.role === 'cta') continue;
+          const imageFile = segmentImageFile(slug, index);
+          if (existsSync(join(IMAGE_DIR, imageFile.replace(/^images\//, '')))) {
+            segment.imageFile = imageFile;
+          }
         }
       }
       updateReviewData(reviewPath, {

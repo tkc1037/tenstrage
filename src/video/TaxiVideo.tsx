@@ -60,7 +60,7 @@ const BgLayer: React.FC<{
       {/* ライブラリ背景 */}
       <BgComponent startDelay={0} />
 
-      {/* Gemini Imagen 生成背景画像（オーバーレイ） */}
+      {/* 生成背景画像（オーバーレイ） */}
       {bgImageSrc && (
         <AbsoluteFill>
           <Img
