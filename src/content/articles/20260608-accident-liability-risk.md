@@ -96,7 +96,7 @@ author: "Takuzo"
 
 **事故負担金ゼロ・無事故手当ありの会社を探す**
 
-[→ タクシードライバーズワークで求人を無料検索する](https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH)
+【PR】[→ タクシードライバーズワークで求人を無料検索する](https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH)
 ---
 
 ## 関連記事
