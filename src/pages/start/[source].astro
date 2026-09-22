@@ -1,0 +1,8 @@
+---
+import HomePage from '../../components/HomePage.astro';
+export function getStaticPaths() {
+  return ['tiktok', 'instagram'].map((source) => ({ params: { source } }));
+}
+const source = Astro.params.source as 'tiktok' | 'instagram';
+---
+<HomePage source={source} />

@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from './ArticleCard.astro';
+import AffiliateCta from './AffiliateCta.astro';
+import { getCollection } from 'astro:content';
+import { categoryConfig } from '../lib/categories';
+interface Props { source?: 'tiktok' | 'instagram'; }
+const { source } = Astro.props;
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const entries = [
+  { number: '01', title: '会社選びのポイントを知る', desc: '給与・配車アプリ・車両・事故補償。比べる前に、確認する条件を押さえる。', href: '/articles/taxi-company-selection-guide/', action: '選び方ガイドへ' },
+  { number: '02', title: 'Q&Aで疑問を解消する', desc: '「免許代」「寮」「歩合」など、気になる言葉から短い回答を探す。', href: '/questions/', action: 'Q&Aを検索する' },
+  { number: '03', title: '転職の準備を進める', desc: '希望条件と面接で聞くことを整理して、応募までの流れをつかむ。', href: '/preparation/', action: '準備の確認リストへ' },
+];
+const topics = [
+  { label: '寮・上京の費用', href: '/questions/#housing-cost' },
+  { label: '入社祝い金の条件', href: '/questions/#bonus-eligibility' },
+  { label: '二種免許の費用', href: '/questions/#license-cost' },
+  { label: '給与保証の確認', href: '/questions/#salary-guarantee' },
+  { label: '事故時の自己負担', href: '/questions/#accident-coverage' },
+  { label: '相談登録後の連絡', href: '/questions/#service-flow' },
+];
+---
+<BaseLayout title="" description="東京のタクシー転職で気になる会社選び・給与・寮・二種免許を、現役ドライバーの解説と検索できるQ&Aで確認。希望条件の整理から転職準備まで案内します。" canonicalUrl="https://takuzo-taxi.com/" noindex={Boolean(source)}>
+  <section class="home-hero">
+    <p class="eyebrow">東京の現役タクシードライバーが案内</p>
+    <h1>タクシー転職の疑問を、<br />一つずつクリアに。</h1>
+    <p class="hero-lead">会社選びも、お金の不安も、応募の準備も。<br class="desktop-break" />今、知りたいことから始めましょう。</p>
+    <nav class="entry-grid" aria-label="目的から選ぶ">
+      {entries.map((entry) => <a class="entry" href={entry.href}>
+        <span class="entry-number" aria-hidden="true">{entry.number}</span>
+        <h2>{entry.title}</h2><p>{entry.desc}</p><span class="entry-action">{entry.action} <span aria-hidden="true">→</span></span>
+      </a>)}
+    </nav>
+  </section>
+
+  <AffiliateCta placement={source ? `start-${source}` : 'home-primary'} compact />
+
+  <section class="home-topics">
+    <div class="section-title"><h2>気になる条件から、Q&Aへ</h2><a href="/questions/">すべてのQ&A</a></div>
+    <ul class="topic-grid">{topics.map((topic) => <li><a href={topic.href}>{topic.label}<span aria-hidden="true">→</span></a></li>)}</ul>
+  </section>
+
+  <section id="articles" class="home-articles">
+    <h2>テーマから解説を読む</h2>
+    <div class="category-grid">
+      {Object.entries(categoryConfig).filter(([slug]) => slug !== 'company-selection').map(([slug, category]) =>
+        <a href={`/category/${slug}/`}><span aria-hidden="true">{category.emoji}</span> {category.label}</a>
+      )}
+    </div>
+    <h2>新しく公開した記事</h2>
+    <div class="article-grid">
+      {articles.slice(0, 6).map((article) => <ArticleCard title={article.data.title} description={article.data.description} href={`/articles/${article.id}/`} pubDate={article.data.pubDate} updatedDate={article.data.updatedDate} category={article.data.category} heroImage={article.data.heroImage} />)}
+    </div>
+    <p class="article-note">ほかの記事は、上のテーマから探せます。</p>
+  </section>
+
+  <section class="home-about">
+    <div>
+      <p class="eyebrow">運営者について</p>
+      <h2>現場の経験と、<br />確認できる情報をもとに。</h2>
+      <p>IT企業の営業職から、東京のタクシードライバーへ転職したTakuzoです。実体験と公開情報を分けて、会社選びや仕事の疑問をまとめています。</p>
+      <a href="/about/">プロフィールを見る <span aria-hidden="true">→</span></a>
+      <p class="about-note">画像の年収は運営者個人の実績です。同じ収入を保証するものではありません。</p>
+    </div>
+    <picture>
+      <source srcset="/images/takuzo-main-hero-768.webp 768w, /images/takuzo-main-hero-1200.webp 1200w" sizes="(max-width: 767px) 100vw, 520px" type="image/webp" />
+      <img src="/images/takuzo-main-hero-768.webp" width="1200" height="675" alt="営業職からタクシーへ転職したTakuzo。営業職時代の年収454万円、転職1年目814万円という本人の実績" loading="lazy" decoding="async" />
+    </picture>
+  </section>
+</BaseLayout>
+<style>
+  .home-hero { padding-top: 2.5rem; }
+  .eyebrow { font-size: var(--text-card-summary); font-weight: 700; margin-bottom: .75rem; }
+  .home-hero h1 { margin: 0 0 1rem; line-height: 1.5; }
+  .hero-lead { color: var(--color-text-muted); margin-bottom: 2rem; }
+  .desktop-break { display: none; }
+  .entry-grid { display: grid; gap: 1rem; }
+  .entry { display: grid; grid-template-columns: 2rem 1fr; gap: .5rem .75rem; padding: 1.25rem; color: var(--color-ink); background: var(--color-surface); border: 1px solid var(--color-border); border-top: 4px solid var(--color-accent); border-radius: var(--radius-md); text-decoration: none; }
+  .entry:hover { border-color: var(--color-ink); color: var(--color-ink); }
+  .entry-number { font: 700 1rem/1.6 var(--font-mono); grid-row: 1 / 4; }
+  .entry h2 { font-size: var(--text-card-title); line-height: 1.6; margin: 0; }
+  .entry p { font-size: var(--text-card-summary); color: var(--color-text-muted); margin: 0; }
+  .entry-action { font-size: var(--text-card-summary); color: var(--color-link); font-weight: 700; }
+  .entry:hover .entry-action { text-decoration: underline; }
+  .section-title { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1rem; margin-top: var(--space-section-gap); margin-bottom: 1rem; }
+  .section-title h2 { margin: 0; }
+  .section-title > a { font-size: var(--text-card-summary); min-height: var(--tap-min); display: inline-flex; align-items: center; }
+  .topic-grid { display: grid; gap: 0 1.5rem; list-style: none; padding: 0; }
+  .topic-grid li { margin: 0; }
+  .topic-grid a { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-ink); text-decoration: none; }
+  .topic-grid a:hover { color: var(--color-link); text-decoration: underline; }
+  .category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .category-grid a { display: flex; gap: .5rem; align-items: center; padding: .75rem; min-height: var(--tap-min); font-size: var(--text-card-summary); text-decoration: none; color: var(--color-ink); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+  .category-grid a:hover { border-color: var(--color-ink); }
+  .article-grid { display: grid; gap: var(--space-card-gap); }
+  .article-note, .about-note { font-size: var(--text-caption); color: var(--color-text-muted); margin-top: 1rem; }
+  .home-about { display: grid; gap: 1.5rem; margin-top: var(--space-section-gap); padding-block: 2rem; border-top: 1px solid var(--color-border); }
+  .home-about h2 { margin: 0 0 1rem; }
+  .home-about img { border-radius: var(--radius-md); width: 100%; height: auto; }
+  @media (min-width: 48rem) {
+    .home-hero { padding-top: 3.5rem; }
+    .desktop-break { display: initial; }
+    .entry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .entry { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; padding: 1.5rem; }
+    .entry-number { grid-row: auto; margin-bottom: .5rem; }
+    .entry-action { margin-top: .75rem; }
+    .topic-grid, .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .home-about { grid-template-columns: 1fr 1fr; align-items: center; gap: 2rem; }
+  }
+</style>

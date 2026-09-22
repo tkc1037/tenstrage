@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AffiliateCta from '../components/AffiliateCta.astro';
+const steps = [
+  { title: '希望条件に優先順位をつける', text: '希望する収入、勤務時間、通勤、寮の必要性、入社までに使えるお金。「譲れない条件」と「相談できる条件」を分けて、手元のメモに残しましょう。', href: '/articles/taxi-company-selection-guide/', label: '会社選びの確認ポイントを読む' },
+  { title: '面接で聞きたいことを残す', text: '求人情報でわからなかった点を、下のリストで確認しましょう。回答は会社名・営業所名と一緒にメモすると、後で比べやすくなります。', href: '/questions/#interview-check', label: '面接のQ&Aを見る' },
+  { title: '応募書類と入社までの予定を整理する', text: '職歴や免許の取得時期、転職の理由を整理し、応募先が求める書類を確認しましょう。在職中なら面接できる日時や入社希望時期も考えておきます。', href: '/articles/taxi-career-roadmap/', label: '転職から乗務開始までの流れを読む' },
+];
+---
+<BaseLayout title="タクシー転職の準備｜希望条件と面接の確認リスト" description="希望条件の整理から面接・応募書類まで、タクシー転職前に準備することをまとめました。会社選びや二種免許の疑問も関連する解説で確認できます。">
+  <div class="preparation-page">
+    <p class="eyebrow">会社選びの次の一歩</p>
+    <h1>転職前に、準備すること</h1>
+    <p class="lead">希望条件と、まだわからないことを整理しましょう。すべてを一人で準備してから相談する必要はありません。</p>
+    <ol class="steps">
+      {steps.map((step, index) => <li>
+        <span class="step-number" aria-hidden="true">0{index + 1}</span>
+        <div><h2>{step.title}</h2><p>{step.text}</p><a href={step.href}>{step.label} <span aria-hidden="true">→</span></a></div>
+      </li>)}
+    </ol>
+    <section class="checklist">
+      <h2>面接・相談前の確認リスト</h2>
+      <p>不明な項目を、担当者に聞く質問として使えます。</p>
+      <ul>
+        <li><strong>給与：</strong>歩合率の適用条件、控除、給与保証の対象・期間、保証終了後の計算方法</li>
+        <li><strong>配属・勤務：</strong>雇用する会社と営業所、勤務形態、出庫・帰庫時刻、休日、通勤</li>
+        <li><strong>アプリ・車両：</strong>配属先で使えるアプリ、担当車両の決まり方</li>
+        <li><strong>事故補償：</strong>補償の範囲、本人負担の条件・上限、休業中の扱い</li>
+        <li><strong>免許・研修：</strong>費用の立替や天引き、研修中の給与、退職時の費用返還条件</li>
+        <li><strong>寮・支援金：</strong>対象者、入居条件・費用、支給時期、退職時の扱い</li>
+      </ul>
+      <p>重要な条件は、求人の表示と説明に違いがないかを確認し、後で見直せる形に残しましょう。</p>
+    </section>
+    <AffiliateCta placement="preparation-bottom" />
+    <p><a href="/questions/">わからない言葉は、Q&Aで調べる <span aria-hidden="true">→</span></a></p>
+  </div>
+</BaseLayout>
+<style>
+  .preparation-page { max-width: 46rem; margin-inline: auto; padding-block: 2.5rem; }
+  .eyebrow { font-size: var(--text-card-summary); font-weight: 700; margin-bottom: .5rem; }
+  h1 { margin: 0 0 1rem; }
+  .lead { color: var(--color-text-muted); }
+  .steps { list-style: none; padding: 0; }
+  .steps li { display: flex; gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--color-border); }
+  .steps h2 { font-size: var(--text-h3); margin: 0 0 .75rem; }
+  .steps p { margin-bottom: .75rem; }
+  .step-number { font-family: var(--font-mono); font-weight: 700; border-top: 4px solid var(--color-accent); padding-top: .5rem; }
+  .checklist { padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-top: 2rem; }
+  .checklist h2 { margin-top: 0; }
+  .checklist li { margin-bottom: 1rem; }
+  .checklist p:last-child { margin-bottom: 0; }
+</style>

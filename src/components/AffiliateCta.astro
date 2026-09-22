@@ -1,0 +1,24 @@
+---
+import { driversWorkUrl, affiliateMessage } from '../lib/affiliate';
+interface Props { placement: string; category?: string; slug?: string; compact?: boolean; }
+const { placement, category, slug, compact = false } = Astro.props;
+---
+<aside class:list={['affiliate-cta', { compact }]} aria-label="広告：ドライバーズワークの転職支援">
+  <p class="affiliate-label">PR · 外部の転職支援サービス</p>
+  <p class="affiliate-intro">{affiliateMessage(category, slug)}</p>
+  <a class="affiliate-button" href={driversWorkUrl} rel="sponsored nofollow" data-affiliate-placement={placement}>
+    <span>【PR】ドライバーズワークの</span><span>無料転職相談に登録する <span aria-hidden="true">→</span></span>
+  </a>
+  <p class="affiliate-note">外部サービスの登録フォームへ進みます。登録後は担当者から連絡があります。掲載会社の紹介を保証するものではありません。</p>
+  {!compact && <a class="affiliate-help" href="/questions/#service-flow">登録後の流れ・連絡について</a>}
+</aside>
+<style>
+  .affiliate-cta { margin-block: 2rem; padding: 1.5rem; border: 1px solid var(--color-border); border-left: 4px solid var(--color-accent); border-radius: var(--radius-md); background: var(--color-surface); }
+  .affiliate-label { margin: 0 0 .5rem; font-size: var(--text-caption); font-weight: 700; color: var(--color-text-muted); }
+  .affiliate-intro { margin: 0 0 1rem; font-size: var(--text-card-summary); line-height: 1.8; }
+  .affiliate-button { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .15em; width: fit-content; max-width: 100%; min-height: var(--tap-min); padding: .875rem 1rem; background: var(--color-accent); color: var(--color-ink); font-size: var(--text-button); font-weight: 700; text-decoration: none; border-radius: var(--radius-sm); }
+  .affiliate-button:hover { background: #E4A400; color: var(--color-ink); text-decoration: underline; }
+  .affiliate-note { margin: .75rem 0 0; max-width: 48em; font-size: var(--text-caption); line-height: 1.7; color: var(--color-text-muted); }
+  .affiliate-help { display: inline-block; padding-block: .65rem; font-size: var(--text-card-summary); min-height: var(--tap-min); }
+  .compact { padding: 1rem; }
+</style>

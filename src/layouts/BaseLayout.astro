@@ -21,13 +21,15 @@ const {
   description,
   canonicalUrl,
   noindex = false,
-  ogImage,
+  ogImage = '/images/takuzo-main-hero-1200.webp',
   jsonLd,
 } = Astro.props;
 
 const siteTitle = 'TAKUZO TAXI｜東京タクシー転職ノート';
 const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
-const canonical = canonicalUrl || Astro.url.href;
+const productionOrigin = Astro.site || new URL('https://takuzo-taxi.com');
+const canonical = new URL(canonicalUrl || Astro.url.pathname, productionOrigin).href;
+const socialImage = new URL(ogImage, productionOrigin).href;
 ---
 
 <!doctype html>
@@ -38,12 +40,28 @@ const canonical = canonicalUrl || Astro.url.href;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Google tag (gtag.js) -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      // Keep local and Cloudflare preview visits out of the production property.
+      // Set the official opt-out flag before the async library can execute.
+      if (window.location.hostname !== 'takuzo-taxi.com' || window.location.protocol !== 'https:') {
+        window['ga-disable-G-WZPP0MPJCW'] = true;
+      } else {
+        gtag('js', new Date());
+        gtag('config', 'G-WZPP0MPJCW');
+      }
+    </script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-WZPP0MPJCW"></script>
+
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     <!-- OGP -->
     <meta property="og:type" content="website" />
@@ -52,21 +70,22 @@ const canonical = canonicalUrl || Astro.url.href;
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={siteTitle} />
     <meta property="og:locale" content="ja_JP" />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:image" content={socialImage} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:image" content={socialImage} />
 
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
   </head>
   <body>
+    <a class="skip-link" href="#main-content">本文へ移動</a>
     <Header currentPath={Astro.url.pathname} />
 
-    <main class="site-main">
+    <main id="main-content" class="site-main" tabindex="-1">
       <slot />
     </main>
 
@@ -75,6 +94,8 @@ const canonical = canonicalUrl || Astro.url.href;
 </html>
 
 <style is:global>
+  .skip-link { position: fixed; top: .5rem; left: 1rem; z-index: 200; padding: .75rem 1rem; background: var(--color-surface); transform: translateY(-200%); }
+  .skip-link:focus { transform: none; }
   .site-main {
     max-width: 72rem;
     margin: 0 auto;

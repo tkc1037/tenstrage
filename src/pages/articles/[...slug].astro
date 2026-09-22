@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
+import AffiliateCta from '../../components/AffiliateCta.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -18,6 +19,8 @@ import { categoryLabels } from '../../lib/categories';
 const { Content, headings } = await render(article);
 
 const category = article.data.category;
+// Respect inline ads already present in editorial content; never exceed three.
+const inlineAdCount = (article.body?.match(/https:\/\/px\.a8\.net\//g) || []).length;
 const breadcrumbItems = [
   ...(category ? [{ label: categoryLabels[category] || category, href: `/category/${category}/` }] : []),
   { label: article.data.title },
@@ -92,11 +95,19 @@ const blogPostingLd = {
       </figure>
     )}
 
+    {inlineAdCount < 2 && <AffiliateCta placement="article-top" category={category} slug={article.id} compact />}
+
     {category !== 'note' && <TableOfContents headings={headings} />}
 
     <div class="article-body">
       <Content />
     </div>
+
+    {inlineAdCount < 3 && <AffiliateCta placement="article-bottom" category={category} slug={article.id} />}
+    <nav class="article-next" aria-label="転職について次に調べる">
+      <a href="/questions/">Q&Aで疑問を調べる</a>
+      <a href="/preparation/">転職準備の確認リストを見る</a>
+    </nav>
 
     {article.data.sources.length > 0 && (
       <footer class="article-sources">
@@ -112,6 +123,8 @@ const blogPostingLd = {
 </BaseLayout>
 
 <style>
+  .article-next { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+  .article-next a { display: inline-flex; align-items: center; min-height: var(--tap-min); font-size: var(--text-card-summary); }
   .article-page {
     max-width: var(--content-max-width);
     margin: 0 auto;

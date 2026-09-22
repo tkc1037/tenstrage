@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AffiliateCta from '../components/AffiliateCta.astro';
+import { questions, questionCategories } from '../lib/questions';
+---
+<BaseLayout title="タクシー転職Q&A｜関連ワードで疑問を調べる" description="会社選び、給与、寮・支援金、二種免許、面接、転職支援サービスの疑問を検索。短い回答と詳しい解説から、次に確認することがわかります。">
+  <div class="questions-page">
+    <header class="page-heading">
+      <p class="eyebrow">転職前の「気になる」を調べる</p>
+      <h1>タクシー転職 Q&A</h1>
+      <p>知りたい言葉やテーマから、疑問を一つずつ解消しましょう。</p>
+    </header>
+
+    <form id="question-search" class="search-panel" role="search" aria-label="Q&A内の検索" hidden>
+      <label for="question-query">関連ワードを入力</label>
+      <input id="question-query" type="search" placeholder="例：免許代、寮、歩合、電話" aria-describedby="search-hint" aria-controls="question-results" autocomplete="off" maxlength="120" />
+      <p id="search-hint">複数の言葉はスペースで区切れます。氏名や連絡先の入力は不要です。</p>
+      <div class="search-options">
+        <div class="category-control">
+          <label for="question-category">テーマで絞り込む</label>
+          <select id="question-category" aria-controls="question-results">
+            <option value="">すべてのテーマ</option>
+            {questionCategories.map(({ id, label }) => <option value={id}>{label}</option>)}
+          </select>
+        </div>
+        <button type="reset">条件をクリア</button>
+      </div>
+      <p id="question-count" role="status" aria-live="polite" aria-atomic="true">{questions.length}件のQ&A</p>
+    </form>
+
+    <nav aria-label="Q&Aのテーマ" class="topic-links">
+      {questionCategories.map(({ id, label }) => <a href={`#topic-${id}`}>{label}</a>)}
+    </nav>
+    <noscript><p>テーマを選ぶと、その質問まで移動できます。キーワード検索はJavaScriptを有効にすると利用できます。</p></noscript>
+
+    <div id="question-results">
+      <div id="question-empty" class="empty-state" hidden>
+        <h2>該当するQ&Aが見つかりませんでした</h2>
+        <p>言葉を短くするか、テーマを「すべて」に戻してみてください。例えば「免許代」「寮」「面接」で調べられます。</p>
+        <button type="button" id="show-all-questions">すべてのQ&Aを表示する</button>
+      </div>
+      {questionCategories.map(({ id, label }) => (
+        <section id={`topic-${id}`} class="question-group" data-question-group>
+          <h2>{label}</h2>
+          {questions.filter((item) => item.category === id).map((item) => (
+            <details id={item.id} class="question-item" data-question-item data-category={id} data-search={`${item.question} ${item.answer} ${item.keywords}`}>
+              <summary><span class="question-mark" aria-hidden="true">Q</span><span>{item.question}</span></summary>
+              <div class="answer">
+                <p>{item.answer}</p>
+                <a href={item.link.href}>{item.link.label} <span aria-hidden="true">→</span></a>
+                {item.source && <p class="answer-source">出典：<a href={item.source.href}>{item.source.label}</a>（2026年9月21日確認）</p>}
+                <a class="question-permalink" href={`#${item.id}`} aria-label={`「${item.question}」へのリンク`}>この質問へのリンク</a>
+              </div>
+            </details>
+          ))}
+        </section>
+      ))}
+    </div>
+    <AffiliateCta placement="questions-bottom" />
+    <p class="page-note">一般的な確認ポイントをまとめています。個別の採用条件や求人の取扱いは応募先・紹介サービスで確認してください。タクゾーではLINEや個別の転職相談を受け付けていません。</p>
+  </div>
+</BaseLayout>
+
+<script>
+  import { matchesQuestion } from '../lib/question-search.mjs';
+  const form = document.querySelector<HTMLFormElement>('#question-search')!;
+  const query = document.querySelector<HTMLInputElement>('#question-query')!;
+  const category = document.querySelector<HTMLSelectElement>('#question-category')!;
+  const items = [...document.querySelectorAll<HTMLDetailsElement>('[data-question-item]')];
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-question-group]')];
+  const count = document.querySelector<HTMLElement>('#question-count')!;
+  const empty = document.querySelector<HTMLElement>('#question-empty')!;
+
+  function filterQuestions() {
+    let visible = 0;
+    for (const item of items) {
+      item.hidden = !matchesQuestion(item.dataset.search || '', query.value, item.dataset.category, category.value);
+      if (!item.hidden) visible++;
+    }
+    for (const group of groups) group.hidden = !items.some((item) => !item.hidden && group.contains(item));
+    count.textContent = `${items.length}件中 ${visible}件のQ&A`;
+    empty.hidden = visible !== 0;
+  }
+  function clearFilters() {
+    query.value = '';
+    category.value = '';
+    filterQuestions();
+  }
+  function revealAnchor() {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    const target = document.getElementById(id);
+    if (!target) return;
+    if (target.matches('[data-question-item], [data-question-group]')) {
+      clearFilters();
+      if (target instanceof HTMLDetailsElement) target.open = true;
+      target.scrollIntoView({ block: 'start' });
+    }
+  }
+  form.addEventListener('submit', (event) => { event.preventDefault(); filterQuestions(); });
+  form.addEventListener('reset', (event) => { event.preventDefault(); clearFilters(); query.focus(); });
+  query.addEventListener('input', filterQuestions);
+  category.addEventListener('change', filterQuestions);
+  document.querySelector('#show-all-questions')!.addEventListener('click', () => { clearFilters(); query.focus(); });
+  // Repeated clicks on the current hash must reveal a question hidden by a later search.
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      const destination = new URL(link.href);
+      if (destination.pathname !== location.pathname) return;
+      let id;
+      try { id = decodeURIComponent(destination.hash.slice(1)); } catch { return; }
+      const target = document.getElementById(id);
+      if (!target?.matches('[data-question-item], [data-question-group]')) return;
+      clearFilters();
+      if (destination.hash === location.hash) requestAnimationFrame(revealAnchor);
+    });
+  });
+  window.addEventListener('hashchange', revealAnchor);
+  form.hidden = false;
+  filterQuestions();
+  revealAnchor();
+</script>
+
+<style>
+  .questions-page { max-width: 48rem; margin-inline: auto; padding-block: 2.5rem; }
+  .eyebrow { font-size: var(--text-card-summary); font-weight: 700; margin-bottom: .5rem; }
+  .page-heading h1 { margin: 0 0 1rem; }
+  .search-panel { padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-top: 4px solid var(--color-accent); border-radius: var(--radius-md); }
+  label { display: block; font-weight: 700; font-size: var(--text-card-summary); margin-bottom: .5rem; }
+  input, select { width: 100%; min-height: var(--tap-min); border: 1px solid var(--color-text-muted); border-radius: var(--radius-sm); background: var(--color-surface); padding: .75rem; color: var(--color-ink); font: inherit; font-size: 1rem; }
+  #search-hint, #question-count, .page-note { font-size: var(--text-card-summary); color: var(--color-text-muted); }
+  #question-query { scroll-margin-top: calc(var(--header-height) + 1rem); }
+  #search-hint { margin: .5rem 0 1.25rem; }
+  #question-count { margin: 1rem 0 0; }
+  .search-options { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+  .category-control { flex: 1 1 13rem; }
+  button { min-height: var(--tap-min); padding: .75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-ink); font: inherit; font-size: 1rem; cursor: pointer; }
+  button:hover { border-color: var(--color-ink); }
+  .topic-links { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: 1rem; }
+  .topic-links a { display: inline-flex; align-items: center; min-height: var(--tap-min); font-size: var(--text-card-summary); }
+  .question-group, .question-item { scroll-margin-top: calc(var(--header-height) + 1rem); }
+  .question-group h2 { margin-bottom: 1rem; }
+  .question-item { border-bottom: 1px solid var(--color-border); }
+  summary { position: relative; display: flex; align-items: baseline; gap: .75rem; list-style: none; min-height: var(--tap-min); padding: 1.25rem 2rem 1.25rem 0; font-weight: 700; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; position: absolute; right: .5rem; color: var(--color-link); }
+  details[open] summary::after { content: '−'; }
+  summary:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .question-mark { color: var(--color-link); font-family: var(--font-mono); }
+  .answer { padding: 0 0 1.25rem 1.5rem; }
+  .answer p { margin-bottom: .75rem; }
+  .answer a { overflow-wrap: anywhere; }
+  .answer-source { font-size: var(--text-caption); color: var(--color-text-muted); margin-top: 1rem; }
+  .question-permalink { display: block; width: fit-content; min-height: var(--tap-min); padding-block: .65rem; font-size: var(--text-caption); }
+  .empty-state { margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .empty-state h2 { margin-top: 0; }
+  [hidden] { display: none !important; }
+</style>

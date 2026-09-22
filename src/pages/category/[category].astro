@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
+import AffiliateCta from '../../components/AffiliateCta.astro';
 import { getCollection } from 'astro:content';
 import { categoryConfig } from '../../lib/categories';
 
@@ -35,6 +36,8 @@ const config = categoryConfig[category] || { label: category, emoji: '', descrip
       <h1>{config.emoji}{config.label}</h1>
       {config.description && <p class="category-desc">{config.description}</p>}
     </header>
+
+    <AffiliateCta placement="category-top" category={category} compact />
 
     {articles.length === 0 ? (
       <p class="empty-state">このカテゴリの記事を準備中です。</p>
