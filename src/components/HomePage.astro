@@ -36,11 +36,10 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
         <h1>タクシー転職の疑問を、<br />一つずつクリアに。</h1>
         <p class="hero-lead">会社選びも、お金の不安も、応募の準備も。<br class="desktop-break" />今、知りたいことから始めましょう。</p>
       </div>
-      <div class="hero-visual" role="img" aria-label="運営者タクゾーと、TAKUZO TAXIのイラスト">
-        <img class="hero-character" src="/images/home/takuzo-character-360.webp" srcset="/images/home/takuzo-character-360.webp 360w, /images/home/takuzo-character-640.webp 640w" sizes="(min-width: 48rem) 15rem, 46vw" width="360" height="572" alt="" decoding="async" fetchpriority="high" />
-        <img class="hero-taxi" src="/images/home/takuzo-taxi-front-480.webp" srcset="/images/home/takuzo-taxi-front-480.webp 480w, /images/home/takuzo-taxi-front-800.webp 800w" sizes="(min-width: 48rem) 19rem, 60vw" width="480" height="288" alt="" decoding="async" />
-        <p class="hero-name" aria-hidden="true">運営者 <strong>タクゾー</strong></p>
-      </div>
+      <figure class="hero-photo">
+        <img src="/images/takuzo-main-hero-768.webp" srcset="/images/takuzo-main-hero-768.webp 768w, /images/takuzo-main-hero-1200.webp 1200w, /images/takuzo-main-hero-1600.webp 1600w" sizes="(min-width: 72rem) 38rem, (min-width: 48rem) 55vw, 100vw" width="1200" height="675" alt="営業職からタクシーへ転職したTakuzo。営業職時代の年収454万円、転職1年目814万円という本人の実績" decoding="async" fetchpriority="high" />
+        <figcaption class="hero-photo-note">画像の年収は運営者個人の実績です。同じ収入を保証するものではありません。</figcaption>
+      </figure>
     </div>
 
     <p class="entry-heading">迷ったら、この順番で</p>
@@ -91,12 +90,12 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
       <h2>現場の経験と、<br />確認できる情報をもとに。</h2>
       <p>IT企業の営業職から、東京のタクシードライバーへ転職したTakuzoです。実体験と公開情報を分けて、会社選びや仕事の疑問をまとめています。</p>
       <a href="/about/">プロフィールを見る <span aria-hidden="true">→</span></a>
-      <p class="about-note">画像の年収は運営者個人の実績です。同じ収入を保証するものではありません。</p>
     </div>
-    <picture>
-      <source srcset="/images/takuzo-main-hero-768.webp 768w, /images/takuzo-main-hero-1200.webp 1200w" sizes="(max-width: 767px) 100vw, 520px" type="image/webp" />
-      <img src="/images/takuzo-main-hero-768.webp" width="1200" height="675" alt="営業職からタクシーへ転職したTakuzo。営業職時代の年収454万円、転職1年目814万円という本人の実績" loading="lazy" decoding="async" />
-    </picture>
+    <div class="about-visual" role="img" aria-label="運営者タクゾーと、TAKUZO TAXIのイラスト">
+      <img class="about-character" src="/images/home/takuzo-character-360.webp" srcset="/images/home/takuzo-character-360.webp 360w, /images/home/takuzo-character-640.webp 640w" sizes="(min-width: 48rem) 15rem, 46vw" width="360" height="572" alt="" loading="lazy" decoding="async" />
+      <img class="about-taxi" src="/images/home/takuzo-taxi-front-480.webp" srcset="/images/home/takuzo-taxi-front-480.webp 480w, /images/home/takuzo-taxi-front-800.webp 800w" sizes="(min-width: 48rem) 19rem, 60vw" width="480" height="288" alt="" loading="lazy" decoding="async" />
+      <p class="about-name" aria-hidden="true">運営者 <strong>タクゾー</strong></p>
+    </div>
   </section>
 </BaseLayout>
 <style>
@@ -107,14 +106,19 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
   .hero-lead { font-size: var(--text-lead); color: var(--color-text-muted); margin-bottom: 0; }
   .desktop-break { display: none; }
 
-  /* ヒーローのイラスト：黄色い円の上にタクゾーとTAKUZO TAXI */
-  .hero-visual { position: relative; width: 100%; max-width: 26rem; aspect-ratio: 5 / 4; margin-inline: auto; overflow: hidden; border-radius: var(--radius-lg); background: var(--color-surface); border: 1px solid var(--color-border); }
-  .hero-visual::before { content: ""; position: absolute; width: 78%; aspect-ratio: 1; left: 50%; top: 10%; transform: translateX(-50%); border-radius: 50%; background: var(--color-taxi-amber); }
-  .hero-visual::after { content: ""; position: absolute; inset: auto 0 0; height: 12%; background: #E9E4D8; }
-  .hero-character { position: absolute; left: 6%; bottom: 0; height: 94%; width: auto; z-index: 1; }
-  .hero-taxi { position: absolute; right: 2%; bottom: 4%; width: 64%; height: auto; z-index: 2; }
-  .hero-name { position: absolute; top: .75rem; right: .75rem; z-index: 3; margin: 0; padding: .25rem .75rem; font-size: var(--text-caption); background: var(--color-ink); color: var(--color-warm-paper); border-radius: 999px; }
-  .hero-name strong { color: var(--color-taxi-amber); }
+  /* ヒーロー画像：年収の実績。注記を必ず画像の直下に置く */
+  .hero-photo { margin: 0; }
+  .hero-photo img { width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+  .hero-photo-note { margin-top: .625rem; font-size: var(--text-caption); line-height: var(--leading-caption); color: var(--color-text-muted); }
+
+  /* 運営者のイラスト：黄色い円の上にタクゾーとTAKUZO TAXI */
+  .about-visual { position: relative; width: 100%; max-width: 26rem; aspect-ratio: 5 / 4; margin-inline: auto; overflow: hidden; border-radius: var(--radius-lg); background: var(--color-surface); border: 1px solid var(--color-border); }
+  .about-visual::before { content: ""; position: absolute; width: 78%; aspect-ratio: 1; left: 50%; top: 10%; transform: translateX(-50%); border-radius: 50%; background: var(--color-taxi-amber); }
+  .about-visual::after { content: ""; position: absolute; inset: auto 0 0; height: 12%; background: #E9E4D8; }
+  .about-character { position: absolute; left: 6%; bottom: 0; height: 94%; width: auto; z-index: 1; }
+  .about-taxi { position: absolute; right: 2%; bottom: 4%; width: 64%; height: auto; z-index: 2; }
+  .about-name { position: absolute; top: .75rem; right: .75rem; z-index: 3; margin: 0; padding: .25rem .75rem; font-size: var(--text-caption); background: var(--color-ink); color: var(--color-warm-paper); border-radius: 999px; }
+  .about-name strong { color: var(--color-taxi-amber); }
 
   /* 3ステップの流れ図 */
   .entry-heading { margin: 2.25rem 0 .75rem; font-weight: 700; font-size: var(--text-card-title); }
@@ -149,16 +153,14 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
   .popular-note { margin: 0; font-size: var(--text-caption); color: var(--color-text-muted); }
   .popular-taxi { width: 8.5rem; height: auto; flex: none; }
   .article-grid { display: grid; gap: var(--space-card-gap); }
-  .article-note, .about-note { font-size: var(--text-caption); color: var(--color-text-muted); margin-top: 1rem; }
+  .article-note { font-size: var(--text-caption); color: var(--color-text-muted); margin-top: 1rem; }
 
   .home-about { display: grid; gap: 1.5rem; margin-top: var(--space-section-gap); padding-block: 2rem; border-top: 1px solid var(--color-border); }
   .home-about h2 { margin: 0 0 1rem; }
-  .home-about img { border-radius: var(--radius-md); width: 100%; height: auto; }
 
   @media (min-width: 48rem) {
     .home-hero { padding-top: 3rem; }
-    .hero-main { grid-template-columns: minmax(0, 1fr) 24rem; align-items: center; gap: 2.5rem; }
-    .hero-visual { max-width: none; }
+    .hero-main { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: 2.5rem; }
     .desktop-break { display: initial; }
     .entry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
     .entry { grid-template-columns: 1fr; grid-template-rows: auto auto auto 1fr auto; padding: 1.5rem; }
