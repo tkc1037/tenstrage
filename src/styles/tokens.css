@@ -9,7 +9,7 @@
   --color-warm-paper: #F7F4ED;
   --color-taxi-amber: #F4B000;
   --color-signal-blue: #2367A8;
-  --color-muted-gray: #687078;
+  --color-muted-gray: #50565C;   /* 補足文字。老眼でも読める濃さ（背景比 約6.8:1） */
 
   --color-success: #2D7D46;
   --color-warning: #C47F17;
@@ -33,36 +33,36 @@
   --font-mono: "Geist Mono", "SF Mono", "Consolas", monospace;
 
   /* Body */
-  --text-body: 1.0625rem;         /* 17px */
+  --text-body: 1.125rem;          /* 18px */
   --leading-body: 1.8;
   --tracking-body: 0.02em;
 
   /* Lead / intro */
-  --text-lead: 1.125rem;          /* 18px */
+  --text-lead: 1.1875rem;         /* 19px */
   --leading-lead: 1.8;
 
   /* Headings — mobile-first */
-  --text-h1: clamp(1.625rem, 7vw, 2rem);  /* 26-32px */
+  --text-h1: clamp(1.75rem, 7vw, 2.25rem);  /* 28-36px */
   --leading-h1: 1.4;
   --tracking-h1: 0;
 
-  --text-h2: clamp(1.375rem, 5vw, 1.5rem); /* 22-24px */
+  --text-h2: clamp(1.5rem, 5.5vw, 1.75rem); /* 24-28px */
   --leading-h2: 1.5;
 
-  --text-h3: clamp(1.1875rem, 4.5vw, 1.25rem); /* 19-20px */
+  --text-h3: clamp(1.25rem, 4.5vw, 1.375rem); /* 20-22px */
   --leading-h3: 1.55;
 
-  /* Small text */
-  --text-card-title: 1.125rem;    /* 18px */
+  /* Small text — 老眼対策で最小16pxを下回らない */
+  --text-card-title: 1.1875rem;   /* 19px */
   --leading-card-title: 1.55;
 
-  --text-card-summary: 0.9375rem; /* 15px */
+  --text-card-summary: 1.0625rem; /* 17px */
   --leading-card-summary: 1.7;
 
-  --text-caption: 0.8125rem;      /* 13px */
-  --leading-caption: 1.5;
+  --text-caption: 1rem;           /* 16px（サイト内の最小） */
+  --leading-caption: 1.6;
 
-  --text-button: 1rem;            /* 16px — prevents iOS zoom */
+  --text-button: 1.0625rem;       /* 17px — 16px以上でiOSの自動ズームも防ぐ */
   --leading-button: 1.4;
 
   /* --- Spacing --- */

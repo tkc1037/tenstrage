@@ -11,11 +11,13 @@ interface Props {
   updatedDate?: Date;
   category?: string;
   heroImage?: string;
+  /** よく読まれている記事の順位。指定時のみ画像の上に順位を表示する */
+  rank?: number;
 }
 
 import { categoryLabels } from '../lib/categories';
 
-const { title, description, href, pubDate, updatedDate, category, heroImage } = Astro.props;
+const { title, description, href, pubDate, updatedDate, category, heroImage, rank } = Astro.props;
 
 const displayDate = updatedDate || pubDate;
 ---
@@ -32,6 +34,7 @@ const displayDate = updatedDate || pubDate;
       </div>
     ) : null}
     <div class="card-content">
+      {rank && <span class="card-rank"><span class="visually-hidden">閲覧数 </span>{rank}<span class="card-rank-unit">位</span></span>}
       {category && (
         <span class="card-category">{categoryLabels[category] || category}</span>
       )}
@@ -85,6 +88,25 @@ const displayDate = updatedDate || pubDate;
     transform: scale(1.03);
   }
 
+  /* 画像内の見出し文字に重ならないよう、順位は本文側に置く */
+  .card-rank {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.1em;
+    margin-right: 0.625rem;
+    padding: 0.05rem 0.6rem;
+    background: var(--color-ink);
+    color: var(--color-taxi-amber);
+    font: 700 1.25rem/1.4 var(--font-heading);
+    border-radius: var(--radius-sm);
+    vertical-align: baseline;
+  }
+
+  .card-rank-unit {
+    font-size: 1rem;
+    color: var(--color-warm-paper);
+  }
+
   .card-image-placeholder {
     display: flex;
     align-items: center;
@@ -107,8 +129,9 @@ const displayDate = updatedDate || pubDate;
   .card-category {
     display: inline-block;
     font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--color-accent);
+    font-weight: 700;
+    /* タクシー黄の文字は白地で読みにくいため、濃い琥珀色にする */
+    color: #7A5A00;
     margin-bottom: 0.375rem;
   }
 

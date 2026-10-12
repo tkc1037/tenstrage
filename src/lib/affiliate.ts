@@ -1,6 +1,11 @@
 // Existing A8-issued URL. Do not add tracking parameters or redirect wrappers.
 export const driversWorkUrl = 'https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGOIY+58IO+BXQOH';
 
+// A8発行のバナー素材（300×250）。計測用の1px画像を含め、発行コードを一字も変えずに出力する。
+export const driversWorkBannerHtml = `<a href="https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGM7M+58IO+BXQOH" rel="nofollow">
+<img border="0" width="300" height="250" alt="" src="https://www27.a8.net/svt/bgt?aid=260527653938&wid=001&eno=01&mid=s00000024432002005000&mc=1"></a>
+<img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4B40F9+FIGM7M+58IO+BXQOH" alt="">`;
+
 export function affiliateMessage(category = '', slug = '') {
   if (slug === 'go-app-guide') return 'GOを使う環境も含めて勤務先を見直したい方へ。希望する配車アプリや働き方を伝えて、転職先を相談できます。';
   if (category === 'vehicle') return '車両や設備も重視して転職先を探したい方へ。希望する車両と配属条件を、求人紹介の際に確認しましょう。';

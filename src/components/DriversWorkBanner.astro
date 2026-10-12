@@ -1,0 +1,17 @@
+---
+import { driversWorkBannerHtml } from '../lib/affiliate';
+interface Props { placement: string; }
+const { placement } = Astro.props;
+---
+<aside class="dw-banner" aria-label="広告：ドライバーズワークの求人" data-affiliate-placement={placement}>
+  <p class="dw-banner-label">PR · ドライバーズワーク（外部の転職支援サービス）</p>
+  <div class="dw-banner-creative" set:html={driversWorkBannerHtml} />
+  <p class="dw-banner-note">バナーを押すと外部サービスのページへ進みます。</p>
+</aside>
+<style>
+  .dw-banner { display: flex; flex-direction: column; align-items: center; margin-block: var(--space-section-gap) 0; padding: 1.25rem 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-align: center; }
+  .dw-banner-label { margin: 0 0 .75rem; font-size: var(--text-caption); font-weight: 700; color: var(--color-text-muted); }
+  .dw-banner-creative { line-height: 0; }
+  .dw-banner-creative :global(img[width="1"]) { position: absolute; width: 1px; height: 1px; }
+  .dw-banner-note { margin: .75rem 0 0; font-size: var(--text-caption); color: var(--color-text-muted); }
+</style>
