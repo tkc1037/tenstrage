@@ -78,9 +78,9 @@
 .taxi-comparison table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;font-size:18px}
 .taxi-comparison th,.taxi-comparison td{width:var(--company);min-width:var(--company);max-width:var(--company);padding:13px 12px;vertical-align:middle;background:white;border-right:1px solid var(--line);border-bottom:1px solid var(--line);overflow-wrap:anywhere;text-align:left}
 .taxi-comparison tr>:first-child{position:sticky;left:0;z-index:1;width:var(--label);min-width:var(--label);max-width:var(--label);background:var(--light);font-size:16px}
-.taxi-comparison thead{position:sticky;top:0;z-index:2}
+.taxi-comparison thead tr:last-child th{position:sticky;top:0;z-index:2}
 .taxi-comparison thead th{background:var(--ink);color:white;vertical-align:top}
-.taxi-comparison thead th:first-child{z-index:3;background:var(--ink)}
+.taxi-comparison thead tr:last-child th:first-child{z-index:3;background:var(--ink)}
 .taxi-comparison .comparison-actions>:is(th,td){padding-block:0;background:var(--ink);color:white}
 .taxi-comparison .comparison-actions .pick,.taxi-comparison .comparison-actions .remove{margin-top:0;min-height:44px}
 .taxi-comparison .office{display:block;font-size:14px;font-weight:400;margin-top:4px}

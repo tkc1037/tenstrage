@@ -65,12 +65,12 @@ try {
     const sticky=await page.evaluate(()=>{
       const scroll=document.querySelector('#all-table');scroll.scrollTop=220;
       const actions=scroll.querySelector('thead tr:first-child').getBoundingClientRect();
-      const names=scroll.querySelector('thead tr:nth-child(2)').getBoundingClientRect();
+      const names=scroll.querySelector('thead tr:nth-child(2) th:nth-child(2)').getBoundingClientRect();
       const result={top:actions.top,edge:scroll.getBoundingClientRect().top,bottom:actions.bottom,namesTop:names.top};
       scroll.scrollTop=0;return result;
     });
-    assert(Math.abs(sticky.top-sticky.edge)<3,'sticky control row');
-    assert(sticky.namesTop>=sticky.bottom-1,'header rows must not overlap');
+    assert(sticky.bottom<sticky.edge,'controls scroll out of view');
+    assert(Math.abs(sticky.namesTop-sticky.edge)<3,'only company names stay sticky');
     await page.locator('#filters summary').click();
     await page.selectOption('#filter-area','足立区');
     assert.equal(await page.locator('#all-table input[value="6"]').count(),1);
