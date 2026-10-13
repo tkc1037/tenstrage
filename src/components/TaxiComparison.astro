@@ -1,0 +1,155 @@
+<div class="taxi-comparison">
+
+<header class="comparison-intro"><p class="eyebrow">条件を並べて、会社を選ぶ</p><h1>タクシー会社比較</h1><p class="muted">未経験向け · 東京23区・三鷹・武蔵野</p></header>
+<section class="panel" aria-labelledby="all-title">
+<h2 id="all-title">全体比較</h2>
+<div class="controls"><label for="sort-order">並べ替え</label><select id="sort-order"><option value="default">掲載順</option><option value="rate">歩合率が高い順</option><option value="bonus">支援金が多い順</option></select></div>
+<details class="filters" id="filters"><summary>条件で絞る</summary>
+<div class="filter-grid" id="comparison-controls">
+<label>給与型<select id="filter-pay"><option value="">すべて</option><option value="B">B型</option><option value="AB">AB型</option></select></label>
+<label>所在地<select id="filter-area"><option value="">すべて</option><option>墨田区</option><option>板橋区</option><option>足立区</option><option>練馬区</option></select></label>
+<label>JPN TAXI<select id="filter-vehicle"><option value="">すべて</option><option value="all">全車</option><option value="introduced">導入あり</option><option value="unknown">未確認</option></select></label>
+<label>配車アプリ<select id="filter-app"><option value="">すべて</option><option>GO</option><option>S.RIDE</option><option>Uber</option><option>DiDi</option></select></label>
+<label>未経験の入社支援金<select id="filter-bonus"><option value="">すべて</option><option value="yes">あり</option><option value="other">なし・未確認</option></select></label>
+<label>寮<select id="filter-dorm"><option value="">すべて</option><option value="yes">あり</option><option value="other">なし・未確認</option></select></label>
+</div><button class="filter-reset" id="reset-filters" type="button">条件をリセット</button>
+</details>
+<div class="bar"><span id="filter-status" role="status"></span><span class="muted">← 横にスクロール →</span></div>
+<div class="bar"><span id="selection-status" role="status">選択 0 / 4件</span><a class="pick-link" href="#picked">選んだ会社を見る</a></div>
+<div id="all-table" class="scroll" tabindex="0" role="region" aria-label="全体比較表。横にスクロールできます"></div>
+</section>
+<section class="panel" id="picked" aria-labelledby="picked-title">
+<div class="bar"><h2 id="picked-title" tabindex="-1">ピックアップ</h2><button id="clear-selection" type="button">選択を解除</button></div>
+<div id="picked-table"></div>
+</section>
+<section class="panel" aria-labelledby="apply-title">
+<h2 id="apply-title">応募・相談</h2>
+<p><a class="pick-link" id="apply-link" href="https://www.drivers-work.com/" target="_blank" rel="noopener noreferrer" aria-label="応募はこちら：ドライバーズワーク（別タブ）">応募はこちら ↗</a></p>
+<p class="muted">ドライバーズワーク<br>掲載会社の取扱い・募集状況は窓口でご確認ください。</p>
+</section>
+<section class="footnotes" aria-labelledby="notes-title">
+<h2 id="notes-title">表の見方</h2>
+<ul>
+<li>同条件の営業所は所在地にまとめ、条件が異なる場合は別列で比較します。同条件か未確認の場合も別列にし、不明な項目は「未確認」とします。</li>
+<li>歩合率は通常勤務が基本。休日出勤は小さく併記し、並べ替えには使いません。※の条件は各社の「補足」へ。</li>
+<li>運賃改定に伴い、各社の歩合率が下がっている可能性があります。求人掲載値と現行条件が異なる場合があるため、応募時に最新の賃金規定をご確認ください。</li>
+<li>金額は手取りではありません。支援金・給与保証・寮は各社規定あり。「未確認」は「なし」とは異なります。</li>
+<li>候補は未確認の項目があっても掲載しています。事故補償の有無と本人負担ゼロは別です。制度の詳細は各社の補足へ。</li>
+<li>「以上」は上限が未確認の掲載値です。並べ替えはその数値を使用。賞与・手当込みの率もあり、同じ売上で同じ月給になるとは限りません。</li>
+</ul>
+<details><summary>その他</summary>
+<p>全車JPN TAXI以外は、車両構成や担当車両の割り当て条件が異なります。アプリの利用条件も会社ごとに異なります。</p>
+<p>選択は最大4件。絞り込み後も選択は残ります。未確認の数値は並べ替えの最後に表示。選択は再読み込みで解除されます。</p>
+<p>地図はGoogleマップを別タブで開きます。このページで位置情報は取得しません。</p>
+</details>
+<p class="muted">掲載内容の確認：2026年10月12日・営業所情報：10月13日<br>転職道・各社公式・複数求人媒体を参照。更新日不明・媒体間の違いは補足へ。全社網羅や募集中・支給の保証ではありません。</p>
+</section>
+<noscript>比較表を表示するにはJavaScriptを有効にしてください。</noscript>
+
+</div>
+<script>
+  import '../lib/taxi-comparison.js';
+</script>
+<style is:global>
+.taxi-comparison *{box-sizing:border-box}
+.taxi-comparison h1,.taxi-comparison h2{font-family:"Meiryo",sans-serif}
+.taxi-comparison h1{font-size:30px;margin:0}
+.taxi-comparison h2{font-size:24px;margin:0}
+.taxi-comparison p{margin:8px 0}
+.taxi-comparison a{color:var(--color-link);text-underline-offset:3px}
+.taxi-comparison button,.taxi-comparison select{font:inherit;color:var(--ink);background:white;border:1px solid var(--line);border-radius:5px;min-height:44px;padding:8px 12px}
+.taxi-comparison button,.taxi-comparison summary{cursor:pointer}
+.taxi-comparison button:hover{background:var(--light)}
+.taxi-comparison :focus-visible{outline:3px solid var(--color-link);outline-offset:3px}
+.taxi-comparison .panel{background:white;padding:20px;margin-top:20px;border-top:5px solid var(--color-link)}
+.taxi-comparison .muted{font-size:16px;color:var(--color-text-muted)}
+.taxi-comparison .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.taxi-comparison .controls label{display:flex;gap:10px;align-items:center}
+.taxi-comparison .controls select{max-width:100%}
+.taxi-comparison .filters{border-bottom:1px solid var(--line);margin-bottom:12px}
+.taxi-comparison .filters summary{padding:10px 0;min-height:44px;font-weight:700}
+.taxi-comparison .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:8px 0 14px}
+.taxi-comparison .filter-grid label{font-size:16px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.taxi-comparison .filter-grid select{width:100%;font-size:16px;padding:8px}
+.taxi-comparison .filter-reset{margin-bottom:12px}
+.taxi-comparison .bar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;font-size:16px}
+.taxi-comparison .pick-link{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;background:var(--color-link);color:white;border-radius:5px;text-decoration:none;font-weight:700}
+.taxi-comparison .scroll{overflow:auto;max-height:78vh;isolation:isolate;border:1px solid var(--line)}
+.taxi-comparison table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;font-size:18px}
+.taxi-comparison th,.taxi-comparison td{width:var(--company);min-width:var(--company);max-width:var(--company);padding:13px 12px;vertical-align:middle;background:white;border-right:1px solid var(--line);border-bottom:1px solid var(--line);overflow-wrap:anywhere;text-align:left}
+.taxi-comparison tr>:first-child{position:sticky;left:0;z-index:1;width:var(--label);min-width:var(--label);max-width:var(--label);background:var(--light);font-size:16px}
+.taxi-comparison thead th{position:sticky;top:0;z-index:2;background:var(--ink);color:white;vertical-align:top}
+.taxi-comparison thead th:first-child{z-index:3;background:var(--ink)}
+.taxi-comparison .office{display:block;font-size:14px;font-weight:400;margin-top:4px}
+.taxi-comparison .pick{display:flex;align-items:center;gap:8px;min-height:44px;margin-top:5px;font-size:16px;cursor:pointer}
+.taxi-comparison .pick input{width:22px;height:22px;margin:0;accent-color:var(--color-link)}
+.taxi-comparison .remove{margin-top:8px;padding:4px 12px;font-size:16px}
+.taxi-comparison .rate{color:var(--color-link);font:700 30px Arial,sans-serif}
+.taxi-comparison .minor{display:block;font-size:16px;margin-top:3px}
+.taxi-comparison .map{display:inline-flex;align-items:center;min-height:44px;font-size:16px}
+.taxi-comparison .empty{padding:20px;background:var(--light);font-size:16px}
+.taxi-comparison .footnotes{margin-top:22px;padding:20px;background:white;font-size:16px}
+.taxi-comparison .footnotes h2{font-size:21px}
+.taxi-comparison .footnotes li{margin:10px 0}
+.taxi-comparison .footnotes ul{padding-left:1.3em}
+.taxi-comparison .footnotes summary{min-height:44px;padding:10px 0;font-weight:700}
+.taxi-comparison .sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.taxi-comparison #picked{scroll-margin-top:12px}
+.taxi-comparison noscript{display:block;padding:20px}
+.taxi-comparison .company-note{font-size:15px;line-height:1.65}
+.taxi-comparison .company-note p{margin:0 0 10px}
+.taxi-comparison .company-note a{display:inline-flex;align-items:center;min-height:44px}
+.taxi-comparison .holiday{display:block;font-size:14px;margin-top:5px}
+.taxi-comparison .holiday strong{white-space:nowrap}
+@media(max-width:600px){.taxi-comparison{--label:56px;--company:calc((100vw - 94px)/3)}
+.taxi-comparison h1{font-size:25px}
+.taxi-comparison h2{font-size:21px}
+.taxi-comparison .panel{padding:8px;margin-top:14px}
+.taxi-comparison .controls{margin:10px 0;gap:6px;font-size:16px}
+.taxi-comparison .controls label{gap:6px}
+.taxi-comparison .controls select{font-size:16px;padding:8px 6px}
+.taxi-comparison .filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.taxi-comparison table{font-size:14px}
+.taxi-comparison th,.taxi-comparison td{padding:9px 5px}
+.taxi-comparison tr>:first-child{font-size:13px;padding:9px 4px}
+.taxi-comparison .rate{font-size:24px}
+.taxi-comparison .minor,.taxi-comparison .holiday,.taxi-comparison .company-note{font-size:13px}
+.taxi-comparison .office{font-size:12px}
+.taxi-comparison .pick{font-size:14px;gap:5px}
+.taxi-comparison .pick input{flex-shrink:0}
+.taxi-comparison .remove{font-size:14px;padding:4px 8px}
+.taxi-comparison .map{font-size:14px}
+.taxi-comparison .footnotes{padding:12px}
+.taxi-comparison .bar{gap:6px;font-size:15px}
+.taxi-comparison .pick-link{padding:8px 10px}
+.taxi-comparison .muted{font-size:15px}
+}
+.taxi-comparison tbody td{vertical-align:top;font-variant-numeric:tabular-nums}
+.taxi-comparison thead th{vertical-align:bottom}
+.taxi-comparison .primary-value{display:flex;align-items:baseline;min-height:36px;line-height:36px;gap:2px}
+.taxi-comparison .primary-value sup{font-size:12px;line-height:1}
+.taxi-comparison .amount{color:var(--color-link);font:700 28px Arial,sans-serif;white-space:nowrap}
+.taxi-comparison .amount small{font:700 16px "Meiryo",sans-serif}
+@media(max-width:600px){.taxi-comparison .primary-value{min-height:30px;line-height:30px}
+.taxi-comparison .amount{font-size:24px}
+.taxi-comparison .amount small{font-size:13px}
+}
+.taxi-comparison .company-name{display:block;min-height:3em}
+.taxi-comparison .office{min-height:3em}
+.taxi-comparison{--ink:var(--color-ink);--light:var(--color-bg);--line:var(--color-border);--label:104px;--company:220px;line-height:1.5;padding-block:2rem;}
+.taxi-comparison h1,.taxi-comparison h2{font-family:var(--font-heading);text-wrap:balance}
+.taxi-comparison p{text-wrap:pretty}
+.taxi-comparison .comparison-intro{border-bottom:4px solid var(--color-accent);padding-bottom:1rem}
+.taxi-comparison .eyebrow{font-size:16px;font-weight:700}
+.taxi-comparison .panel{border:1px solid var(--color-border);border-top:3px solid var(--color-accent);border-radius:var(--radius-md)}
+.taxi-comparison .pick-link{background:var(--color-accent);color:var(--color-ink)}
+.taxi-comparison .pick-link:hover{background:var(--color-ink);color:var(--color-surface)}
+.taxi-comparison table{overflow:visible;border-radius:0}
+.taxi-comparison th{white-space:normal}
+.taxi-comparison #picked{scroll-margin-top:calc(var(--header-height) + 1rem)}
+@media(max-width:600px){.taxi-comparison{--label:56px;--company:calc((100vw - 114px)/3);padding-block:1.25rem}
+.taxi-comparison .panel{padding:8px}
+.taxi-comparison .company-name{min-height:3em}
+.taxi-comparison h1{font-size:var(--text-h1)}
+}
+</style>

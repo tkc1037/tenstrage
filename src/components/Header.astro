@@ -2,6 +2,7 @@
 interface Props { currentPath?: string; }
 const { currentPath = Astro.url.pathname } = Astro.props;
 const navItems = [
+  { label: '会社比較', href: '/compare/' },
   { label: '会社選び', href: '/articles/taxi-company-selection-guide/' },
   { label: 'Q&A', href: '/questions/' },
   { label: '転職準備', href: '/preparation/' },

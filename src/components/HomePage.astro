@@ -50,6 +50,7 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
         <h2>{entry.title}</h2><p>{entry.desc}</p><span class="entry-action">{entry.action} <span aria-hidden="true">→</span></span>
       </a>)}
     </nav>
+    <p class="comparison-entry"><a href="/compare/">タクシー会社を条件で比較する <span aria-hidden="true">→</span></a><span>歩合率・寮・入社支援金を並べて確認。</span></p>
   </section>
 
   <AffiliateCta placement={source ? `start-${source}` : 'home-primary'} compact />
@@ -100,6 +101,9 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
 </BaseLayout>
 <style>
   .home-hero { padding-top: 2rem; }
+  .comparison-entry { margin-block: 1rem 0; padding: 1rem; background: var(--color-surface); border-left: 4px solid var(--color-accent); border-radius: var(--radius-sm); }
+  .comparison-entry a { display: inline-flex; align-items: center; min-height: var(--tap-min); font-weight: 700; }
+  .comparison-entry span:not([aria-hidden]) { display: block; color: var(--color-text-muted); font-size: var(--text-caption); }
   .hero-main { display: grid; gap: 1.5rem; }
   .eyebrow { font-size: var(--text-card-summary); font-weight: 700; margin-bottom: .75rem; }
   .home-hero h1 { margin: 0 0 1rem; line-height: 1.5; }
