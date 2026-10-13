@@ -26,14 +26,51 @@ try {
     assert.equal(await page.locator('h1').count(),1);
     assert(await page.locator('a[href="#picked"]').evaluate(a=>getComputedStyle(a).color!==getComputedStyle(a).backgroundColor));
     assert.equal(await page.locator('#all-table input').count(),31);
+    const miyagiRate=page.locator('#all-table tbody tr').nth(0).locator('td').nth(19);
+    assert(!(await miyagiRate.innerText()).includes('賞与'));
+    assert((await miyagiRate.innerText()).includes('休日出勤'));
+    assert((await page.locator('#all-table .company-note').nth(19).innerText()).includes('隔日・賞与込み'));
+    const cells=await page.locator('#all-table tbody tr:not(:last-child) td').evaluateAll(nodes=>nodes.map(node=>{
+      const copy=node.cloneNode(true);copy.querySelectorAll('.holiday').forEach(n=>n.remove());return copy.textContent;
+    }));
+    for(const text of cells)if(text.includes('未確認'))assert.equal(text,'未確認');
+    assert(!(await page.locator('#all-table tbody tr').nth(2).locator('td').nth(13).innerText()).includes('最大'));
+    assert((await page.locator('#all-table .company-note').nth(13).innerText()).includes('最大'));
+    assert((await page.locator('#all-table .company-note').nth(5).innerText()).includes('最大35万 × 6か月'));
+    assert((await page.locator('#all-table .company-note').nth(1).innerText()).includes('または'));
+    const guarantees=await page.locator('#all-table .guarantees').evaluateAll(nodes=>nodes.map(node=>({
+      count:node.children.length,
+      lines:[...node.children].map(line=>({text:line.textContent,width:line.scrollWidth,available:line.clientWidth,height:line.getBoundingClientRect().height,lineHeight:parseFloat(getComputedStyle(line).lineHeight)}))
+    })));
+    for(const guarantee of guarantees){
+      assert(guarantee.count<=3);
+      for(const line of guarantee.lines){
+        assert(/^\d+(?:\.\d+)?万 × \d+か月$/.test(line.text));
+        assert(line.width<=line.available+1,`guarantee overflow at ${width}px: ${JSON.stringify(line)}`);
+        assert(line.height<=line.lineHeight+1,'single-line guarantee');
+      }
+    }
+    assert((await page.locator('#all-table .company-note').nth(13).innerText()).includes('免許費用を含む'));
     assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'),'https://takuzo-taxi.com/compare/');
     const layout=await page.evaluate(()=>{
-      const cells=[...document.querySelectorAll('#all-table thead th')];
+      const cells=[...document.querySelectorAll('#all-table thead tr:first-child>*')];
       return {width:document.documentElement.scrollWidth,right:cells[3].getBoundingClientRect().right,edge:document.querySelector('#all-table').getBoundingClientRect().right,tops:cells.slice(1).map(c=>c.querySelector('.pick').getBoundingClientRect().top)};
     });
     assert(layout.width<=width+1,'page overflow');
     if(width<=600)assert(layout.right<=layout.edge+1,'three columns '+JSON.stringify(layout));
     assert(Math.max(...layout.tops)-Math.min(...layout.tops)<1,'aligned controls');
+    assert.equal(await page.locator('#all-table thead tr').count(),2);
+    assert.equal(await page.locator('#all-table thead tr:first-child input').count(),31);
+    assert.equal(await page.locator('#all-table thead tr:nth-child(2) .company-name').count(),31);
+    const sticky=await page.evaluate(()=>{
+      const scroll=document.querySelector('#all-table');scroll.scrollTop=220;
+      const actions=scroll.querySelector('thead tr:first-child').getBoundingClientRect();
+      const names=scroll.querySelector('thead tr:nth-child(2)').getBoundingClientRect();
+      const result={top:actions.top,edge:scroll.getBoundingClientRect().top,bottom:actions.bottom,namesTop:names.top};
+      scroll.scrollTop=0;return result;
+    });
+    assert(Math.abs(sticky.top-sticky.edge)<3,'sticky control row');
+    assert(sticky.namesTop>=sticky.bottom-1,'header rows must not overlap');
     await page.locator('#filters summary').click();
     await page.selectOption('#filter-area','足立区');
     assert.equal(await page.locator('#all-table input[value="6"]').count(),1);

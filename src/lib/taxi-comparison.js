@@ -207,21 +207,56 @@ appSelect.replaceChildren(new Option('すべて',''),...[...new Set(companies.fl
 let visibleCompanies=[];
 const value=id=>document.getElementById(id).value;
 function maps(c,l=locations(c)[0]){const u=new URL('https://www.google.com/maps/search/');u.searchParams.set('api','1');u.searchParams.set('query',c.name+' '+l.office+' 東京都'+l.address);return u.href;}
+// Keep comparisons short without discarding the original conditions.
+const compactFields={
+  '7':{dorm:'なし'},
+  '8':{dorm:'12か月無料'},
+  '13':{guarantee:'未確認',vehicleText:'レクサス導入'},
+  '14':{guarantee:'38万 × 6か月'},
+  '15':{guarantee:'未確認'}
+};
+function compactValue(c,key){
+  return compactFields[c.id]?.[key]??(c[key]?.includes('未確認')?'未確認':c[key]);
+}
+function guaranteeLines(c){
+  return compactValue(c,'guarantee').match(/\d+(?:\.\d+)?万\s*×\s*\d+か月/g)||[];
+}
+function guaranteeMarkup(c){
+  const lines=guaranteeLines(c);
+  return lines.length?'<div class="guarantees">'+lines.slice(0,3).map(line=>'<span class="guarantee-line">'+line+'</span>').join('')+'</div>':'未確認';
+}
+function noteMarkup(c){
+  const details=[];
+  if(c.rateBasis)details.push('歩合率：'+c.rateBasis);
+  if(c.bonusLabel)details.push('入社支援金：'+c.bonusLabel.replaceAll('<br>','・'));
+  else if(c.bonusText.startsWith('最大'))details.push('入社支援金：'+c.bonusText);
+  if(guaranteeLines(c).length>1||c.guarantee.includes('最大')||compactValue(c,'guarantee')!==c.guarantee){
+    details.push('給与保証：'+c.guarantee.replaceAll('<br>',' ').replace(/\s+/g,' ').trim());
+  }
+  for(const [key,label] of [['dorm','寮'],['accident','事故負担'],['vehicleText','車両']]){
+    if(c[key]&&compactValue(c,key)!==c[key])details.push(label+'：'+c[key].replaceAll('<br>','・').replace('・以降は補足',''));
+  }
+  return '<div class="company-note">'+details.map(text=>'<p>'+text+'</p>').join('')+'<p>'+companyNotes[c.id].text+'</p><p>'+licenseSupport[c.id].note+'</p></div>';
+}
 const rows=[
-['最高<br>歩合率',c=>'<div class="primary-value">'+(c.rate===null?'未確認':'<span class="rate">'+c.rate+'%</span>'+(c.rateNote?'<sup>※</sup>':''))+'</div>'+(c.rateMore?'<span class="minor">以上</span>':'')+(c.rateBasis?'<span class="minor">'+c.rateBasis+'</span>':'')+(companyNotes[c.id].holiday?'<span class="holiday">休日出勤<br><strong>'+companyNotes[c.id].holiday+'</strong></span>':'')],
+['最高<br>歩合率',c=>'<div class="primary-value">'+(c.rate===null?'未確認':'<span class="rate">'+c.rate+'%</span>'+(c.rateNote?'<sup>※</sup>':''))+'</div>'+(c.rateMore?'<span class="minor">以上</span>':'')+(companyNotes[c.id].holiday?'<span class="holiday">休日出勤<br><strong>'+companyNotes[c.id].holiday+'</strong></span>':'')],
 ['給与型',c=>c.pay?c.pay+'型':'未確認'],
-['入社<br>支援金',c=>'<div class="primary-value">'+(c.bonus===null?c.bonusText:'<span class="amount">'+c.bonus+'<small>万円</small></span>')+'</div>'+(c.bonusLabel?'<span class="minor">'+c.bonusLabel+'</span>':c.bonusText.startsWith('最大')?'<span class="minor">（最大）</span>':'')],
-['給与<br>保証',c=>c.guarantee.replace(/(\d+か月)/g,'<span style="white-space:nowrap">$1</span>')],
+['入社<br>支援金',c=>'<div class="primary-value">'+(c.bonus===null?c.bonusText:'<span class="amount">'+c.bonus+'<small>万円</small></span>')+'</div>'],
+['給与<br>保証',guaranteeMarkup],
 ['二種<br>免許<br>費用',c=>licenseSupport[c.id]?.cost||'未確認'],
-['寮<br>月額',c=>c.dorm],
-['事故<br>負担',c=>c.accident],
-['車両',c=>c.vehicleText||(c.vehicle==='unknown'?'未確認':'JPN TAXI<span class="minor">'+(c.vehicle==='all'?'全車':'導入あり')+'</span>')],
+['寮<br>月額',c=>compactValue(c,'dorm')],
+['事故<br>負担',c=>compactValue(c,'accident')],
+['車両',c=>compactValue(c,'vehicleText')||(c.vehicle==='unknown'?'未確認':'JPN TAXI<span class="minor">'+(c.vehicle==='all'?'全車':'導入あり')+'</span>')],
 ['配車<br>アプリ',c=>c.apps.length?c.apps.join('・<wbr>'):'未確認'],
 ['所在地',c=>locations(c).map(l=>'<div>'+(locations(c).length>1?'<strong>'+l.office+'</strong><br>':'')+(l.address==='未確認'?'未確認':l.address+'<br><a class="map" href="'+maps(c,l)+'" target="_blank" rel="noopener noreferrer" aria-label="'+c.name+' '+l.office+'をGoogleマップで見る（別タブ）">地図 ↗</a>')+'</div>').join('')],
-['補足',c=>'<div class="company-note"><p>'+companyNotes[c.id].text+'</p><p>'+licenseSupport[c.id].note+'</p></div>']
+['補足',noteMarkup]
 ];
 function ordered(list){const mode=value('sort-order');return [...list].sort((a,b)=>{if(mode==='default')return Number(a.id)-Number(b.id);const key=mode==='rate'?'rate':'bonus';if(a[key]===null&&b[key]===null)return Number(a.id)-Number(b.id);if(a[key]===null)return 1;if(b[key]===null)return -1;return b[key]-a[key]||Number(a.id)-Number(b.id);});}
-function tableMarkup(list,selectable){return '<table><caption class="sr-only">'+(selectable?'全体比較':'ピックアップ比較')+'</caption><thead><tr><th scope="col">項目</th>'+list.map(c=>'<th scope="col"><span class="company-name">'+c.name+'</span><span class="office">'+c.office+'</span>'+(selectable?'<label class="pick"><input type="checkbox" value="'+c.id+'" '+(selectedIds.has(c.id)?'checked':'')+' aria-label="'+c.name+' '+c.office+'を比較に追加">比較</label>':'<button class="remove" type="button" data-remove="'+c.id+'" aria-label="'+c.name+' '+c.office+'をピックアップから外す">外す</button>')+'</th>').join('')+'</tr></thead><tbody>'+rows.map(([label,render])=>'<tr><th scope="row">'+label+'</th>'+list.map(c=>'<td>'+render(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
+function tableMarkup(list,selectable){
+  const controls='<tr class="comparison-actions"><th scope="row">比較</th>'+list.map(c=>'<td>'+(selectable?'<label class="pick"><input type="checkbox" value="'+c.id+'" '+(selectedIds.has(c.id)?'checked':'')+' aria-label="'+c.name+' '+c.office+'を比較に追加">比較</label>':'<button class="remove" type="button" data-remove="'+c.id+'" aria-label="'+c.name+' '+c.office+'をピックアップから外す">外す</button>')+'</td>').join('')+'</tr>';
+  const names='<tr><th scope="col">会社名</th>'+list.map(c=>'<th scope="col"><span class="company-name">'+c.name+'</span><span class="office">'+c.office+'</span></th>').join('')+'</tr>';
+  return '<table><caption class="sr-only">'+(selectable?'全体比較':'ピックアップ比較')+'</caption><thead>'+controls+names+'</thead><tbody>'+rows.map(([label,render])=>'<tr><th scope="row">'+label+'</th>'+list.map(c=>'<td>'+render(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+}
 function renderPicked(){const list=ordered(companies.filter(c=>selectedIds.has(c.id)));document.getElementById('selection-status').textContent='選択 '+list.length+' / 4件';document.getElementById('picked-table').innerHTML=list.length?'<div class="scroll" tabindex="0" role="region" aria-label="選択した会社の比較表。横にスクロールできます">'+tableMarkup(list,false)+'</div>':'<p class="empty">上の表で「比較」にチェック。</p>';}
 function renderAll(){visibleCompanies=ordered(companies.filter(c=>(!value('filter-pay')||c.pay===value('filter-pay'))&&(!value('filter-area')||locations(c).some(l=>l.area===value('filter-area')))&&(!value('filter-vehicle')||(value('filter-vehicle')==='introduced'?['all','introduced'].includes(c.vehicle):c.vehicle===value('filter-vehicle')))&&(!value('filter-app')||c.apps.includes(value('filter-app')))&&(!value('filter-bonus')||(value('filter-bonus')==='yes'?c.bonusStatus==='yes':c.bonusStatus!=='yes'))&&(!value('filter-dorm')||(value('filter-dorm')==='yes'?c.dormStatus==='yes':c.dormStatus!=='yes'))));document.getElementById('all-table').innerHTML=visibleCompanies.length?tableMarkup(visibleCompanies,true):'<p class="empty">該当なし。条件を変えてください。</p>';document.getElementById('filter-status').textContent=companyCount(visibleCompanies)+' / '+companyCount(companies)+'社'+(companies.length>companyCount(companies)?'（'+visibleCompanies.length+'件）':'');renderPicked();}
 document.getElementById('all-table').addEventListener('change',e=>{if(!e.target.matches('input[type=checkbox]'))return;const input=e.target;if(input.checked&&selectedIds.size>=4){input.checked=false;document.getElementById('selection-status').textContent='最大4件まで選べます';return;}if(input.checked)selectedIds.add(input.value);else selectedIds.delete(input.value);renderPicked();});

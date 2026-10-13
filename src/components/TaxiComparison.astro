@@ -78,8 +78,11 @@
 .taxi-comparison table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;font-size:18px}
 .taxi-comparison th,.taxi-comparison td{width:var(--company);min-width:var(--company);max-width:var(--company);padding:13px 12px;vertical-align:middle;background:white;border-right:1px solid var(--line);border-bottom:1px solid var(--line);overflow-wrap:anywhere;text-align:left}
 .taxi-comparison tr>:first-child{position:sticky;left:0;z-index:1;width:var(--label);min-width:var(--label);max-width:var(--label);background:var(--light);font-size:16px}
-.taxi-comparison thead th{position:sticky;top:0;z-index:2;background:var(--ink);color:white;vertical-align:top}
+.taxi-comparison thead{position:sticky;top:0;z-index:2}
+.taxi-comparison thead th{background:var(--ink);color:white;vertical-align:top}
 .taxi-comparison thead th:first-child{z-index:3;background:var(--ink)}
+.taxi-comparison .comparison-actions>:is(th,td){padding-block:0;background:var(--ink);color:white}
+.taxi-comparison .comparison-actions .pick,.taxi-comparison .comparison-actions .remove{margin-top:0;min-height:44px}
 .taxi-comparison .office{display:block;font-size:14px;font-weight:400;margin-top:4px}
 .taxi-comparison .pick{display:flex;align-items:center;gap:8px;min-height:44px;margin-top:5px;font-size:16px;cursor:pointer}
 .taxi-comparison .pick input{width:22px;height:22px;margin:0;accent-color:var(--color-link)}
@@ -101,6 +104,8 @@
 .taxi-comparison .company-note a{display:inline-flex;align-items:center;min-height:44px}
 .taxi-comparison .holiday{display:block;font-size:14px;margin-top:5px}
 .taxi-comparison .holiday strong{white-space:nowrap}
+.taxi-comparison .guarantees{font-family:Arial,"Meiryo",sans-serif;font-variant-numeric:tabular-nums;line-height:1.5}
+.taxi-comparison .guarantee-line{display:block;white-space:nowrap}
 @media(max-width:600px){.taxi-comparison{--label:56px;--company:calc((100vw - 94px)/3)}
 .taxi-comparison h1{font-size:25px}
 .taxi-comparison h2{font-size:21px}
@@ -111,6 +116,8 @@
 .taxi-comparison .filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .taxi-comparison table{font-size:14px}
 .taxi-comparison th,.taxi-comparison td{padding:9px 5px}
+.taxi-comparison td:has(.guarantees){padding-inline:2px}
+.taxi-comparison .guarantees{font-size:clamp(10px,calc((100vw - 114px)/23),14px)}
 .taxi-comparison tr>:first-child{font-size:13px;padding:9px 4px}
 .taxi-comparison .rate{font-size:24px}
 .taxi-comparison .minor,.taxi-comparison .holiday,.taxi-comparison .company-note{font-size:13px}
@@ -124,6 +131,7 @@
 .taxi-comparison .pick-link{padding:8px 10px}
 .taxi-comparison .muted{font-size:15px}
 }
+@media(max-width:360px){.taxi-comparison td:has(.guarantees){padding-inline:0}}
 .taxi-comparison tbody td{vertical-align:top;font-variant-numeric:tabular-nums}
 .taxi-comparison thead th{vertical-align:bottom}
 .taxi-comparison .primary-value{display:flex;align-items:baseline;min-height:36px;line-height:36px;gap:2px}
