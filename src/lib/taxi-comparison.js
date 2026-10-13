@@ -239,7 +239,7 @@ function noteMarkup(c){
   return '<div class="company-note">'+details.map(text=>'<p>'+text+'</p>').join('')+'<p>'+companyNotes[c.id].text+'</p><p>'+licenseSupport[c.id].note+'</p></div>';
 }
 const rows=[
-['最高<br>歩合率',c=>'<div class="primary-value">'+(c.rate===null?'未確認':'<span class="rate">'+c.rate+'%</span>'+(c.rateNote?'<sup>※</sup>':''))+'</div>'+(c.rateMore?'<span class="minor">以上</span>':'')+(companyNotes[c.id].holiday?'<span class="holiday">休日出勤<br><strong>'+companyNotes[c.id].holiday+'</strong></span>':'')],
+['最高<br>歩合率',c=>'<div class="primary-value">'+(c.rate===null?'未確認':'<span class="rate">'+c.rate+'%</span>'+(c.rateMore?'<span class="rate-suffix">以上</span>':'')+(c.rateNote?'<sup>※</sup>':''))+'</div>'+(companyNotes[c.id].holiday?'<span class="holiday">休日出勤<br><strong>'+companyNotes[c.id].holiday+'</strong></span>':'')],
 ['給与型',c=>c.pay?c.pay+'型':'未確認'],
 ['入社<br>支援金',c=>'<div class="primary-value">'+(c.bonus===null?c.bonusText:'<span class="amount">'+c.bonus+'<small>万円</small></span>')+'</div>'],
 ['給与<br>保証',guaranteeMarkup],

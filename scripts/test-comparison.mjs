@@ -26,6 +26,12 @@ try {
     assert.equal(await page.locator('h1').count(),1);
     assert(await page.locator('a[href="#picked"]').evaluate(a=>getComputedStyle(a).color!==getComputedStyle(a).backgroundColor));
     assert.equal(await page.locator('#all-table input').count(),31);
+    const numericCells=await page.locator('#all-table .primary-value').evaluateAll(nodes=>nodes.map(n=>({text:n.textContent,width:n.scrollWidth,available:n.clientWidth})));
+    for(const cell of numericCells)assert(cell.width<=cell.available+1,'numeric value fits its cell '+width+' '+JSON.stringify(cell));
+    assert.equal(await page.locator('#all-table .rate-suffix').count(),4);
+    assert.equal(await page.locator('#all-table .primary-value .rate-suffix').count(),4);
+    const rateHeight=await page.locator('#all-table tbody tr').first().evaluate(n=>n.getBoundingClientRect().height);
+    if(width<=600)assert(rateHeight<80,'compact commission row');
     const miyagiRate=page.locator('#all-table tbody tr').nth(0).locator('td').nth(19);
     assert(!(await miyagiRate.innerText()).includes('賞与'));
     assert((await miyagiRate.innerText()).includes('休日出勤'));
