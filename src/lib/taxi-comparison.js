@@ -165,7 +165,7 @@ const extraCompanies = [
   {
     id:'30',name:'東京合同自動車',area:'未確認',address:'未確認',rate:62,bonusText:'なし',bonusStatus:'no',bonusLabel:'現任のみ',accident:'補償あり<br>負担額未確認',guarantee:'30万 × 6か月',dorm:'あり<br>月額未確認',dormStatus:'yes',license:'会社負担',
     source:'https://www.promenkyo.com/job/tokyo/tokyo-godo/',sourceLabel:'プロ免許',
-    notes:{text:'運営者提供情報：4月の運賃改定に合わせ最高歩合を62％へ変更。事故補償あり、支援金は現任のみ。事故の本人負担額は未確認。給与型・所在地、拘束時間に関する控除の現行条件は追加確認。'}
+    notes:{holiday:'70%',text:'運営者提供情報：休日出勤の歩合は70％（1日あたり税抜売上6万円以上）。4月の運賃改定に合わせ通常の最高歩合を62％へ変更。事故補償あり、支援金は現任のみ。事故の本人負担額は未確認。給与型・所在地、拘束時間に関する控除の現行条件は追加確認。'}
   }
 ];
 
