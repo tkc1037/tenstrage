@@ -1,3 +1,6 @@
+---
+import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
+---
 <div class="taxi-comparison">
 
 <header class="comparison-intro"><p class="eyebrow">条件を並べて、会社を選ぶ</p><h1>タクシー会社比較</h1><p class="muted">未経験向け · 東京23区・三鷹・武蔵野</p></header>
@@ -18,12 +21,14 @@
 <div class="bar"><span id="selection-status" role="status">選択 0 / 4件</span><a class="pick-link" href="#picked">選んだ会社を見る</a></div>
 <div id="all-table" class="scroll" tabindex="0" role="region" aria-label="全体比較表。横にスクロールできます"></div>
 </section>
+<DriversWorkBanner />
 <section class="panel" id="picked" aria-labelledby="picked-title">
 <div class="bar"><h2 id="picked-title" tabindex="-1">ピックアップ</h2><button id="clear-selection" type="button">選択を解除</button></div>
 <div id="picked-table"></div>
 </section>
 <section class="panel" aria-labelledby="apply-title">
 <h2 id="apply-title">応募・相談</h2>
+<DriversWorkBanner />
 <p><a class="pick-link" id="apply-link" href="https://www.drivers-work.com/" target="_blank" rel="noopener noreferrer" aria-label="応募はこちら：ドライバーズワーク（別タブ）">応募はこちら ↗</a></p>
 <p class="muted">ドライバーズワーク<br>掲載会社の取扱い・募集状況は窓口でご確認ください。</p>
 </section>

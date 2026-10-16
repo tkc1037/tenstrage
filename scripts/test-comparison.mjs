@@ -19,11 +19,25 @@ try {
   await page.emulateMedia({reducedMotion:'reduce'});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('https://www.googletagmanager.com/**',r=>r.abort());
+  // Do not generate affiliate impressions or clicks during automated checks.
+  await page.route('https://*.a8.net/**',r=>r.abort());
   for(const width of [320,390,430,1440]){
     await page.setViewportSize({width,height:900});
     await page.goto('http://127.0.0.1:4328/compare/');
     await page.waitForSelector('#all-table input');
     assert.equal(await page.locator('h1').count(),1);
+    const banners=page.locator('.drivers-work-banner');
+    assert.equal(await banners.count(),2);
+    for(const banner of await banners.all()){
+      assert((await banner.innerText()).includes('【PR】'));
+      const link=banner.locator('a');
+      assert.equal(await link.getAttribute('href'),'https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGM7M+58IO+BXQOH');
+      assert((await link.getAttribute('rel')).includes('sponsored'));
+      assert.equal(await link.locator('img').getAttribute('src'),'https://www27.a8.net/svt/bgt?aid=260527653938&wid=001&eno=01&mid=s00000024432002005000&mc=1');
+      assert.equal(await banner.locator('.tracking-pixel').getAttribute('src'),'https://www18.a8.net/0.gif?a8mat=4B40F9+FIGM7M+58IO+BXQOH');
+      const bounds=await link.evaluate(n=>({left:n.getBoundingClientRect().left,right:n.getBoundingClientRect().right}));
+      assert(bounds.left>=0&&bounds.right<=width,'banner fits viewport');
+    }
     assert(await page.locator('a[href="#picked"]').evaluate(a=>getComputedStyle(a).color!==getComputedStyle(a).backgroundColor));
     assert.equal(await page.locator('#all-table input').count(),31);
     const numericCells=await page.locator('#all-table .primary-value').evaluateAll(nodes=>nodes.map(n=>({text:n.textContent,width:n.scrollWidth,available:n.clientWidth})));
