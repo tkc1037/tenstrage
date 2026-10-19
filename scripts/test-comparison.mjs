@@ -27,7 +27,8 @@ try {
     await page.waitForSelector('#all-table input');
     assert.equal(await page.locator('h1').count(),1);
     const banners=page.locator('.drivers-work-banner');
-    assert.equal(await banners.count(),2);
+    assert.equal(await banners.count(),1);
+    assert.equal(await page.locator('section[aria-labelledby="apply-title"] .drivers-work-banner').count(),1);
     for(const banner of await banners.all()){
       assert((await banner.innerText()).includes('【PR】'));
       const link=banner.locator('a');
