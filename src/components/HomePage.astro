@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from './ArticleCard.astro';
 import AffiliateCta from './AffiliateCta.astro';
 import DriversWorkBanner from './DriversWorkBanner.astro';
+import CompareCta from './CompareCta.astro';
 import HomeIcon from './HomeIcon.astro';
 import type { HomeIconName } from './HomeIcon.astro';
 import { getCollection } from 'astro:content';
@@ -35,12 +36,15 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
         <p class="eyebrow">東京の現役タクシードライバーが案内</p>
         <h1>タクシー転職の疑問を、<br />一つずつクリアに。</h1>
         <p class="hero-lead">会社選びも、お金の不安も、応募の準備も。<br class="desktop-break" />今、知りたいことから始めましょう。</p>
+        <a class="hero-compare" href="/compare/" data-compare-placement={source ? `start-${source}-hero` : 'home-hero'}>タクシー会社を条件で比較する <span aria-hidden="true">→</span></a>
       </div>
       <figure class="hero-photo">
         <img src="/images/takuzo-main-hero-768.webp" srcset="/images/takuzo-main-hero-768.webp 768w, /images/takuzo-main-hero-1200.webp 1200w, /images/takuzo-main-hero-1600.webp 1600w" sizes="(min-width: 72rem) 38rem, (min-width: 48rem) 55vw, 100vw" width="1200" height="675" alt="営業職からタクシーへ転職したTakuzo。営業職時代の年収454万円、転職1年目814万円という本人の実績" decoding="async" fetchpriority="high" />
         <figcaption class="hero-photo-note">画像の年収は運営者個人の実績です。同じ収入を保証するものではありません。</figcaption>
       </figure>
     </div>
+
+    <CompareCta placement={source ? `start-${source}-feature` : 'home-feature'} />
 
     <p class="entry-heading">迷ったら、この順番で</p>
     <nav class="entry-grid" aria-label="目的から選ぶ">
@@ -50,7 +54,6 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
         <h2>{entry.title}</h2><p>{entry.desc}</p><span class="entry-action">{entry.action} <span aria-hidden="true">→</span></span>
       </a>)}
     </nav>
-    <p class="comparison-entry"><a href="/compare/">タクシー会社を条件で比較する <span aria-hidden="true">→</span></a><span>歩合率・寮・入社支援金を並べて確認。</span></p>
   </section>
 
   <AffiliateCta placement={source ? `start-${source}` : 'home-primary'} compact />
@@ -101,9 +104,10 @@ const topics: { label: string; icon: HomeIconName; href: string }[] = [
 </BaseLayout>
 <style>
   .home-hero { padding-top: 2rem; }
-  .comparison-entry { margin-block: 1rem 0; padding: 1rem; background: var(--color-surface); border-left: 4px solid var(--color-accent); border-radius: var(--radius-sm); }
-  .comparison-entry a { display: inline-flex; align-items: center; min-height: var(--tap-min); font-weight: 700; }
-  .comparison-entry span:not([aria-hidden]) { display: block; color: var(--color-text-muted); font-size: var(--text-caption); }
+  /* ファーストビューの比較表ボタン */
+  .hero-compare { display: inline-flex; align-items: center; justify-content: center; gap: .4em; margin-top: 1.25rem; min-height: 3.25rem; padding: .75rem 1.5rem; background: var(--color-ink); color: var(--color-warm-paper); font-size: var(--text-button); font-weight: 700; text-decoration: none; border-radius: var(--radius-md); border-bottom: 4px solid var(--color-taxi-amber); }
+  .hero-compare:hover { color: var(--color-taxi-amber); text-decoration: underline; }
+  .hero-compare:focus-visible { outline: 3px solid var(--color-taxi-amber); outline-offset: 3px; }
   .hero-main { display: grid; gap: 1.5rem; }
   .eyebrow { font-size: var(--text-card-summary); font-weight: 700; margin-bottom: .75rem; }
   .home-hero h1 { margin: 0 0 1rem; line-height: 1.5; }

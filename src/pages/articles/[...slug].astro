@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import AffiliateCta from '../../components/AffiliateCta.astro';
+import CompareCta from '../../components/CompareCta.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -95,6 +96,8 @@ const blogPostingLd = {
       </figure>
     )}
 
+    <CompareCta placement="article-top" variant="bar" />
+
     {inlineAdCount < 2 && <AffiliateCta placement="article-top" category={category} slug={article.id} compact />}
 
     {category !== 'note' && <TableOfContents headings={headings} />}
@@ -102,6 +105,8 @@ const blogPostingLd = {
     <div class="article-body">
       <Content />
     </div>
+
+    <CompareCta placement="article-bottom" />
 
     {inlineAdCount < 3 && <AffiliateCta placement="article-bottom" category={category} slug={article.id} />}
     <nav class="article-next" aria-label="転職について次に調べる">

@@ -19,10 +19,15 @@ const navItems = [
       <button type="button" class="menu-button" aria-controls="site-nav" aria-expanded="false" hidden>メニュー</button>
     </div>
     <nav id="site-nav" class="site-nav" aria-label="メインナビゲーション">
-      <ul>{navItems.map(({ label, href }) => <li><a href={href} aria-current={currentPath === href ? 'page' : undefined}>{label}</a></li>)}</ul>
+      <ul>{navItems.map(({ label, href }) => <li><a class:list={{ 'nav-compare': href === '/compare/' }} href={href} aria-current={currentPath === href ? 'page' : undefined}>{label}</a></li>)}</ul>
     </nav>
   </div>
 </header>
+{currentPath !== '/compare/' && (
+  <a class="compare-dock" href="/compare/" data-compare-placement="mobile-dock">
+    <span>東京のタクシー会社を<strong>条件で比較</strong></span><span class="dock-arrow" aria-hidden="true">→</span>
+  </a>
+)}
 <script>
   const button = document.querySelector<HTMLButtonElement>('.menu-button')!;
   const nav = document.querySelector<HTMLElement>('#site-nav')!;
@@ -63,9 +68,20 @@ const navItems = [
   .site-nav a:hover { text-decoration: underline; background: var(--color-surface); }
   .site-nav a[aria-current="page"] { background: #FBE7B3; font-weight: 700; }
   [hidden] { display: none !important; }
+  /* 会社比較はサイトの主役。スマホは画面下に常時表示（ヘッダーは1段に収まらないため）、PCはナビ内で強調 */
+  .compare-dock { position: fixed; z-index: 90; left: .75rem; right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 3.25rem; padding: .625rem 1.125rem; background: var(--color-taxi-amber); color: var(--color-ink); font-size: var(--text-card-summary); text-decoration: none; border-radius: 999px; box-shadow: 0 6px 20px rgba(16, 20, 24, .28); }
+  .compare-dock strong { font-weight: 700; }
+  .compare-dock:hover { color: var(--color-ink); text-decoration: underline; }
+  .compare-dock:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 3px; }
+  .dock-arrow { font-size: 1.25rem; font-weight: 700; }
+  :global(body:has(.compare-dock)) { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom)); }
   @media (min-width: 48rem) {
     .site-nav { flex-basis: auto; margin-left: auto; }
     .site-nav ul { display: flex; gap: .25rem; padding: 0; }
     .header-actions { order: 2; }
+    .compare-dock { display: none; }
+    :global(body:has(.compare-dock)) { padding-bottom: 0; }
+    .site-nav a.nav-compare { background: var(--color-taxi-amber); font-weight: 700; border-radius: 999px; padding-inline: 1rem; }
+    .site-nav a.nav-compare:hover { background: #E4A400; }
   }
 </style>
