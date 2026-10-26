@@ -225,18 +225,30 @@ function guaranteeMarkup(c){
   const lines=guaranteeLines(c);
   return lines.length?'<div class="guarantees">'+lines.slice(0,3).map(line=>'<span class="guarantee-line">'+line+'</span>').join('')+'</div>':'未確認';
 }
-function noteMarkup(c){
-  const details=[];
-  if(c.rateBasis)details.push('歩合率：'+c.rateBasis);
-  if(c.bonusLabel)details.push('入社支援金：'+c.bonusLabel.replaceAll('<br>','・'));
-  else if(c.bonusText.startsWith('最大'))details.push('入社支援金：'+c.bonusText);
-  if(guaranteeLines(c).length>1||c.guarantee.includes('最大')||compactValue(c,'guarantee')!==c.guarantee){
-    details.push('給与保証：'+c.guarantee.replaceAll('<br>',' ').replace(/\s+/g,' ').trim());
+function detailMarkup(c){
+  const escapeHtml=value=>value.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  const groups=new Map(['歩合','入社支援金','給与保証','寮','事故','車両','二種免許','その他'].map(label=>[label,[]]));
+  const add=(label,text)=>{if(text)groups.get(label).push(text.replaceAll('<br>','・').replace('・以降は補足','').trim());};
+  if(c.rateBasis)add('歩合',c.rateBasis);
+  if(c.bonusLabel)add('入社支援金',c.bonusLabel);
+  else if(c.bonusText.startsWith('最大'))add('入社支援金',c.bonusText);
+  if(guaranteeLines(c).length>1||c.guarantee.includes('最大')||compactValue(c,'guarantee')!==c.guarantee)add('給与保証',c.guarantee.replaceAll('<br>',' ').replace(/\s+/g,' '));
+  for(const [key,label] of [['dorm','寮'],['accident','事故'],['vehicleText','車両']]){
+    if(c[key]&&compactValue(c,key)!==c[key])add(label,c[key]);
   }
-  for(const [key,label] of [['dorm','寮'],['accident','事故負担'],['vehicleText','車両']]){
-    if(c[key]&&compactValue(c,key)!==c[key])details.push(label+'：'+c[key].replaceAll('<br>','・').replace('・以降は補足',''));
-  }
-  return '<div class="company-note">'+details.map(text=>'<p>'+text+'</p>').join('')+'<p>'+companyNotes[c.id].text+'</p><p>'+licenseSupport[c.id].note+'</p></div>';
+  const category=text=>{
+    if(/二種免許|免許費用|返済|養成/.test(text))return '二種免許';
+    if(/事故|免責|弁償|本人負担|保険|共済/.test(text))return '事故';
+    if(/寮|住宅|住居|転居|家賃|敷金|礼金/.test(text))return '寮';
+    if(/給与保証|保証額|時給保証/.test(text))return '給与保証';
+    if(/支援金|祝い金|報奨金|入社金/.test(text))return '入社支援金';
+    if(/歩合|売上|営収|賃金比率/.test(text))return '歩合';
+    if(/車両|JPN|レクサス|アプリ/.test(text))return '車両';
+    return 'その他';
+  };
+  for(const sentence of companyNotes[c.id].text.split(/<br\s*\/?>|(?<=。)/).map(s=>s.trim()).filter(Boolean))add(category(sentence),sentence);
+  add('二種免許',licenseSupport[c.id].note);
+  return [...groups].filter(([,items])=>items.length).map(([label,items])=>'<section class="detail-group"><h3>'+label+'</h3>'+items.map(item=>'<p>'+escapeHtml(item)+'</p>').join('')+'</section>').join('');
 }
 const rows=[
 ['最高<br>歩合率',c=>'<div class="primary-value">'+(c.rate===null?'未確認':'<span class="rate">'+c.rate+'%</span>'+(c.rateMore?'<span class="rate-suffix">以上</span>':'')+(c.rateNote?'<sup>※</sup>':''))+'</div>'+(companyNotes[c.id].holiday?'<span class="holiday">休日出勤<br><strong>'+companyNotes[c.id].holiday+'</strong></span>':'')],
@@ -249,7 +261,7 @@ const rows=[
 ['車両',c=>compactValue(c,'vehicleText')||(c.vehicle==='unknown'?'未確認':'JPN TAXI<span class="minor">'+(c.vehicle==='all'?'全車':'導入あり')+'</span>')],
 ['配車<br>アプリ',c=>c.apps.length?c.apps.join('・<wbr>'):'未確認'],
 ['所在地',c=>locations(c).map(l=>'<div>'+(locations(c).length>1?'<strong>'+l.office+'</strong><br>':'')+(l.address==='未確認'?'未確認':l.address+'<br><a class="map" href="'+maps(c,l)+'" target="_blank" rel="noopener noreferrer" aria-label="'+c.name+' '+l.office+'をGoogleマップで見る（別タブ）">地図 ↗</a>')+'</div>').join('')],
-['補足',noteMarkup]
+['補足',c=>'<button class="detail-button" type="button" data-details="'+c.id+'" aria-label="'+c.name+'の補足を開く">詳細</button>']
 ];
 function ordered(list){const mode=value('sort-order');return [...list].sort((a,b)=>{if(mode==='default')return Number(a.id)-Number(b.id);const key=mode==='rate'?'rate':'bonus';if(a[key]===null&&b[key]===null)return Number(a.id)-Number(b.id);if(a[key]===null)return 1;if(b[key]===null)return -1;return b[key]-a[key]||Number(a.id)-Number(b.id);});}
 function tableMarkup(list,selectable){
@@ -265,4 +277,21 @@ document.getElementById('comparison-controls').addEventListener('change',renderA
 document.getElementById('reset-filters').addEventListener('click',()=>{document.querySelectorAll('#comparison-controls select').forEach(s=>s.selectedIndex=0);renderAll();});
 document.getElementById('clear-selection').addEventListener('click',()=>{selectedIds.clear();renderAll();});
 document.getElementById('picked-table').addEventListener('click',e=>{const button=e.target.closest('[data-remove]');if(!button)return;selectedIds.delete(button.dataset.remove);renderAll();document.getElementById('picked-title').focus({preventScroll:true});});
+const detailsDialog=document.getElementById('company-details');
+const closeDetails=document.getElementById('close-company-details');
+let detailTrigger=null;
+document.querySelector('.taxi-comparison').addEventListener('click',e=>{
+  const button=e.target.closest('[data-details]');
+  if(!button)return;
+  const company=companies.find(c=>c.id===button.dataset.details);
+  if(!company)return;
+  detailTrigger=button;
+  document.getElementById('company-details-title').textContent=company.name+(company.office?'（'+company.office+'）':'')+'の補足';
+  document.getElementById('company-details-body').innerHTML=detailMarkup(company);
+  detailsDialog.showModal();
+  closeDetails.focus({preventScroll:true});
+});
+closeDetails.addEventListener('click',()=>detailsDialog.close());
+detailsDialog.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();closeDetails.focus();}});
+detailsDialog.addEventListener('close',()=>{if(detailTrigger?.isConnected)detailTrigger.focus({preventScroll:true});detailTrigger=null;});
 renderAll();

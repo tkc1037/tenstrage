@@ -25,6 +25,10 @@ import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
 <div class="bar"><h2 id="picked-title" tabindex="-1">ピックアップ</h2><button id="clear-selection" type="button">選択を解除</button></div>
 <div id="picked-table"></div>
 </section>
+<dialog id="company-details" class="company-details" aria-labelledby="company-details-title">
+<div class="detail-head"><h2 id="company-details-title"></h2><button id="close-company-details" type="button">閉じる</button></div>
+<div id="company-details-body" class="detail-body"></div>
+</dialog>
 <section class="panel" aria-labelledby="apply-title">
 <h2 id="apply-title">応募・相談</h2>
 <DriversWorkBanner />
@@ -108,6 +112,17 @@ import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
 .taxi-comparison .company-note{font-size:15px;line-height:1.65}
 .taxi-comparison .company-note p{margin:0 0 10px}
 .taxi-comparison .company-note a{display:inline-flex;align-items:center;min-height:44px}
+.taxi-comparison .detail-button{width:100%;padding:5px 2px;min-height:44px;font-size:14px;font-weight:700;color:var(--color-link)}
+.taxi-comparison .company-details{position:fixed;inset:0;margin:auto;width:min(640px,calc(100vw - 24px));max-width:none;max-height:80dvh;padding:0;border:1px solid var(--line);border-radius:var(--radius-md);background:white;color:var(--ink);overflow:auto}
+.taxi-comparison .company-details::backdrop{background:rgba(0,0,0,.58)}
+.taxi-comparison .detail-head{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:white;border-bottom:1px solid var(--line)}
+.taxi-comparison .detail-head h2{font-size:20px;line-height:1.3}
+.taxi-comparison .detail-head button{flex:none}
+.taxi-comparison .detail-body{padding:12px 16px 20px;font-size:16px;line-height:1.6}
+.taxi-comparison .detail-group{padding:10px 0;border-bottom:1px solid var(--line)}
+.taxi-comparison .detail-group:last-child{border-bottom:0}
+.taxi-comparison .detail-group h3{margin:0 0 4px;font-size:16px;color:var(--color-link)}
+.taxi-comparison .detail-group p{margin:4px 0;overflow-wrap:anywhere}
 .taxi-comparison .holiday{display:block;font-size:12px;margin-top:2px;line-height:1.25}
 .taxi-comparison .holiday strong{white-space:nowrap}
 .taxi-comparison .guarantees{font-family:Arial,"Meiryo",sans-serif;font-variant-numeric:tabular-nums;line-height:1.5}
@@ -127,6 +142,7 @@ import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
 .taxi-comparison tr>:first-child{font-size:13px;padding:9px 4px}
 .taxi-comparison .rate{font-size:24px}
 .taxi-comparison .minor,.taxi-comparison .holiday,.taxi-comparison .company-note{font-size:13px}
+.taxi-comparison .detail-button{font-size:13px}
 .taxi-comparison .office{font-size:12px}
 .taxi-comparison .pick{font-size:14px;gap:5px}
 .taxi-comparison .pick input{flex-shrink:0}
