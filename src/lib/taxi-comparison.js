@@ -237,11 +237,11 @@ function detailMarkup(c){
     if(c[key]&&compactValue(c,key)!==c[key])add(label,c[key]);
   }
   const category=text=>{
-    if(/二種免許|免許費用|返済|養成/.test(text))return '二種免許';
+    if(/二種免許|二種費用|免許費用|返済|養成/.test(text))return '二種免許';
     if(/事故|免責|弁償|本人負担|保険|共済/.test(text))return '事故';
     if(/寮|住宅|住居|転居|家賃|敷金|礼金/.test(text))return '寮';
-    if(/給与保証|保証額|時給保証/.test(text))return '給与保証';
-    if(/支援金|祝い金|報奨金|入社金/.test(text))return '入社支援金';
+    if(/給与保証|保証額|時給保証|保証も|保証は/.test(text))return '給与保証';
+    if(/支援金|未経験支援|祝い金|報奨金|入社金/.test(text))return '入社支援金';
     if(/歩合|売上|営収|賃金比率/.test(text))return '歩合';
     if(/車両|JPN|レクサス|アプリ/.test(text))return '車両';
     return 'その他';

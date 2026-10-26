@@ -78,6 +78,8 @@ try {
     await page.locator('#all-table .detail-button').nth(13).click();
     assert((await page.locator('#company-details-body').innerText()).includes('免許費用を含む'));
     assert((await page.locator('#company-details-body .detail-group h3').allTextContents()).includes('入社支援金'));
+    assert((await page.locator('#company-details-body .detail-group').filter({has:page.locator('h3', {hasText:'入社支援金'})}).innerText()).includes('売上連動'));
+    assert((await page.locator('#company-details-body .detail-group').filter({has:page.locator('h3', {hasText:'二種免許'})}).innerText()).includes('二種費用'));
     await page.locator('#close-company-details').click();
     await page.locator('#all-table .detail-button').nth(5).click();
     assert((await page.locator('#company-details-body').innerText()).includes('最大35万 × 6か月'));
