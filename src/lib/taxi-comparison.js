@@ -17,12 +17,12 @@ const extraCompanies = [
     notes:{text:'歩合は「社員最高60％以上」の掲載。正確な上限は未確認。寮は先着20名・最大6か月無料。報奨金最大50万円の未経験者への適用・支給時期は未確認。',official:'https://www.eisen-kotsu.com/'}
   },
   {
-    id:'6',name:'坂本自動車',office:'本社・足立',area:'台東区',address:'台東区日本堤2-36-10',pay:'B',rate:null,
+    id:'6',name:'坂本自動車',office:'本社・足立',area:'台東区',address:'台東区日本堤2-36-10',pay:'B',rate:64,rateNote:true,
     locations:[{office:'本社営業所',area:'台東区',address:'台東区日本堤2-36-10'},{office:'足立営業所',area:'足立区',address:'足立区梅島2-8-2'}],
     guarantee:'40万 × 6か月',dorm:'あり<br>月額未確認',dormStatus:'yes',accident:'修理・賠償の請求なし',vehicle:'all',apps:['GO'],license:'全額会社負担',
     source:'https://townwork.net/viewjob/jobid_d8809548c862f2b8/',sourceLabel:'タウンワーク',
-    notes:{text:'本社・足立は掲載上の主要待遇が共通。10月1日更新の直接採用求人では両営業所とも最高歩合の数値記載なし。以前の64％は現行適用未確認。祝い金30万円は経験者向け。未経験の住宅支援は寮満室時・最大40万円（初期費用最大10万円＋月2.5万円×1年）、受取条件・時期は要確認。寮の空室・家賃は営業所ごとに確認。',official:'https://taxi-sakamotojidousya.com/mid_career/'},
-    sources:[['給与型（公式）','https://sakamotojidousha.jp/7397/'],['本社・2026-10-13確認','https://arwrk.net/recruit/amigs05xv94ne0d/12814359/'],['足立・2026-10-13確認','https://arwrk.net/recruit/amigs05xv94ne0d/12801530/']]
+    notes:{text:'本社・足立は掲載上の主要待遇が共通。最高歩合64％はGOジョブの会社紹介の掲載（2026-10-26確認）。10月1日更新の直接採用求人には両営業所とも最高歩合の数値記載がないため、応募時に現行の賃金規定を確認。祝い金30万円は経験者向け。未経験の住宅支援は寮満室時・最大40万円（初期費用最大10万円＋月2.5万円×1年）、受取条件・時期は要確認。寮の空室・家賃は営業所ごとに確認。',official:'https://taxi-sakamotojidousya.com/mid_career/'},
+    sources:[['歩合率64％・2026-10-26確認','https://gojob.go.goinc.jp/jobs/companies/QBSPLUSA'],['給与型（公式）','https://sakamotojidousha.jp/7397/'],['本社・2026-10-13確認','https://arwrk.net/recruit/amigs05xv94ne0d/12814359/'],['足立・2026-10-13確認','https://arwrk.net/recruit/amigs05xv94ne0d/12801530/']]
   },
   {
     id:'7',name:'新和自動車',office:'本社営業所',area:'江東区',address:'江東区亀戸3-51-10',pay:'B',rate:60,
