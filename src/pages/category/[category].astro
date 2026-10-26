@@ -37,7 +37,7 @@ const config = categoryConfig[category] || { label: category, emoji: '', descrip
       {config.description && <p class="category-desc">{config.description}</p>}
     </header>
 
-    <AffiliateCta placement="category-top" category={category} compact />
+    <AffiliateCta placement="category-top" compact />
 
     {articles.length === 0 ? (
       <p class="empty-state">このカテゴリの記事を準備中です。</p>

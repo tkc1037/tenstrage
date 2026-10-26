@@ -95,7 +95,7 @@ const blogPostingLd = {
       </figure>
     )}
 
-    {inlineAdCount < 2 && <AffiliateCta placement="article-top" category={category} slug={article.id} compact />}
+    {inlineAdCount < 2 && <AffiliateCta placement="article-top" compact />}
 
     {category !== 'note' && <TableOfContents headings={headings} />}
 
@@ -103,7 +103,7 @@ const blogPostingLd = {
       <Content />
     </div>
 
-    {inlineAdCount < 3 && <AffiliateCta placement="article-bottom" category={category} slug={article.id} />}
+    {inlineAdCount < 3 && <AffiliateCta placement="article-bottom" />}
     <nav class="article-next" aria-label="転職について次に調べる">
       <a href="/questions/">Q&Aで疑問を調べる</a>
       <a href="/preparation/">転職準備の確認リストを見る</a>

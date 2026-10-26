@@ -1,14 +1,19 @@
+---
+import { driversWorkBannerHtml, affiliateIntro, affiliateNote } from '../lib/affiliate';
+---
 <aside class="drivers-work-banner" aria-label="広告：ドライバーズワーク">
   <p>【PR】ドライバーズワーク</p>
-  <a href="https://px.a8.net/svt/ejp?a8mat=4B40F9+FIGM7M+58IO+BXQOH" rel="nofollow sponsored" aria-label="ドライバーズワークの案内を見る（広告）">
-    <img border="0" width="300" height="250" alt="" src="https://www27.a8.net/svt/bgt?aid=260527653938&wid=001&eno=01&mid=s00000024432002005000&mc=1" loading="lazy" />
-  </a>
-  <img class="tracking-pixel" border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4B40F9+FIGM7M+58IO+BXQOH" alt="" loading="lazy" />
+  <p class="drivers-work-intro">{affiliateIntro}</p>
+  <div class="drivers-work-creative" set:html={driversWorkBannerHtml} />
+  <p class="drivers-work-note">{affiliateNote}</p>
 </aside>
 <style>
   .drivers-work-banner { position: relative; margin-block: 1.5rem; text-align: center; }
   .drivers-work-banner p { margin: 0 0 .5rem; font-size: var(--text-caption); color: var(--color-text-muted); }
-  .drivers-work-banner a { display: block; width: 300px; max-width: 100%; margin-inline: auto; }
-  .drivers-work-banner a img { display: block; width: 100%; height: auto; aspect-ratio: 6 / 5; }
-  .tracking-pixel { position: absolute; width: 1px; height: 1px; }
+  .drivers-work-banner .drivers-work-intro { max-width: 36em; margin: 0 auto .75rem; font-size: var(--text-card-summary); line-height: 1.8; color: inherit; }
+  .drivers-work-banner .drivers-work-note { max-width: 36em; margin: .75rem auto 0; line-height: 1.7; }
+  .drivers-work-creative { line-height: 0; }
+  .drivers-work-creative :global(a) { display: block; width: 300px; max-width: 100%; margin-inline: auto; }
+  .drivers-work-creative :global(a img) { display: block; width: 100%; height: auto; aspect-ratio: 6 / 5; }
+  .drivers-work-creative :global(img[width="1"]) { position: absolute; width: 1px; height: 1px; }
 </style>
