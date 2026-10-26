@@ -120,30 +120,30 @@ const extraCompanies = [
     notes:{text:'応募資格は二種免許保有者。免許を持たない未経験者の養成採用は未確認。埼玉の営業所ではなく東京営業所の条件。'}
   },
   {
-    id:'22',name:'東日本交通',area:'渋谷区',address:'渋谷区笹塚',dorm:'あり<br>月額未確認',dormStatus:'yes',apps:['GO'],license:'会社負担',accident:'免責あり<br>金額未確認',
+    id:'22',name:'東日本交通',area:'渋谷区',address:'渋谷区笹塚1-62-2',dorm:'あり<br>月額未確認',dormStatus:'yes',apps:['GO'],license:'会社負担',accident:'免責あり<br>金額未確認',
     source:'https://www.tenshokudou.com/detail/3792',
-    notes:{text:'現在の求人は積算歩合表記。過去媒体のAB型・64％は現行と照合できず未確認。所在地の番地も今回未確認。'},
+    notes:{text:'現在の求人は積算歩合表記。過去媒体のAB型・64％は現行と照合できず未確認。'},
     sources:[['過去掲載（参考）','https://takicorporation.com/taxijob/1141']]
   },
   {
-    id:'23',name:'平和タクシー',area:'江戸川区',address:'江戸川区',pay:'B',rate:64,accident:'補償・負担とも未確認',
+    id:'23',name:'平和タクシー',area:'渋谷区',address:'渋谷区初台2-11-9',pay:'B',rate:64,accident:'補償・負担とも未確認',
     source:'https://www.heiwa-taxi.tokyo/Joboffer.html',sourceLabel:'公式採用',
-    notes:{text:'月営収60万円で64％。公出を含む最高67％とは区別。祝い金10万円は経験者向け。未経験向け支援・寮・事故補償の確認が必要。番地は未確認。'}
+    notes:{text:'月営収60万円で64％。公出を含む最高67％とは区別。祝い金10万円は経験者向け。未経験向け支援・寮・事故補償の確認が必要。'}
   },
   {
-    id:'24',name:'幸進',area:'未確認',address:'未確認',rate:65,dorm:'あり<br>月額未確認',dormStatus:'yes',vehicle:'all',accident:'補償・負担とも未確認',
+    id:'24',name:'幸進',area:'足立区',address:'足立区加賀2-29-13',rate:65,dorm:'あり<br>月額未確認',dormStatus:'yes',vehicle:'all',accident:'補償・負担とも未確認',
     source:'https://koushintaxi.tokyo/recruit',sourceLabel:'公式採用',
-    notes:{text:'二種免許とタクシーセンター講習済みが応募条件。未経験の養成、B／AB型、事故補償、営業区域・所在地は未確認。'}
+    notes:{text:'二種免許とタクシーセンター講習済みが応募条件。未経験の養成、B／AB型、事故補償、営業区域は未確認。'}
   },
   {
-    id:'25',name:'品川タクシー',area:'未確認',address:'未確認',pay:'AB',rate:60,guarantee:'30万 × 6か月',license:'全額会社負担',
+    id:'25',name:'品川タクシー',area:'品川区',address:'品川区東品川1-9-8',pay:'AB',rate:60,guarantee:'30万 × 6か月',license:'全額会社負担',
     source:'https://www.tenshokudou.com/detail/6325',
-    notes:{text:'祝い金30万円は二種免許保有者向け。免許なし未経験への支援・寮は未確認。所在地を確認後に地図を追加。同名に近い品川自動車タクシーとは別。'}
+    notes:{text:'祝い金30万円は二種免許保有者向け。免許なし未経験への支援・寮は未確認。同名に近い品川自動車タクシーとは別。'}
   },
   {
-    id:'26',name:'帝都三信交通',area:'大田区',address:'大田区',rate:63,dorm:'あり<br>月額未確認',dormStatus:'yes',
+    id:'26',name:'帝都三信交通',area:'大田区',address:'大田区東六郷1-27-3',rate:63,dorm:'あり<br>月額未確認',dormStatus:'yes',
     source:'https://www.drivers-work.com/job/taxi6500/',sourceLabel:'ドライバーズワーク',
-    notes:{text:'掲載の歩合45〜63％。B／AB型、未経験支援、事故補償の詳細は未確認。番地は未確認。'}
+    notes:{text:'掲載の歩合45〜63％。B／AB型、未経験支援、事故補償の詳細は未確認。'}
   },
   {
     id:'27',name:'松竹交通',office:'板橋・舟渡',area:'板橋区',address:'板橋区舟渡1-16-35',pay:'B',guarantee:'35万 × 6か月',dorm:'あり<br>月額未確認',dormStatus:'yes',vehicle:'introduced',apps:['GO'],license:'全額会社負担',
@@ -153,19 +153,19 @@ const extraCompanies = [
     sources:[['両営業所・2026-10-13確認','https://www.baitoru.com/jobdetail/162859255'],['公式営業所一覧','https://shochiku-group.com/shochiku/会社案内/関連会社・営業所/']]
   },
   {
-    id:'28',name:'七福交通',area:'江東区',address:'江東区亀戸',pay:'B',apps:['GO'],
+    id:'28',name:'七福交通',area:'江東区',address:'江東区亀戸8-26-10',pay:'B',apps:['GO'],
     source:'https://www.tenshokudou.com/detail/4981',
-    notes:{text:'最高74％の勤務条件・内訳を確認できず、通常最高歩合は未確認。現任向け10万円を未経験向けへ転記しない。寮・事故負担・番地も未確認。'}
+    notes:{text:'最高74％の勤務条件・内訳を確認できず、通常最高歩合は未確認。現任向け10万円を未経験向けへ転記しない。寮・事故負担は未確認。'}
   },
   {
-    id:'29',name:'新都交通',area:'未確認',address:'未確認',pay:'B',
+    id:'29',name:'新都交通',area:'北区',address:'北区赤羽西6-11-12',pay:'B',
     source:'https://www.tenshokudou.com/detail/6437',
     notes:{text:'月給60〜65万円の掲載を歩合60〜65％と読み替えない。最高歩合・支援・寮・事故補償・対象営業区域を追加確認。'}
   },
   {
-    id:'30',name:'東京合同自動車',area:'未確認',address:'未確認',rate:62,bonusText:'なし',bonusStatus:'no',bonusLabel:'現任のみ',accident:'補償あり<br>負担額未確認',guarantee:'30万 × 6か月',dorm:'あり<br>月額未確認',dormStatus:'yes',license:'会社負担',
+    id:'30',name:'東京合同自動車',area:'荒川区',address:'荒川区東日暮里6-57-6',rate:62,bonusText:'なし',bonusStatus:'no',bonusLabel:'現任のみ',accident:'補償あり<br>負担額未確認',guarantee:'30万 × 6か月',dorm:'あり<br>月額未確認',dormStatus:'yes',license:'会社負担',
     source:'https://www.promenkyo.com/job/tokyo/tokyo-godo/',sourceLabel:'プロ免許',
-    notes:{holiday:'70%',text:'運営者提供情報：休日出勤の歩合は70％（1日あたり税抜売上6万円以上）。4月の運賃改定に合わせ通常の最高歩合を62％へ変更。事故補償あり、支援金は現任のみ。事故の本人負担額は未確認。給与型・所在地、拘束時間に関する控除の現行条件は追加確認。'}
+    notes:{holiday:'70%',text:'運営者提供情報：休日出勤の歩合は70％（1日あたり税抜売上6万円以上）。4月の運賃改定に合わせ通常の最高歩合を62％へ変更。事故補償あり、支援金は現任のみ。事故の本人負担額は未確認。給与型・拘束時間に関する控除の現行条件は追加確認。'}
   }
 ];
 

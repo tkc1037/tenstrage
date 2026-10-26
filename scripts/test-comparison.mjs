@@ -41,6 +41,13 @@ try {
     }
     assert(await page.locator('a[href="#picked"]').evaluate(a=>getComputedStyle(a).color!==getComputedStyle(a).backgroundColor));
     assert.equal(await page.locator('#all-table input').count(),31);
+    const locationCells=page.locator('#all-table tbody tr').nth(9).locator('td');
+    assert.equal(await locationCells.count(),31);
+    for(const cell of await locationCells.all()){
+      assert(!(await cell.innerText()).includes('未確認'),'company location is complete');
+      assert(await cell.locator('a.map').count()>=1,'company has a map link');
+    }
+    assert((await locationCells.nth(23).innerText()).includes('渋谷区初台2-11-9'),'平和タクシーの所在地');
     assert.equal(await page.locator('#all-table .detail-button').count(),31);
     const detailRowHeight=await page.locator('#all-table tbody tr:last-child').evaluate(row=>row.getBoundingClientRect().height);
     assert(detailRowHeight<=70,'compact details row');
