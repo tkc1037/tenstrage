@@ -1,11 +1,11 @@
 ---
-import { driversWorkBannerHtml, affiliateIntro, affiliateNote } from '../lib/affiliate';
+import { driversWorkBannerHtml, affiliateMessage, affiliateNote } from '../lib/affiliate';
 interface Props { placement: string; }
 const { placement } = Astro.props;
 ---
 <aside class="dw-banner" aria-label="広告：ドライバーズワークの求人" data-affiliate-placement={placement}>
   <p class="dw-banner-label">PR · ドライバーズワーク（外部の転職支援サービス）</p>
-  <p class="dw-banner-intro">{affiliateIntro}</p>
+  <p class="dw-banner-intro">{affiliateMessage()}</p>
   <div class="dw-banner-creative" set:html={driversWorkBannerHtml} />
   <p class="dw-banner-note">{affiliateNote}</p>
 </aside>

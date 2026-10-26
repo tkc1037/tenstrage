@@ -1,11 +1,11 @@
 ---
-import { driversWorkUrl, affiliateIntro, affiliateNote } from '../lib/affiliate';
-interface Props { placement: string; compact?: boolean; }
-const { placement, compact = false } = Astro.props;
+import { driversWorkUrl, affiliateMessage, affiliateNote } from '../lib/affiliate';
+interface Props { placement: string; category?: string; slug?: string; compact?: boolean; }
+const { placement, category, slug, compact = false } = Astro.props;
 ---
 <aside class:list={['affiliate-cta', { compact }]} aria-label="広告：ドライバーズワークの転職支援">
   <p class="affiliate-label">PR · 外部の転職支援サービス</p>
-  <p class="affiliate-intro">{affiliateIntro}</p>
+  <p class="affiliate-intro">{affiliateMessage(category, slug)}</p>
   <a class="affiliate-button" href={driversWorkUrl} rel="sponsored nofollow" data-affiliate-placement={placement}>
     <span>【PR】ドライバーズワークの</span><span>無料転職相談に登録する <span aria-hidden="true">→</span></span>
   </a>

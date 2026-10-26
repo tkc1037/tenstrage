@@ -1,9 +1,9 @@
 ---
-import { driversWorkBannerHtml, affiliateIntro, affiliateNote } from '../lib/affiliate';
+import { driversWorkBannerHtml, affiliateMessage, affiliateNote } from '../lib/affiliate';
 ---
 <aside class="drivers-work-banner" aria-label="広告：ドライバーズワーク">
   <p>【PR】ドライバーズワーク</p>
-  <p class="drivers-work-intro">{affiliateIntro}</p>
+  <p class="drivers-work-intro">{affiliateMessage()}</p>
   <div class="drivers-work-creative" set:html={driversWorkBannerHtml} />
   <p class="drivers-work-note">{affiliateNote}</p>
 </aside>
