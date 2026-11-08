@@ -3,7 +3,7 @@ import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
 ---
 <div class="taxi-comparison">
 
-<header class="comparison-intro"><p class="eyebrow">条件を並べて、会社を選ぶ</p><h1>タクシー会社比較</h1><p class="muted">未経験向け · 東京23区・三鷹・武蔵野</p></header>
+<header class="comparison-intro"><p class="eyebrow">条件を並べて、会社を選ぶ</p><h1>タクシー会社比較</h1><p class="muted">未経験向け · 東京23区・三鷹・武蔵野</p><p class="intro-scope">東京の高歩合率の会社（求人で公表されている最高歩合率が60％以上）だけを選んで掲載しています。</p></header>
 <section class="panel" aria-labelledby="all-title">
 <h2 id="all-title">全体比較</h2>
 <div class="controls"><label for="sort-order">並べ替え</label><select id="sort-order"><option value="default">掲載順</option><option value="rate">歩合率が高い順</option><option value="bonus">支援金が多い順</option></select></div>
@@ -175,6 +175,7 @@ import DriversWorkBanner from './ComparisonDriversWorkBanner.astro';
 .taxi-comparison p{text-wrap:pretty}
 .taxi-comparison .comparison-intro{border-bottom:4px solid var(--color-accent);padding-bottom:1rem}
 .taxi-comparison .eyebrow{font-size:16px;font-weight:700}
+.taxi-comparison .intro-scope{margin-top:.5rem;font-size:16px;font-weight:700;color:var(--color-ink)}
 .taxi-comparison .panel{border:1px solid var(--color-border);border-top:3px solid var(--color-accent);border-radius:var(--radius-md)}
 .taxi-comparison .pick-link{background:var(--color-accent);color:var(--color-ink)}
 .taxi-comparison .pick-link:hover{background:var(--color-ink);color:var(--color-surface)}
